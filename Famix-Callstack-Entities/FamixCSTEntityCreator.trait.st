@@ -35,6 +35,13 @@ FamixCSTEntityCreator >> newEntity [
 ]
 
 { #category : 'entity creation' }
+FamixCSTEntityCreator >> newMethod [
+
+	<generated>
+	^ self add: FamixCSMethod new
+]
+
+{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newReceiver [
 
 	<generated>

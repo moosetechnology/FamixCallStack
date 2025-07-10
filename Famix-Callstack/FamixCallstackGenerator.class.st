@@ -8,7 +8,8 @@ Class {
 		'entity',
 		'parameter',
 		'invocation',
-		'invocationReceiver'
+		'invocationReceiver',
+		'method'
 	],
 	#category : 'Famix-Callstack',
 	#package : 'Famix-Callstack'
@@ -40,6 +41,7 @@ FamixCallstackGenerator >> defineClasses [
 	stackline := builder newClassNamed: #Stackline.
 	argument := builder newClassNamed: #Argument.
 	receiver := builder newClassNamed: #Receiver.
+	method := builder newClassNamed: #Method.
 
 	parameter := self remoteEntity: #Parameter withPrefix: #FamixJava.
 	invocation := self remoteEntity: #Invocation withPrefix: #FamixJava.
@@ -49,15 +51,27 @@ FamixCallstackGenerator >> defineClasses [
 { #category : 'definition' }
 FamixCallstackGenerator >> defineHierarchy [
 
-    super defineHierarchy.
-    stackline --|> entity.
-    argument --|> entity.
-    receiver --|> entity.
+	super defineHierarchy.
+	stackline --|> entity.
+	argument --|> entity.
+	receiver --|> entity.
+	method --|> entity
+]
+
+{ #category : 'definition' }
+FamixCallstackGenerator >> defineProperties [
+
+	super defineProperties.
+	argument property: #type type: #String.
+	argument property: #value type: #Object.
+	method property: #name type: #String
 ]
 
 { #category : 'definition' }
 FamixCallstackGenerator >> defineRelations [
-    super defineRelations.
-    stackline <>-* argument.
-    stackline <>- receiver.
+
+	super defineRelations.
+	stackline <>-* argument.
+	stackline <>- receiver.
+	stackline <>- method.
 ]

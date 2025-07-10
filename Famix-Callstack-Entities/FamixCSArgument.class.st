@@ -8,12 +8,21 @@
 | `stackline` | `FamixCSArgument` | `arguments` | `FamixCSStackline` | |
 
 
+## Properties
+======================
+
+| Name | Type | Default value | Comment |
+|---|
+| `type` | `String` | nil | |
+| `value` | `Object` | nil | |
 
 "
 Class {
 	#name : 'FamixCSArgument',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
+		'#type => FMProperty',
+		'#value => FMProperty',
 		'#stackline => FMOne type: #FamixCSStackline opposite: #arguments'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
@@ -51,4 +60,32 @@ FamixCSArgument >> stacklineGroup [
 	<generated>
 	<navigation: 'Stackline'>
 	^ MooseSpecializedGroup with: self stackline
+]
+
+{ #category : 'accessing' }
+FamixCSArgument >> type [
+
+	<FMProperty: #type type: #String>
+	<generated>
+	^ type
+]
+
+{ #category : 'accessing' }
+FamixCSArgument >> type: anObject [
+	<generated>
+	type := anObject
+]
+
+{ #category : 'accessing' }
+FamixCSArgument >> value [
+
+	<FMProperty: #value type: #Object>
+	<generated>
+	^ value
+]
+
+{ #category : 'accessing' }
+FamixCSArgument >> value: anObject [
+	<generated>
+	value := anObject
 ]

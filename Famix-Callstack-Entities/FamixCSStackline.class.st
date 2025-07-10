@@ -6,6 +6,7 @@
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `arguments` | `FamixCSStackline` | `stackline` | `FamixCSArgument` | |
+| `method` | `FamixCSStackline` | `stackline` | `FamixCSMethod` | |
 | `receiver` | `FamixCSStackline` | `stackline` | `FamixCSReceiver` | |
 
 
@@ -16,7 +17,8 @@ Class {
 	#superclass : 'FamixCSEntity',
 	#instVars : [
 		'#arguments => FMMany type: #FamixCSArgument opposite: #stackline',
-		'#receiver => FMOne type: #FamixCSReceiver opposite: #stackline'
+		'#receiver => FMOne type: #FamixCSReceiver opposite: #stackline',
+		'#method => FMOne type: #FamixCSMethod opposite: #stackline'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -59,6 +61,28 @@ FamixCSStackline >> argumentsGroup [
 	<generated>
 	<navigation: 'Arguments'>
 	^ MooseSpecializedGroup withAll: self arguments asSet
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> method [
+	"Relation named: #method type: #FamixCSMethod opposite: #stackline"
+
+	<generated>
+	^ method
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> method: anObject [
+
+	<generated>
+	method := anObject
+]
+
+{ #category : 'navigation' }
+FamixCSStackline >> methodGroup [
+	<generated>
+	<navigation: 'Method'>
+	^ MooseSpecializedGroup with: self method
 ]
 
 { #category : 'accessing' }
