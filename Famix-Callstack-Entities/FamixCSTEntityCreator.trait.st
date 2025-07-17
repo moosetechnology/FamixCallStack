@@ -35,10 +35,24 @@ FamixCSTEntityCreator >> newEntity [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newMethod [
+FamixCSTEntityCreator >> newInstance [
 
 	<generated>
-	^ self add: FamixCSMethod new
+	^ self add: FamixCSInstance new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newObjectReference [
+
+	<generated>
+	^ self add: FamixCSObjectReference new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newPrimitiveType [
+
+	<generated>
+	^ self add: FamixCSPrimitiveType new
 ]
 
 { #category : 'entity creation' }

@@ -7,6 +7,11 @@
 |---|
 | `stackline` | `FamixCSArgument` | `arguments` | `FamixCSStackline` | |
 
+### Other
+| Relation | Origin | Opposite | Type | Comment |
+|---|
+| `value` | `FamixCSArgument` | `argumentUsage` | `FamixCSInstance` | |
+
 
 ## Properties
 ======================
@@ -14,16 +19,15 @@
 | Name | Type | Default value | Comment |
 |---|
 | `type` | `String` | nil | |
-| `value` | `Object` | nil | |
 
 "
 Class {
 	#name : 'FamixCSArgument',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
+		'#stackline => FMOne type: #FamixCSStackline opposite: #arguments',
 		'#type => FMProperty',
-		'#value => FMProperty',
-		'#stackline => FMOne type: #FamixCSStackline opposite: #arguments'
+		'#value => FMOne type: #FamixCSInstance opposite: #argumentUsage'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -78,14 +82,15 @@ FamixCSArgument >> type: anObject [
 
 { #category : 'accessing' }
 FamixCSArgument >> value [
+	"Relation named: #value type: #FamixCSInstance opposite: #argumentUsage"
 
-	<FMProperty: #value type: #Object>
 	<generated>
 	^ value
 ]
 
 { #category : 'accessing' }
 FamixCSArgument >> value: anObject [
+
 	<generated>
 	value := anObject
 ]

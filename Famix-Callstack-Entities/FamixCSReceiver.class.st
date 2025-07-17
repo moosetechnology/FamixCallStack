@@ -7,6 +7,11 @@
 |---|
 | `stackline` | `FamixCSReceiver` | `receiver` | `FamixCSStackline` | |
 
+### Other
+| Relation | Origin | Opposite | Type | Comment |
+|---|
+| `value` | `FamixCSReceiver` | `receiverUsage` | `FamixCSObjectReference` | |
+
 
 
 "
@@ -14,7 +19,8 @@ Class {
 	#name : 'FamixCSReceiver',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
-		'#stackline => FMOne type: #FamixCSStackline opposite: #receiver'
+		'#stackline => FMOne type: #FamixCSStackline opposite: #receiver',
+		'#value => FMOne type: #FamixCSObjectReference opposite: #receiverUsage'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -52,4 +58,19 @@ FamixCSReceiver >> stacklineGroup [
 	<generated>
 	<navigation: 'Stackline'>
 	^ MooseSpecializedGroup with: self stackline
+]
+
+{ #category : 'accessing' }
+FamixCSReceiver >> value [
+	"Relation named: #value type: #FamixCSObjectReference opposite: #receiverUsage"
+
+	<generated>
+	^ value
+]
+
+{ #category : 'accessing' }
+FamixCSReceiver >> value: anObject [
+
+	<generated>
+	value := anObject
 ]
