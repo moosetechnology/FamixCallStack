@@ -10,7 +10,8 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `arguments` | `FamixCSMethodCall` | `methodUsages` | `FamixCSInstance` | |
+| `arguments` | `FamixCSMethodCall` | `methodUsages` | `FamixCSValue` | |
+| `arguments` | `FamixCSMethodCall` | `parent` | `FamixCSArgument` | |
 | `method` | `FamixCSMethodCall` | `methodCalls` | `FamixJavaMethod` | |
 
 
@@ -21,7 +22,7 @@ Class {
 	#superclass : 'FamixCSEntity',
 	#instVars : [
 		'#stackline => FMOne type: #FamixCSStackline opposite: #methodCall',
-		'#arguments => FMMany type: #FamixCSInstance opposite: #methodUsages'
+		'#arguments => FMMany type: #FamixCSValue opposite: #methodUsages'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -45,7 +46,7 @@ FamixCSMethodCall >> addArgument: anObject [
 
 { #category : 'accessing' }
 FamixCSMethodCall >> arguments [
-	"Relation named: #arguments type: #FamixCSInstance opposite: #methodUsages"
+	"Relation named: #arguments type: #FamixCSValue opposite: #methodUsages"
 
 	<generated>
 	<derived>

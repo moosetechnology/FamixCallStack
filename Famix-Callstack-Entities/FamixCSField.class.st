@@ -5,8 +5,8 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `instance` | `FamixCSField` | `fields` | `FamixCSInstance` | |
-| `objectReference` | `FamixCSField` | `fields` | `FamixCSObjectReference` | |
+| `parent` | `FamixCSField` | `field` | `FamixCSClassReference` | |
+| `value` | `FamixCSField` | `fieldUsages` | `FamixCSValue` | |
 
 
 ## Properties
@@ -22,8 +22,8 @@ Class {
 	#superclass : 'FamixCSEntity',
 	#instVars : [
 		'#name => FMProperty',
-		'#objectReference => FMOne type: #FamixCSObjectReference opposite: #fields',
-		'#instance => FMOne type: #FamixCSInstance opposite: #fields'
+		'#parent => FMOne type: #FamixCSClassReference opposite: #field',
+		'#value => FMOne type: #FamixCSValue opposite: #fieldUsages'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -37,21 +37,6 @@ FamixCSField class >> annotation [
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
-]
-
-{ #category : 'accessing' }
-FamixCSField >> instance [
-	"Relation named: #instance type: #FamixCSInstance opposite: #fields"
-
-	<generated>
-	^ instance
-]
-
-{ #category : 'accessing' }
-FamixCSField >> instance: anObject [
-
-	<generated>
-	instance := anObject
 ]
 
 { #category : 'accessing' }
@@ -69,16 +54,31 @@ FamixCSField >> name: anObject [
 ]
 
 { #category : 'accessing' }
-FamixCSField >> objectReference [
-	"Relation named: #objectReference type: #FamixCSObjectReference opposite: #fields"
+FamixCSField >> parent [
+	"Relation named: #parent type: #FamixCSClassReference opposite: #field"
 
 	<generated>
-	^ objectReference
+	^ parent
 ]
 
 { #category : 'accessing' }
-FamixCSField >> objectReference: anObject [
+FamixCSField >> parent: anObject [
 
 	<generated>
-	objectReference := anObject
+	parent := anObject
+]
+
+{ #category : 'accessing' }
+FamixCSField >> value [
+	"Relation named: #value type: #FamixCSValue opposite: #fieldUsages"
+
+	<generated>
+	^ value
+]
+
+{ #category : 'accessing' }
+FamixCSField >> value: anObject [
+
+	<generated>
+	value := anObject
 ]

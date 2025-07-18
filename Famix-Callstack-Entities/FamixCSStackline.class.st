@@ -12,7 +12,7 @@
 |---|
 | `next` | `FamixCSStackline` | `previous` | `FamixCSStackline` | |
 | `previous` | `FamixCSStackline` | `next` | `FamixCSStackline` | |
-| `receiver` | `FamixCSStackline` | `receiverUsages` | `FamixCSInstanceReference` | |
+| `receiver` | `FamixCSStackline` | `receiverUsages` | `FamixCSObjectReference` | |
 
 
 ## Properties
@@ -29,7 +29,7 @@ Class {
 	#instVars : [
 		'#number => FMProperty',
 		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
-		'#receiver => FMOne type: #FamixCSInstanceReference opposite: #receiverUsages',
+		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
 		'#previous => FMOne type: #FamixCSStackline opposite: #next',
 		'#next => FMOne type: #FamixCSStackline opposite: #previous'
 	],
@@ -116,7 +116,7 @@ FamixCSStackline >> previous: anObject [
 
 { #category : 'accessing' }
 FamixCSStackline >> receiver [
-	"Relation named: #receiver type: #FamixCSInstanceReference opposite: #receiverUsages"
+	"Relation named: #receiver type: #FamixCSObjectReference opposite: #receiverUsages"
 
 	<generated>
 	^ receiver

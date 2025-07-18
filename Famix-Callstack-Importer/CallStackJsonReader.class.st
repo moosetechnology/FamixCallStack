@@ -12,10 +12,18 @@ Class {
 	#package : 'Famix-Callstack-Importer'
 }
 
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createArgument: aDictionary [
+
+	| arg |
+	arg := model newArgument.
+	aDictionary ifNotNil: [ :value | arg value: (self createValueWith: value) ].
+	^ arg
+]
+
 { #category : 'instance creation' }
 CallStackJsonReader >> createArguments: anArray thenDo: aBlock [
-
-	anArray collect: [ :instance | self createInstanceWith: instance ] thenDo: aBlock
+	anArray collect: [ :instance | self createArgument: instance ] thenDo: aBlock.
 ]
 
 { #category : 'as yet unclassified' }
@@ -23,32 +31,37 @@ CallStackJsonReader >> createArrayReference: aCollection [
 
 	| ref |
 	ref := model newArrayReference.
-	aCollection isEmpty ifFalse: [ self shouldBeImplemented ].
+	ref size: aCollection size.
+	aCollection do: [ :elem | ref addElement: (self createArrayValueWith: elem) ].
 	^ ref
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createInstanceReference: aDictionary [
+CallStackJsonReader >> createArrayValueWith: aCollection [
 
-	| reference refered |
-	refered := aDictionary at: #refered.
-	reference := self createReferenceFor: refered.
-	reference uniqueID: (aDictionary at: #uniqueId).
-	reference type: (aDictionary at: #type).
-	^ reference
+	| arrVal |
+	arrVal := model newArrayValue.
+	"if the collection (so the value) is nil then there is no need to add anything"
+	aCollection ifNotNil: [ arrVal value: (self createValueWith: aCollection) ].
+	^ arrVal
 ]
 
-{ #category : 'instance creation' }
-CallStackJsonReader >> createInstanceWith: aDictionnary [
-	"instanciate the element in different ways depending on if it is a reference or a primitive object"
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createClassReference: anArray [
+	| ref | 
+	ref := model newClassReference.
+	anArray collect:[:dict | self createField: (dict at: #field)] thenDo:[:object | ref addField: object].
+	^ ref
+]
 
-	"Looking for either a reference or a primitive type, if neither are present throw an error"
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createField: aDictionary [
 
-	^ aDictionnary at: #reference ifPresent: [ :reference | self createInstanceReference: reference ] ifAbsent: [
-			  aDictionnary
-				  at: #primitiveType
-				  ifPresent: [ :primitive | self createPrimitiveType: primitive ]
-				  ifAbsent: [ Error signal: 'Unexcepted argument value' ] ]
+	| field |
+	field := model newField.
+	field name: (aDictionary at: #name).
+	(aDictionary at: #value) ifNotNil: [ :value | field value: (self createValueWith: value) ].
+	^ field
 ]
 
 { #category : 'as yet unclassified' }
@@ -72,7 +85,7 @@ CallStackJsonReader >> createMethodCall: aDictionnary [
 	| methodCall |
 	methodCall := model newMethodCall.
 	methodCall method: (self createMethod: (aDictionnary at: #method)).
-
+	
 	self createArguments: (aDictionnary at: #arguments) thenDo: [ :arg | methodCall addArgument: arg ].
 	^ methodCall
 ]
@@ -88,37 +101,70 @@ CallStackJsonReader >> createMethodCall: aFamixCSStackline with: aDictionnary [
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createObjectReference: anArray [
-	| ref | 
-	ref := model newObjectReference.
-	anArray collect:[:dict | self createField: (dict at: #field)] thenDo:[:object | ref addField: object].
+CallStackJsonReader >> createPrimitiveValue: aDictionary [
+
+	| primVal primType |
+	primVal := model newPrimitiveValue.
+	self flag: #todo. "Maybe the primitiveType should be a stub or something like that so that we can make a link to java model"
+	primType := model newPrimitiveTypeNamed: (aDictionary at: #type).
+	primVal type: primType.
+	primVal value: (aDictionary at: #value).
+	^ primVal
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createReceiver: aDictionary [
+
+	^ self createValueReference: (aDictionary at: #reference)
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createStringReference: aString [ 
+	| ref |
+	ref := model newStringReference.
+	ref value: aString.
 	^ ref
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createPrimitiveType: aCollection [
-	self shouldBeImplemented.
+CallStackJsonReader >> createValueReference: aDictionary [
+
+	| reference refered |
+	"If already found do not create again"
+	foundReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ].
+
+	refered := aDictionary at: #refered.
+	reference := self createValueReferenceFor: refered.
+	reference uniqueID: (aDictionary at: #uniqueId).
+	reference type: (aDictionary at: #type).
+
+	"Add the reference to already found objects"
+	foundReference at: (aDictionary at: #uniqueId) put: reference.
+	^ reference
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createReceiver: aFamixCSStackline with: aDictionnary [
-
-	aDictionnary ifNotNil: [ :dict |
-			dict
-				at: #reference
-				ifPresent: [ :informations | foundReference at: (informations at: #uniqueId) ifPresent: [ self halt ] ifAbsentPut: [ self halt ] ]
-				ifAbsent: [ Error signal: 'The only possible key should be #reference' ] ]
-]
-
-{ #category : 'as yet unclassified' }
-CallStackJsonReader >> createReferenceFor: aCollection [
+CallStackJsonReader >> createValueReferenceFor: aCollection [
 
 	aCollection isDictionary ifTrue: [
-			aCollection at: #fields ifPresent: [ :fields | ^ self createObjectReference: fields ].
+			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields ].
 			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements ] ].
 	self flag: #todo. "could also be a maxdepth message or other things"
 	aCollection isByteString ifTrue: [ ^ self createStringReference: aCollection ].
 	Error signal: 'Should either be String, array or an object'
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createValueWith: aDictionnary [
+	"instanciate the element in different ways depending on if it is a reference or a primitive object"
+
+	"Looking for either a reference or a primitive type, if neither are present throw an error"
+
+	^ aDictionnary at: #reference ifPresent: [ :reference | self createValueReference: reference ] ifAbsent: [
+			  aDictionnary
+				  at: #primitiveType
+				  ifPresent: [ :primitive | self createPrimitiveValue: primitive ]
+				  ifAbsent: [ Error signal: 'Unexcepted argument value' ] ]
 ]
 
 { #category : 'initialization' }
@@ -135,15 +181,15 @@ CallStackJsonReader >> parseFromLine: aDictionnary [
 	line := model newStackline.
 	"setting and incrementing the line number"
 	self flag: #todo. "the line number could be added direclty on the parsing and should not be done here"
-	line number: lineNumber. 
+	line number: lineNumber.
 	lineNumber := lineNumber + 1.
+	self flag: #todo. "Should previous line be added like that?"
 	"Setting and reseting the previous line"
 	line previous: prevLine.
 	prevLine := line.
-	
-	line methodCall: ( self createMethodCall: aDictionnary).
-	self flag: #todo. "uncomment when implemented"
-	"self createReceiver: line with: (aDictionnary at: #receiver)."
+
+	line methodCall: (self createMethodCall: aDictionnary).
+	(aDictionnary at: #receiver) ifNotNil:[:receiver | line receiver: (self createReceiver: receiver)]
 ]
 
 { #category : 'meta-object-protocol' }

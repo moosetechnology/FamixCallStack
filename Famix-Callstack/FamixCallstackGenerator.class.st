@@ -6,14 +6,17 @@ Class {
 		'entity',
 		'parameter',
 		'method',
-		'instance',
-		'primitiveType',
 		'methodCall',
-		'instanceReference',
-		'objectReference',
 		'arrayReference',
 		'stringReference',
-		'field'
+		'field',
+		'primitiveValue',
+		'primitiveType',
+		'value',
+		'classReference',
+		'objectReference',
+		'arrayValue',
+		'argument'
 	],
 	#category : 'Famix-Callstack',
 	#package : 'Famix-Callstack'
@@ -44,18 +47,21 @@ FamixCallstackGenerator >> defineClasses [
 	entity := builder newClassNamed: #Entity.
 	stackline := builder newClassNamed: #Stackline.
 	methodCall := builder newClassNamed: #MethodCall.
-	
-	instance := builder newClassNamed: #Instance.
-	primitiveType := builder newClassNamed: #PrimitiveType.
-	instanceReference := builder newClassNamed: #InstanceReference.
+
+	value := builder newClassNamed: #Value.
+	primitiveValue := builder newClassNamed: #PrimitiveValue.
 	objectReference := builder newClassNamed: #ObjectReference.
+	classReference := builder newClassNamed: #ClassReference.
 	arrayReference := builder newClassNamed: #ArrayReference.
 	stringReference := builder newClassNamed: #StringReference.
-	
+
+	argument := builder newClassNamed: #Argument.
 	field := builder newClassNamed: #Field.
-	
+	arrayValue := builder newClassNamed: #ArrayValue.
+
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
 	parameter := self remoteEntity: #Parameter withPrefix: #FamixJava.
+	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava
 ]
 
 { #category : 'definition' }
@@ -64,13 +70,15 @@ FamixCallstackGenerator >> defineHierarchy [
 	super defineHierarchy.
 	stackline --|> entity.
 	methodCall --|> entity.
-	instance --|> entity.
-	primitiveType --|> instance.
-	instanceReference --|> instance.
-	objectReference --|> instanceReference.
-	arrayReference --|> instanceReference.
-	stringReference --|> instanceReference.
+	value --|> entity.
+	primitiveValue --|> value.
+	objectReference --|> value.
+	classReference --|> objectReference.
+	arrayReference --|> objectReference.
+	stringReference --|> objectReference.
 	field --|> entity.
+	arrayValue --|> entity.
+	argument --|> entity.
 ]
 
 { #category : 'definition' }
@@ -81,14 +89,19 @@ FamixCallstackGenerator >> defineProperties [
 	self flag: #todo. "stackline>>number and instance>>uniqueID should be number/integer and not Object"
 	stackline property: #number type: #Object.
 	method property: #name type: #String.
+	
+	primitiveValue property: #value type: #Object.
 
-	instance property: #uniqueID type: #Object.
+	self flag: #todo. "ishould not have their type as properties but as relations to an object representing java types"
+	objectReference property: #type type: #String.
+	objectReference property: #uniqueID type: #Object.
 
-	self flag: #todo. "Argument and Instance should not have their type as properties but as relations to an object representing java types"
-	instance property: #type type: #String.
 	stringReference property: #value type: #String.
+	
+	arrayReference property: #size type: #Object.
 
-	field property: #name type: #String
+	field property: #name type: #String.
+	self flag:#todo. "try adding more information on argument (like the name or order of these"
 ]
 
 { #category : 'definition' }
@@ -96,13 +109,22 @@ FamixCallstackGenerator >> defineRelations [
 
 	super defineRelations.
 	stackline <>- methodCall.
-	(stackline property: #receiver) *- (instanceReference property: #receiverUsages).
+	(stackline property: #receiver) *- (objectReference property: #receiverUsages).
 	(stackline property: #previous) - (stackline property: #next).
 
 	methodCall *- method.
-	(methodCall property: #arguments) *-* (instance property: #methodUsages).
-	(arrayReference property: #elements) *-* (instance property: #arrayUsages).
+	(methodCall property: #arguments) *-* (value property: #methodUsages).
 	
-	objectReference -* field.
-	field *- instance.
+	(classReference property: #field) -* (field property: #parent).
+	(field property: #value)*- (value property: #fieldUsages).
+	
+	
+	(arrayReference property: #elements) -* (arrayValue property: #parent).
+	(arrayValue property: #value)*- (value property: #fieldUsages).
+	
+	(methodCall property: #arguments) -* (argument property: #parent).
+	(argument property: #value)*- (value property: #argumentUsages).
+	
+	(primitiveValue property: #type) - (primitiveType property: #usages).
+	
 ]
