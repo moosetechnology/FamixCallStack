@@ -21,10 +21,10 @@ FamixCSTEntityCreator classSide >> annotation [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newArgument [
+FamixCSTEntityCreator >> newArrayReference [
 
 	<generated>
-	^ self add: FamixCSArgument new
+	^ self add: FamixCSArrayReference new
 ]
 
 { #category : 'entity creation' }
@@ -35,10 +35,31 @@ FamixCSTEntityCreator >> newEntity [
 ]
 
 { #category : 'entity creation' }
+FamixCSTEntityCreator >> newField [
+
+	<generated>
+	^ self add: FamixCSField new
+]
+
+{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newInstance [
 
 	<generated>
 	^ self add: FamixCSInstance new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newInstanceReference [
+
+	<generated>
+	^ self add: FamixCSInstanceReference new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newMethodCall [
+
+	<generated>
+	^ self add: FamixCSMethodCall new
 ]
 
 { #category : 'entity creation' }
@@ -56,15 +77,15 @@ FamixCSTEntityCreator >> newPrimitiveType [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newReceiver [
-
-	<generated>
-	^ self add: FamixCSReceiver new
-]
-
-{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newStackline [
 
 	<generated>
 	^ self add: FamixCSStackline new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newStringReference [
+
+	<generated>
+	^ self add: FamixCSStringReference new
 ]

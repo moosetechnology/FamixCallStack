@@ -5,15 +5,14 @@
 ### Children
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `arguments` | `FamixCSStackline` | `stackline` | `FamixCSArgument` | |
-| `method` | `FamixCSStackline` | `stackline` | `FamixJavaMethod` | |
-| `receiver` | `FamixCSStackline` | `stackline` | `FamixCSReceiver` | |
+| `methodCall` | `FamixCSStackline` | `stackline` | `FamixCSMethodCall` | |
 
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `next` | `FamixCSStackline` | `previous` | `FamixCSStackline` | |
 | `previous` | `FamixCSStackline` | `next` | `FamixCSStackline` | |
+| `receiver` | `FamixCSStackline` | `receiverUsages` | `FamixCSInstanceReference` | |
 
 
 ## Properties
@@ -28,11 +27,11 @@ Class {
 	#name : 'FamixCSStackline',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
-		'#arguments => FMMany type: #FamixCSArgument opposite: #stackline',
-		'#next => FMOne type: #FamixCSStackline opposite: #previous',
 		'#number => FMProperty',
+		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
+		'#receiver => FMOne type: #FamixCSInstanceReference opposite: #receiverUsages',
 		'#previous => FMOne type: #FamixCSStackline opposite: #next',
-		'#receiver => FMOne type: #FamixCSReceiver opposite: #stackline'
+		'#next => FMOne type: #FamixCSStackline opposite: #previous'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -48,63 +47,26 @@ FamixCSStackline class >> annotation [
 	^ self
 ]
 
-{ #category : 'adding' }
-FamixCSStackline >> addArgument: anObject [
+{ #category : 'accessing' }
+FamixCSStackline >> methodCall [
+	"Relation named: #methodCall type: #FamixCSMethodCall opposite: #stackline"
+
 	<generated>
-	^ self arguments add: anObject
+	^ methodCall
 ]
 
 { #category : 'accessing' }
-FamixCSStackline >> arguments [
-	"Relation named: #arguments type: #FamixCSArgument opposite: #stackline"
+FamixCSStackline >> methodCall: anObject [
 
 	<generated>
-	<derived>
-	^ arguments
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> arguments: anObject [
-
-	<generated>
-	arguments value: anObject
+	methodCall := anObject
 ]
 
 { #category : 'navigation' }
-FamixCSStackline >> argumentsGroup [
+FamixCSStackline >> methodCallGroup [
 	<generated>
-	<navigation: 'Arguments'>
-	^ MooseSpecializedGroup withAll: self arguments asSet
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> method [
-	"Relation named: #method type: #FamixJavaMethod opposite: #stackline"
-
-	<generated>
-	<FMProperty: #method type: #FamixJavaMethod opposite: #stackline>
-	^ self attributeAt: #method ifAbsent: [ nil ]
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> method: anObject [
-
-	<generated>
-	(self attributeAt: #method ifAbsentPut: [nil]) == anObject ifTrue: [ ^ anObject ].
-	anObject ifNil: [ | otherSide |
-		otherSide :=  self method.
-		self attributeAt: #method put: anObject.
-		otherSide stackline: nil ]
-	ifNotNil: [ 
-		self attributeAt: #method put: anObject.
-		anObject stackline: self ]
-]
-
-{ #category : 'navigation' }
-FamixCSStackline >> methodGroup [
-	<generated>
-	<navigation: 'Method'>
-	^ MooseSpecializedGroup with: self method
+	<navigation: 'MethodCall'>
+	^ MooseSpecializedGroup with: self methodCall
 ]
 
 { #category : 'accessing' }
@@ -154,7 +116,7 @@ FamixCSStackline >> previous: anObject [
 
 { #category : 'accessing' }
 FamixCSStackline >> receiver [
-	"Relation named: #receiver type: #FamixCSReceiver opposite: #stackline"
+	"Relation named: #receiver type: #FamixCSInstanceReference opposite: #receiverUsages"
 
 	<generated>
 	^ receiver
@@ -165,11 +127,4 @@ FamixCSStackline >> receiver: anObject [
 
 	<generated>
 	receiver := anObject
-]
-
-{ #category : 'navigation' }
-FamixCSStackline >> receiverGroup [
-	<generated>
-	<navigation: 'Receiver'>
-	^ MooseSpecializedGroup with: self receiver
 ]

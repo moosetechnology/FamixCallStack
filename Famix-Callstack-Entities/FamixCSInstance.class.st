@@ -2,15 +2,12 @@
 ## Relations
 ======================
 
-### Parents
-| Relation | Origin | Opposite | Type | Comment |
-|---|
-| `objectReference` | `FamixCSInstance` | `instances` | `FamixCSObjectReference` | |
-
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `argumentUsage` | `FamixCSInstance` | `value` | `FamixCSArgument` | |
+| `arrayUsages` | `FamixCSInstance` | `elements` | `FamixCSArrayReference` | |
+| `fields` | `FamixCSInstance` | `instance` | `FamixCSField` | |
+| `methodUsages` | `FamixCSInstance` | `arguments` | `FamixCSMethodCall` | |
 
 
 ## Properties
@@ -26,10 +23,11 @@ Class {
 	#name : 'FamixCSInstance',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
-		'#argumentUsage => FMMany type: #FamixCSArgument opposite: #value',
-		'#objectReference => FMOne type: #FamixCSObjectReference opposite: #instances',
+		'#uniqueID => FMProperty',
 		'#type => FMProperty',
-		'#uniqueID => FMProperty'
+		'#methodUsages => FMMany type: #FamixCSMethodCall opposite: #arguments',
+		'#arrayUsages => FMMany type: #FamixCSArrayReference opposite: #elements',
+		'#fields => FMMany type: #FamixCSField opposite: #instance'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -46,48 +44,67 @@ FamixCSInstance class >> annotation [
 ]
 
 { #category : 'adding' }
-FamixCSInstance >> addArgumentUsage: anObject [
+FamixCSInstance >> addArrayUsage: anObject [
 	<generated>
-	^ self argumentUsage add: anObject
+	^ self arrayUsages add: anObject
+]
+
+{ #category : 'adding' }
+FamixCSInstance >> addField: anObject [
+	<generated>
+	^ self fields add: anObject
+]
+
+{ #category : 'adding' }
+FamixCSInstance >> addMethodUsage: anObject [
+	<generated>
+	^ self methodUsages add: anObject
 ]
 
 { #category : 'accessing' }
-FamixCSInstance >> argumentUsage [
-	"Relation named: #argumentUsage type: #FamixCSArgument opposite: #value"
+FamixCSInstance >> arrayUsages [
+	"Relation named: #arrayUsages type: #FamixCSArrayReference opposite: #elements"
+
+	<generated>
+	^ arrayUsages
+]
+
+{ #category : 'accessing' }
+FamixCSInstance >> arrayUsages: anObject [
+
+	<generated>
+	arrayUsages value: anObject
+]
+
+{ #category : 'accessing' }
+FamixCSInstance >> fields [
+	"Relation named: #fields type: #FamixCSField opposite: #instance"
 
 	<generated>
 	<derived>
-	^ argumentUsage
+	^ fields
 ]
 
 { #category : 'accessing' }
-FamixCSInstance >> argumentUsage: anObject [
+FamixCSInstance >> fields: anObject [
 
 	<generated>
-	argumentUsage value: anObject
+	fields value: anObject
 ]
 
 { #category : 'accessing' }
-FamixCSInstance >> objectReference [
-	"Relation named: #objectReference type: #FamixCSObjectReference opposite: #instances"
+FamixCSInstance >> methodUsages [
+	"Relation named: #methodUsages type: #FamixCSMethodCall opposite: #arguments"
 
 	<generated>
-	<container>
-	^ objectReference
+	^ methodUsages
 ]
 
 { #category : 'accessing' }
-FamixCSInstance >> objectReference: anObject [
+FamixCSInstance >> methodUsages: anObject [
 
 	<generated>
-	objectReference := anObject
-]
-
-{ #category : 'navigation' }
-FamixCSInstance >> objectReferenceGroup [
-	<generated>
-	<navigation: 'ObjectReference'>
-	^ MooseSpecializedGroup with: self objectReference
+	methodUsages value: anObject
 ]
 
 { #category : 'accessing' }
