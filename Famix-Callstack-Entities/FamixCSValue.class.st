@@ -8,7 +8,7 @@
 | `argumentUsages` | `FamixCSValue` | `value` | `FamixCSArgument` | |
 | `fieldUsages` | `FamixCSValue` | `value` | `FamixCSArrayValue` | |
 | `fieldUsages` | `FamixCSValue` | `value` | `FamixCSField` | |
-| `methodUsages` | `FamixCSValue` | `arguments` | `FamixCSMethodCall` | |
+| `methodUsages` | `FamixCSValue` | `value` | `FamixCSArgument` | |
 
 
 
@@ -17,7 +17,7 @@ Class {
 	#name : 'FamixCSValue',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
-		'#methodUsages => FMMany type: #FamixCSMethodCall opposite: #arguments',
+		'#methodUsages => FMMany type: #FamixCSArgument opposite: #value',
 		'#fieldUsages => FMMany type: #FamixCSField opposite: #value',
 		'#argumentUsages => FMMany type: #FamixCSArgument opposite: #value'
 	],
@@ -87,9 +87,10 @@ FamixCSValue >> fieldUsages: anObject [
 
 { #category : 'accessing' }
 FamixCSValue >> methodUsages [
-	"Relation named: #methodUsages type: #FamixCSMethodCall opposite: #arguments"
+	"Relation named: #methodUsages type: #FamixCSArgument opposite: #value"
 
 	<generated>
+	<derived>
 	^ methodUsages
 ]
 

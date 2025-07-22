@@ -5,8 +5,9 @@ Class {
 		'filename',
 		'model',
 		'lineNumber',
+		'prevLine',
 		'foundReference',
-		'prevLine'
+		'createdPrimitives'
 	],
 	#category : 'Famix-Callstack-Importer',
 	#package : 'Famix-Callstack-Importer'
@@ -17,7 +18,12 @@ CallStackJsonReader >> createArgument: aDictionary [
 
 	| arg |
 	arg := model newArgument.
-	aDictionary ifNotNil: [ :value | arg value: (self createValueWith: value) ].
+	aDictionary ifNotNil: [ aDictionary isCSAttentionTag
+					 ifTrue: [
+							 self flag: #todo. "Should react when an attention tag is seen can be <<UNACCESSIBLE>>"
+							 (aDictionary includesSubstring: 'UNACC') ifFalse: [ self halt ].
+							 nil ]
+					 ifFalse: [ arg value: (self createValueWith: aDictionary) ]].
 	^ arg
 ]
 
@@ -42,15 +48,29 @@ CallStackJsonReader >> createArrayValueWith: aCollection [
 	| arrVal |
 	arrVal := model newArrayValue.
 	"if the collection (so the value) is nil then there is no need to add anything"
-	aCollection ifNotNil: [ arrVal value: (self createValueWith: aCollection) ].
+	aCollection ifNotNil: [ aCollection isCSAttentionTag
+				ifTrue: [
+						self flag: #todo. "Should react when an attention tag is seen can be <<MAX_DEPTH_REACHED>>"
+						(aCollection includesSubstring: 'MAX') ifFalse: [ self halt ].
+						nil ]
+				ifFalse: [arrVal value: (self createValueWith: aCollection) ]].
 	^ arrVal
 ]
 
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createClassReference: anArray [
-	| ref | 
+
+	| ref |
 	ref := model newClassReference.
-	anArray collect:[:dict | self createField: (dict at: #field)] thenDo:[:object | ref addField: object].
+	(anArray
+		 collect: [ :col |
+				 col isCSAttentionTag
+					 ifTrue: [
+							 self flag: #todo. "Should react when an attention tag is seen can be <<CLASS_NOT_PREPARED>> or <<UNACCESSIBLE>>"
+							 (col includesSubstring: 'CLASS') | (col includesSubstring: 'UNACC') ifFalse: [ self halt ].
+							 nil ]
+					 ifFalse: [ self createField: (col at: #field) ] ]
+		 thenReject: [ :object | object isNil ]) do: [ :object | ref addField: object ].
 	^ ref
 ]
 
@@ -60,7 +80,13 @@ CallStackJsonReader >> createField: aDictionary [
 	| field |
 	field := model newField.
 	field name: (aDictionary at: #name).
-	(aDictionary at: #value) ifNotNil: [ :value | field value: (self createValueWith: value) ].
+	(aDictionary at: #value) ifNotNil: [ :value |
+			value isCSAttentionTag
+				ifTrue: [
+						self flag: #todo. "Should react when an attention tag is seen can be <<MAX_DEPTH_REACHED>>"
+						(value includesSubstring: 'MAX') ifFalse: [ self halt ].
+						nil ]
+				ifFalse: [ field value: (self createValueWith: value) ] ].
 	^ field
 ]
 
@@ -68,14 +94,12 @@ CallStackJsonReader >> createField: aDictionary [
 CallStackJsonReader >> createMethod: aDictionnary [
 
 	| method |
-	self flag: #todo. "should we make the method a stub to know it has to be completed by another model?"
 	self flag: #todo. "maybe we could add more information on the class implementing the used method in the parsing?"
 	method := model newMethodNamed: (aDictionnary at: #name).
+	"Setting the method to be a Stub to make a link to the concrete one in models"
+	method isStub: true.
 
-
-	self flag: #todo. "what we give to the parameter is actually the type, but how are we supposed to create a FamixJavaParameter with just the type? is this really usefull ?"
-	self flag: #todo. "Maybe FamixJavaMethod already have somewhere to put the parameters, and should not be defined by the callstack generator"
-	(aDictionnary at: #parameters) do: [ :type | method addParameter: (model newParameterNamed: type) ].
+	self createParameters: (aDictionnary at: #parameters) thenDo: [ :param | method addParameter: param ].
 	^ method
 ]
 
@@ -100,13 +124,34 @@ CallStackJsonReader >> createMethodCall: aFamixCSStackline with: aDictionnary [
 	self createArguments: (aDictionnary at: #arguments) thenDo: [:arg | methodCall addArgument: arg].
 ]
 
+{ #category : 'instance creation' }
+CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
+
+	anArray
+		collect: [ :param |
+				(model newParameterNamed: (param at: #name))
+					typing: (model newEntityTyping declaredType: (self createStubClassNamed: (param at: #type)));
+					yourself ]
+		thenDo: aBlock
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createPrimitiveType: aString [
+	| res | 
+	res := (model newPrimitiveTypeNamed: aString)
+		  isStub: true;
+		  yourself.
+	createdPrimitives at: aString put: res.
+	^ res
+]
+
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createPrimitiveValue: aDictionary [
 
 	| primVal primType |
 	primVal := model newPrimitiveValue.
-	self flag: #todo. "Maybe the primitiveType should be a stub or something like that so that we can make a link to java model"
-	primType := model newPrimitiveTypeNamed: (aDictionary at: #type).
+	self flag: #todo. "Change the typing with a typing entity to reify the link"
+	primType := createdPrimitives at: (aDictionary at: #type) ifAbsentPut: [ self createPrimitiveType: (aDictionary at: #type) ].
 	primVal type: primType.
 	primVal value: (aDictionary at: #value).
 	^ primVal
@@ -124,6 +169,11 @@ CallStackJsonReader >> createStringReference: aString [
 	ref := model newStringReference.
 	ref value: aString.
 	^ ref
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createStubClassNamed: aString [ 
+	^ (model newClassNamed: aString) isStub: true; yourself.
 ]
 
 { #category : 'as yet unclassified' }
@@ -171,7 +221,7 @@ CallStackJsonReader >> createValueWith: aDictionnary [
 CallStackJsonReader >> initialize [ 
 	lineNumber := 1. "Start the count on 1"
 	foundReference := Dictionary new.
-	
+	createdPrimitives := Dictionary new.
 ]
 
 { #category : 'instance creation' }
@@ -202,7 +252,8 @@ CallStackJsonReader >> read: json [
 				         name: filename;
 				         yourself.
 			lines := json at: #Lines. "Get the lines"
-			lines do: [ :line | self parseFromLine: line ] ]
+			lines do: [ :line | self parseFromLine: line ].
+			model entities do: #resetMooseName ]
 ]
 
 { #category : 'instance creation' }

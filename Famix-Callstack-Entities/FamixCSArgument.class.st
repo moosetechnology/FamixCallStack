@@ -6,7 +6,9 @@
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `parent` | `FamixCSArgument` | `arguments` | `FamixCSMethodCall` | |
+| `parent` | `FamixCSArgument` | `arguments` | `FamixCSMethodCall` | |
 | `value` | `FamixCSArgument` | `argumentUsages` | `FamixCSValue` | |
+| `value` | `FamixCSArgument` | `methodUsages` | `FamixCSValue` | |
 
 
 
@@ -16,7 +18,7 @@ Class {
 	#superclass : 'FamixCSEntity',
 	#instVars : [
 		'#parent => FMOne type: #FamixCSMethodCall opposite: #arguments',
-		'#value => FMOne type: #FamixCSValue opposite: #argumentUsages'
+		'#value => FMOne type: #FamixCSValue opposite: #methodUsages'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -49,7 +51,7 @@ FamixCSArgument >> parent: anObject [
 
 { #category : 'accessing' }
 FamixCSArgument >> value [
-	"Relation named: #value type: #FamixCSValue opposite: #argumentUsages"
+	"Relation named: #value type: #FamixCSValue opposite: #methodUsages"
 
 	<generated>
 	^ value

@@ -45,6 +45,11 @@ FamixCSObjectReference >> addReceiverUsage: anObject [
 	^ self receiverUsages add: anObject
 ]
 
+{ #category : 'printing' }
+FamixCSObjectReference >> mooseNameOn: aStream [
+	aStream print: '[', uniqueID , ']' , ' :'
+]
+
 { #category : 'accessing' }
 FamixCSObjectReference >> receiverUsages [
 	"Relation named: #receiverUsages type: #FamixCSStackline opposite: #receiver"

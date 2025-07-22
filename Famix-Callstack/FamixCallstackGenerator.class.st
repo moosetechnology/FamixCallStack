@@ -58,7 +58,7 @@ FamixCallstackGenerator >> defineClasses [
 	argument := builder newClassNamed: #Argument.
 	field := builder newClassNamed: #Field.
 	arrayValue := builder newClassNamed: #ArrayValue.
-
+	
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
 	parameter := self remoteEntity: #Parameter withPrefix: #FamixJava.
 	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava
@@ -113,7 +113,8 @@ FamixCallstackGenerator >> defineRelations [
 	(stackline property: #previous) - (stackline property: #next).
 
 	methodCall *- method.
-	(methodCall property: #arguments) *-* (value property: #methodUsages).
+	(methodCall property: #arguments) -* (argument property: #parent).
+	(argument property: #value) *- (value property: #methodUsages).
 	
 	(classReference property: #field) -* (field property: #parent).
 	(field property: #value)*- (value property: #fieldUsages).

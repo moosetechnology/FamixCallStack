@@ -27,6 +27,12 @@ FamixCSStringReference class >> annotation [
 	^ self
 ]
 
+{ #category : 'printing' }
+FamixCSStringReference >> mooseNameOn: aStream [
+	super mooseNameOn: aStream.
+	aStream print: value
+]
+
 { #category : 'accessing' }
 FamixCSStringReference >> value [
 
