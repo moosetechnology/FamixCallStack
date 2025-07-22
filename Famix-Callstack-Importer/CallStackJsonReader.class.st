@@ -13,6 +13,26 @@ Class {
 	#package : 'Famix-Callstack-Importer'
 }
 
+{ #category : 'api' }
+CallStackJsonReader class >> import: aFileReference [
+
+	^ self new readFrom: aFileReference
+]
+
+{ #category : 'class initialization' }
+CallStackJsonReader class >> initialize [
+
+	self registerExternalDropHandler
+]
+
+{ #category : 'class initialization' }
+CallStackJsonReader class >> registerExternalDropHandler [
+	ExternalDropHandler registerHandler: (ExternalDropHandler type: nil extension: #cs action: [ :fileReference |
+				 (self import: fileReference)
+					 install;
+					 inspect ])
+]
+
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createArgument: aDictionary [
 
