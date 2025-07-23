@@ -36,6 +36,14 @@ FamixCSPrimitiveValue class >> annotation [
 	^ self
 ]
 
+{ #category : 'printing' }
+FamixCSPrimitiveValue >> mooseNameOn: aStream [
+
+	self type mooseNameOn: aStream.
+	aStream nextPutAll: ' : ' , value asString.
+	
+]
+
 { #category : 'accessing' }
 FamixCSPrimitiveValue >> type [
 	"Relation named: #type type: #FamixJavaPrimitiveType opposite: #usages"

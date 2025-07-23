@@ -13,7 +13,7 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `size` | `Object` | nil | |
+| `size` | `Number` | nil | |
 
 "
 Class {
@@ -59,10 +59,23 @@ FamixCSArrayReference >> elements: anObject [
 	elements value: anObject
 ]
 
+{ #category : 'printing' }
+FamixCSArrayReference >> mooseNameOn: aStream [
+
+	super mooseNameOn: aStream.
+	aStream nextPutAll: ' ['.
+	elements ifNotEmpty: [
+			elements first mooseNameOn: aStream.
+			elements allButFirstDo: [ :elem |
+					aStream nextPutAll: ', '.
+					elem ifNil: [ aStream nextPutAll: 'nil' ] ifNotNil: [ elem mooseNameOn: aStream ] ] ].
+	aStream nextPutAll: ']'
+]
+
 { #category : 'accessing' }
 FamixCSArrayReference >> size [
 
-	<FMProperty: #size type: #Object>
+	<FMProperty: #size type: #Number>
 	<generated>
 	^ size
 ]

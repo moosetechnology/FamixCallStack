@@ -84,6 +84,13 @@ FamixCSTEntityCreator >> newPrimitiveValue [
 ]
 
 { #category : 'entity creation' }
+FamixCSTEntityCreator >> newStack [
+
+	<generated>
+	^ self add: FamixCSStack new
+]
+
+{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newStackline [
 
 	<generated>

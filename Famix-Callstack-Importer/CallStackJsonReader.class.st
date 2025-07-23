@@ -4,10 +4,10 @@ Class {
 	#instVars : [
 		'filename',
 		'model',
-		'lineNumber',
-		'prevLine',
-		'foundReference',
-		'createdPrimitives'
+		'createdPrimitives',
+		'createdClasses',
+		'createdMethods',
+		'createdReference'
 	],
 	#category : 'Famix-Callstack-Importer',
 	#package : 'Famix-Callstack-Importer'
@@ -53,10 +53,14 @@ CallStackJsonReader >> createArguments: anArray thenDo: aBlock [
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createArrayReference: aCollection [
+CallStackJsonReader >> createArrayReference: aCollection withId: uniqueId [
 
 	| ref |
 	ref := model newArrayReference.
+
+	ref uniqueID: uniqueId.
+	createdReference at: uniqueId put: ref.
+
 	ref size: aCollection size.
 	aCollection do: [ :elem | ref addElement: (self createArrayValueWith: elem) ].
 	^ ref
@@ -78,10 +82,12 @@ CallStackJsonReader >> createArrayValueWith: aCollection [
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createClassReference: anArray [
+CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
 
 	| ref |
 	ref := model newClassReference.
+	ref uniqueID: uniqueId.
+	createdReference at: uniqueId put: ref.
 	(anArray
 		 collect: [ :col |
 				 col isCSAttentionTag
@@ -113,11 +119,13 @@ CallStackJsonReader >> createField: aDictionary [
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createMethod: aDictionnary [
 
-	| method |
+	| method | 
+	
+	self flag: #todo. "supress duplications of methods use createPrimitiveType"
 	self flag: #todo. "maybe we could add more information on the class implementing the used method in the parsing?"
-	method := model newMethodNamed: (aDictionnary at: #name).
-	"Setting the method to be a Stub to make a link to the concrete one in models"
-	method isStub: true.
+	method := (model newMethodNamed: (aDictionnary at: #name))
+		          isStub: true;
+		          yourself.
 
 	self createParameters: (aDictionnary at: #parameters) thenDo: [ :param | method addParameter: param ].
 	^ method
@@ -146,7 +154,7 @@ CallStackJsonReader >> createMethodCall: aFamixCSStackline with: aDictionnary [
 
 { #category : 'instance creation' }
 CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
-
+	self flag: #todo. "sometimes the names of the parameters are not given"
 	anArray
 		collect: [ :param |
 				(model newParameterNamed: (param at: #name))
@@ -157,12 +165,11 @@ CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
 
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createPrimitiveType: aString [
-	| res | 
-	res := (model newPrimitiveTypeNamed: aString)
-		  isStub: true;
-		  yourself.
-	createdPrimitives at: aString put: res.
-	^ res
+
+	^ createdClasses at: aString ifAbsentPut: [
+			  (model newPrimitiveTypeNamed: aString)
+				  isStub: true;
+				  yourself ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -170,8 +177,8 @@ CallStackJsonReader >> createPrimitiveValue: aDictionary [
 
 	| primVal primType |
 	primVal := model newPrimitiveValue.
-	self flag: #todo. "Change the typing with a typing entity to reify the link"
-	primType := createdPrimitives at: (aDictionary at: #type) ifAbsentPut: [ self createPrimitiveType: (aDictionary at: #type) ].
+	self flag: #todo. "Change the typing with a typing entity to reify the link like for paramaters"
+	primType := self createPrimitiveType: (aDictionary at: #type).
 	primVal type: primType.
 	primVal value: (aDictionary at: #value).
 	^ primVal
@@ -184,43 +191,55 @@ CallStackJsonReader >> createReceiver: aDictionary [
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createStringReference: aString [ 
+CallStackJsonReader >> createStringReference: aString withId: uniqueId [
+
 	| ref |
 	ref := model newStringReference.
+
+	ref uniqueID: uniqueId.
+	createdReference at: uniqueId put: ref.
+
 	ref value: aString.
 	^ ref
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createStubClassNamed: aString [ 
-	^ (model newClassNamed: aString) isStub: true; yourself.
+CallStackJsonReader >> createStubClassNamed: aString [
+
+	self flag: #todo. "how to differentiates java.lang.String and java.lang.String[] without 2 object?"
+	^ createdClasses at: aString ifAbsentPut: [
+			  (model newClassNamed: aString)
+				  isStub: true;
+				  yourself ]
 ]
 
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createValueReference: aDictionary [
 
 	| reference refered |
-	"If already found do not create again"
-	foundReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ].
+	"If already created do not create again"
+	createdReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ].
 
 	refered := aDictionary at: #refered.
-	reference := self createValueReferenceFor: refered.
-	reference uniqueID: (aDictionary at: #uniqueId).
+	reference := self createValueReferenceFor: refered withId: (aDictionary at: #uniqueId).
 	reference type: (aDictionary at: #type).
 
-	"Add the reference to already found objects"
-	foundReference at: (aDictionary at: #uniqueId) put: reference.
 	^ reference
 ]
 
 { #category : 'as yet unclassified' }
-CallStackJsonReader >> createValueReferenceFor: aCollection [
+CallStackJsonReader >> createValueReferenceFor: aCollection  withId: uniqueId [
 
 	aCollection isDictionary ifTrue: [
-			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields ].
-			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements ] ].
+			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields withId: uniqueId].
+			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements withId: uniqueId ] ].
 	self flag: #todo. "could also be a maxdepth message or other things"
-	aCollection isByteString ifTrue: [ ^ self createStringReference: aCollection ].
+	aCollection isByteString ifTrue: [
+			aCollection isCSAttentionTag
+				ifFalse: [ ^ self createStringReference: aCollection withId: uniqueId ]
+				ifTrue: [
+						self flag: #todo. "the actual problem here is that when an object can contain itself it will study it again before being added in foundReference"
+						Error signal: 'Should not be an attentionTag, this should be detected after coming to this method' ] ].
 	Error signal: 'Should either be String, array or an object'
 ]
 
@@ -239,9 +258,10 @@ CallStackJsonReader >> createValueWith: aDictionnary [
 
 { #category : 'initialization' }
 CallStackJsonReader >> initialize [ 
-	lineNumber := 1. "Start the count on 1"
-	foundReference := Dictionary new.
+	createdReference := Dictionary new.
 	createdPrimitives := Dictionary new.
+	createdClasses := Dictionary new.
+	createdMethods := Dictionary new.
 ]
 
 { #category : 'instance creation' }
@@ -249,30 +269,24 @@ CallStackJsonReader >> parseFromLine: aDictionnary [
 
 	| line |
 	line := model newStackline.
-	"setting and incrementing the line number"
-	self flag: #todo. "the line number could be added direclty on the parsing and should not be done here"
-	line number: lineNumber.
-	lineNumber := lineNumber + 1.
-	self flag: #todo. "Should previous line be added like that?"
-	"Setting and reseting the previous line"
-	line previous: prevLine.
-	prevLine := line.
 
 	line methodCall: (self createMethodCall: aDictionnary).
-	(aDictionnary at: #receiver) ifNotNil:[:receiver | line receiver: (self createReceiver: receiver)]
+	(aDictionnary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
+	^ line
 ]
 
 { #category : 'meta-object-protocol' }
 CallStackJsonReader >> read: json [
 	"Loads parsed json"
 
-	| lines |
+	| stack lines |
 	json ifEmpty: [ Error signal: 'The json file is empty' ] ifNotEmpty: [
 			model := FamixCSModel new
 				         name: filename;
 				         yourself.
+			stack := model newStack.
 			lines := json at: #Lines. "Get the lines"
-			lines do: [ :line | self parseFromLine: line ].
+			lines do: [ :line | stack addStackline: (self parseFromLine: line) ].
 			model entities do: #resetMooseName ]
 ]
 

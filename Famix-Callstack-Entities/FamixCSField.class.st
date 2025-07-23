@@ -6,7 +6,7 @@
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `parent` | `FamixCSField` | `field` | `FamixCSClassReference` | |
-| `value` | `FamixCSField` | `fieldUsages` | `FamixCSValue` | |
+| `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
 
 ## Properties
@@ -20,10 +20,11 @@
 Class {
 	#name : 'FamixCSField',
 	#superclass : 'FamixCSEntity',
+	#traits : 'FamixCSTValueContainer',
+	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
 		'#name => FMProperty',
-		'#parent => FMOne type: #FamixCSClassReference opposite: #field',
-		'#value => FMOne type: #FamixCSValue opposite: #fieldUsages'
+		'#parent => FMOne type: #FamixCSClassReference opposite: #field'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -37,6 +38,13 @@ FamixCSField class >> annotation [
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
+]
+
+{ #category : 'printing' }
+FamixCSField >> mooseNameOn: aStream [
+
+	aStream nextPutAll: name , ' = '.
+	value ifNil: [ aStream nextPutAll: 'nil' ] ifNotNil: [ value mooseNameOn: aStream ]
 ]
 
 { #category : 'accessing' }
@@ -66,19 +74,4 @@ FamixCSField >> parent: anObject [
 
 	<generated>
 	parent := anObject
-]
-
-{ #category : 'accessing' }
-FamixCSField >> value [
-	"Relation named: #value type: #FamixCSValue opposite: #fieldUsages"
-
-	<generated>
-	^ value
-]
-
-{ #category : 'accessing' }
-FamixCSField >> value: anObject [
-
-	<generated>
-	value := anObject
 ]

@@ -51,3 +51,9 @@ FamixCSClassReference >> field: anObject [
 	<generated>
 	field value: anObject
 ]
+
+{ #category : 'printing' }
+FamixCSClassReference >> mooseNameOn: aStream [
+	super mooseNameOn: aStream.
+	aStream nextPutAll: type asString.
+]

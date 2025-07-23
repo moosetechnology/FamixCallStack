@@ -11,7 +11,6 @@
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `arguments` | `FamixCSMethodCall` | `parent` | `FamixCSArgument` | |
-| `arguments` | `FamixCSMethodCall` | `parent` | `FamixCSArgument` | |
 | `method` | `FamixCSMethodCall` | `methodCalls` | `FamixJavaMethod` | |
 
 

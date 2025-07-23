@@ -6,9 +6,7 @@
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `parent` | `FamixCSArgument` | `arguments` | `FamixCSMethodCall` | |
-| `parent` | `FamixCSArgument` | `arguments` | `FamixCSMethodCall` | |
-| `value` | `FamixCSArgument` | `argumentUsages` | `FamixCSValue` | |
-| `value` | `FamixCSArgument` | `methodUsages` | `FamixCSValue` | |
+| `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
 
 
@@ -16,9 +14,10 @@
 Class {
 	#name : 'FamixCSArgument',
 	#superclass : 'FamixCSEntity',
+	#traits : 'FamixCSTValueContainer',
+	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
-		'#parent => FMOne type: #FamixCSMethodCall opposite: #arguments',
-		'#value => FMOne type: #FamixCSValue opposite: #methodUsages'
+		'#parent => FMOne type: #FamixCSMethodCall opposite: #arguments'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -34,6 +33,13 @@ FamixCSArgument class >> annotation [
 	^ self
 ]
 
+{ #category : 'printing' }
+FamixCSArgument >> mooseNameOn: aStream [
+	self flag: #todo. "how to print? we don't know to which one of the method parameter this argument correspond"
+	super mooseNameOn: aStream.
+	
+]
+
 { #category : 'accessing' }
 FamixCSArgument >> parent [
 	"Relation named: #parent type: #FamixCSMethodCall opposite: #arguments"
@@ -47,19 +53,4 @@ FamixCSArgument >> parent: anObject [
 
 	<generated>
 	parent := anObject
-]
-
-{ #category : 'accessing' }
-FamixCSArgument >> value [
-	"Relation named: #value type: #FamixCSValue opposite: #methodUsages"
-
-	<generated>
-	^ value
-]
-
-{ #category : 'accessing' }
-FamixCSArgument >> value: anObject [
-
-	<generated>
-	value := anObject
 ]

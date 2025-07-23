@@ -14,7 +14,7 @@
 | Name | Type | Default value | Comment |
 |---|
 | `type` | `String` | nil | |
-| `uniqueID` | `Object` | nil | |
+| `uniqueID` | `Number` | nil | |
 
 "
 Class {
@@ -47,7 +47,8 @@ FamixCSObjectReference >> addReceiverUsage: anObject [
 
 { #category : 'printing' }
 FamixCSObjectReference >> mooseNameOn: aStream [
-	aStream print: '[', uniqueID , ']' , ' :'
+
+	aStream nextPutAll: '[' , uniqueID asString , '] : '
 ]
 
 { #category : 'accessing' }
@@ -83,7 +84,7 @@ FamixCSObjectReference >> type: anObject [
 { #category : 'accessing' }
 FamixCSObjectReference >> uniqueID [
 
-	<FMProperty: #uniqueID type: #Object>
+	<FMProperty: #uniqueID type: #Number>
 	<generated>
 	^ uniqueID
 ]

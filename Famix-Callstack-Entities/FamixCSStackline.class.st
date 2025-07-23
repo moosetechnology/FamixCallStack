@@ -2,6 +2,11 @@
 ## Relations
 ======================
 
+### Parents
+| Relation | Origin | Opposite | Type | Comment |
+|---|
+| `stack` | `FamixCSStackline` | `stacklines` | `FamixCSStack` | |
+
 ### Children
 | Relation | Origin | Opposite | Type | Comment |
 |---|
@@ -20,18 +25,19 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `number` | `Object` | nil | |
+| `number` | `Number` | nil | |
 
 "
 Class {
 	#name : 'FamixCSStackline',
 	#superclass : 'FamixCSEntity',
 	#instVars : [
-		'#number => FMProperty',
 		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
-		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
+		'#next => FMOne type: #FamixCSStackline opposite: #previous',
+		'#number => FMProperty',
 		'#previous => FMOne type: #FamixCSStackline opposite: #next',
-		'#next => FMOne type: #FamixCSStackline opposite: #previous'
+		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
+		'#stack => FMOne type: #FamixCSStack opposite: #stacklines'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -69,26 +75,25 @@ FamixCSStackline >> methodCallGroup [
 	^ MooseSpecializedGroup with: self methodCall
 ]
 
-{ #category : 'accessing' }
-FamixCSStackline >> next [
-	"Relation named: #next type: #FamixCSStackline opposite: #previous"
+{ #category : 'printing' }
+FamixCSStackline >> mooseNameOn: aStream [
 
-	<generated>
-	<derived>
-	^ next
+	aStream nextPutAll: 'Line ' , self positionInStack asString.
 ]
 
 { #category : 'accessing' }
-FamixCSStackline >> next: anObject [
+FamixCSStackline >> next [
 
-	<generated>
-	next := anObject
+	<derived>
+	<FMComment: 'The next stackline in the stack'>
+	self flag: #todo. "Should we add some pragmas ?"
+	^ self stack nextTo: self
 ]
 
 { #category : 'accessing' }
 FamixCSStackline >> number [
 
-	<FMProperty: #number type: #Object>
+	<FMProperty: #number type: #Number>
 	<generated>
 	^ number
 ]
@@ -99,19 +104,22 @@ FamixCSStackline >> number: anObject [
 	number := anObject
 ]
 
-{ #category : 'accessing' }
-FamixCSStackline >> previous [
-	"Relation named: #previous type: #FamixCSStackline opposite: #next"
-
-	<generated>
-	^ previous
+{ #category : 'as yet unclassified' }
+FamixCSStackline >> positionInStack [
+	
+	<FMProperty: #positionInStack type: #Number>
+	<derived>
+	<FMComment: 'The position of this stack line in the stack'>
+	^ self stack stacklines indexOf: self
 ]
 
 { #category : 'accessing' }
-FamixCSStackline >> previous: anObject [
+FamixCSStackline >> previous [
 
-	<generated>
-	previous := anObject
+	<derived>
+	<FMComment: 'The previous stackline in the stack'>
+	self flag: #todo. "Should we add some pragmas ?"
+	^ self stack previousTo: self.
 ]
 
 { #category : 'accessing' }
@@ -127,4 +135,27 @@ FamixCSStackline >> receiver: anObject [
 
 	<generated>
 	receiver := anObject
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> stack [
+	"Relation named: #stack type: #FamixCSStack opposite: #stacklines"
+
+	<generated>
+	<container>
+	^ stack
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> stack: anObject [
+
+	<generated>
+	stack := anObject
+]
+
+{ #category : 'navigation' }
+FamixCSStackline >> stackGroup [
+	<generated>
+	<navigation: 'Stack'>
+	^ MooseSpecializedGroup with: self stack
 ]

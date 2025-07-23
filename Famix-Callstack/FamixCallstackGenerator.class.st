@@ -16,7 +16,9 @@ Class {
 		'classReference',
 		'objectReference',
 		'arrayValue',
-		'argument'
+		'argument',
+		'tValueContainer',
+		'stack'
 	],
 	#category : 'Famix-Callstack',
 	#package : 'Famix-Callstack'
@@ -45,6 +47,7 @@ FamixCallstackGenerator >> defineClasses [
 	super defineClasses.
 
 	entity := builder newClassNamed: #Entity.
+	stack := builder newClassNamed: #Stack.
 	stackline := builder newClassNamed: #Stackline.
 	methodCall := builder newClassNamed: #MethodCall.
 
@@ -60,7 +63,6 @@ FamixCallstackGenerator >> defineClasses [
 	arrayValue := builder newClassNamed: #ArrayValue.
 	
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
-	parameter := self remoteEntity: #Parameter withPrefix: #FamixJava.
 	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava
 ]
 
@@ -68,6 +70,9 @@ FamixCallstackGenerator >> defineClasses [
 FamixCallstackGenerator >> defineHierarchy [
 
 	super defineHierarchy.
+	
+	"inheritances"
+	stack --|> entity.
 	stackline --|> entity.
 	methodCall --|> entity.
 	value --|> entity.
@@ -79,53 +84,58 @@ FamixCallstackGenerator >> defineHierarchy [
 	field --|> entity.
 	arrayValue --|> entity.
 	argument --|> entity.
+	
+	"trait usages"
+	field --|> tValueContainer.
+	arrayValue --|> tValueContainer.
+	argument --|> tValueContainer.
 ]
 
 { #category : 'definition' }
 FamixCallstackGenerator >> defineProperties [
 
 	super defineProperties.
-
-	self flag: #todo. "stackline>>number and instance>>uniqueID should be number/integer and not Object"
-	stackline property: #number type: #Object.
-	method property: #name type: #String.
 	
+	method property: #name type: #String.
+
 	primitiveValue property: #value type: #Object.
 
 	self flag: #todo. "ishould not have their type as properties but as relations to an object representing java types"
 	objectReference property: #type type: #String.
-	objectReference property: #uniqueID type: #Object.
+	objectReference property: #uniqueID type: #Number.
 
 	stringReference property: #value type: #String.
-	
-	arrayReference property: #size type: #Object.
+
+	arrayReference property: #size type: #Number.
 
 	field property: #name type: #String.
-	self flag:#todo. "try adding more information on argument (like the name or order of these"
+	self flag: #todo "try adding more information on argument (like the name or order of these)"
 ]
 
 { #category : 'definition' }
 FamixCallstackGenerator >> defineRelations [
 
 	super defineRelations.
+	stack <>-* stackline.
 	stackline <>- methodCall.
+	self flag: #todo. "add the trati TvaluesContainer to stackline"
 	(stackline property: #receiver) *- (objectReference property: #receiverUsages).
-	(stackline property: #previous) - (stackline property: #next).
 
 	methodCall *- method.
-	(methodCall property: #arguments) -* (argument property: #parent).
-	(argument property: #value) *- (value property: #methodUsages).
-	
+
 	(classReference property: #field) -* (field property: #parent).
-	(field property: #value)*- (value property: #fieldUsages).
-	
-	
 	(arrayReference property: #elements) -* (arrayValue property: #parent).
-	(arrayValue property: #value)*- (value property: #fieldUsages).
-	
 	(methodCall property: #arguments) -* (argument property: #parent).
-	(argument property: #value)*- (value property: #argumentUsages).
-	
-	(primitiveValue property: #type) - (primitiveType property: #usages).
-	
+
+	(tValueContainer property: #value) *- (value property: #usage).
+
+	(primitiveValue property: #type) - (primitiveType property: #usages)
+]
+
+{ #category : 'definition' }
+FamixCallstackGenerator >> defineTraits [
+
+	super defineTraits.
+
+	tValueContainer := builder newTraitNamed: #TValueContainer
 ]
