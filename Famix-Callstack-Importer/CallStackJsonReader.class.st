@@ -1,3 +1,13 @@
+"
+## Usage :
+	file := '/Path/To/.../JDIOutput.cs' asFileReference.
+	
+	model := CallStackJsonReader import: file.
+	
+	
+	
+
+"
 Class {
 	#name : 'CallStackJsonReader',
 	#superclass : 'Object',
@@ -33,27 +43,32 @@ CallStackJsonReader class >> registerExternalDropHandler [
 					 inspect ])
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createArgument: aDictionary [
+	"Instiantiate an argument given to a method in a stackline"
 
 	| arg |
 	arg := model newArgument.
-	aDictionary ifNotNil: [ aDictionary isCSAttentionTag
-					 ifTrue: [
-							 self flag: #todo. "Should react when an attention tag is seen can be <<UNACCESSIBLE>>"
-							 (aDictionary includesSubstring: 'UNACC') ifFalse: [ self halt ].
-							 nil ]
-					 ifFalse: [ arg value: (self createValueWith: aDictionary) ]].
+	aDictionary ifNotNil: [
+			aDictionary isCSAttentionTag
+				ifTrue: [
+						self flag: #todo. "Should react when an attention tag is seen can be <<UNACCESSIBLE>>"
+						(aDictionary includesSubstring: 'UNACC') ifFalse: [ self halt ].
+						nil ]
+				ifFalse: [ arg value: (self createValueWith: aDictionary) ] ].
 	^ arg
 ]
 
 { #category : 'instance creation' }
 CallStackJsonReader >> createArguments: anArray thenDo: aBlock [
-	anArray collect: [ :instance | self createArgument: instance ] thenDo: aBlock.
+	"Instantiate all arguments of a method and apply a block on the instantiated arguments"
+
+	anArray collect: [ :instance | self createArgument: instance ] thenDo: aBlock
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createArrayReference: aCollection withId: uniqueId [
+	"Instantiate an ArrayReference and all its values"
 
 	| ref |
 	ref := model newArrayReference.
@@ -66,8 +81,9 @@ CallStackJsonReader >> createArrayReference: aCollection withId: uniqueId [
 	^ ref
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createArrayValueWith: aCollection [
+	"Instantiate an ArrayValue"
 
 	| arrVal |
 	arrVal := model newArrayValue.
@@ -81,8 +97,20 @@ CallStackJsonReader >> createArrayValueWith: aCollection [
 	^ arrVal
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
+CallStackJsonReader >> createClassNamed: aString [
+	"Instantiate a FamixJavaClass with the given name"
+
+	self flag: #todo. "how to differentiates java.lang.String and java.lang.String[] without 2 object?"
+	^ createdClasses at: aString ifAbsentPut: [
+			  (model newClassNamed: aString)
+				  isStub: true;
+				  yourself ]
+]
+
+{ #category : 'instance creation' }
 CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
+	"Instantiate a ClassReference and all its fields"
 
 	| ref |
 	ref := model newClassReference.
@@ -100,8 +128,9 @@ CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
 	^ ref
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createField: aDictionary [
+	"Instantiate a field from a ClassReference"
 
 	| field |
 	field := model newField.
@@ -116,9 +145,10 @@ CallStackJsonReader >> createField: aDictionary [
 	^ field
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createMethod: aDictionnary [
-
+	"Instantiate a FamixJavaMethod with the maximum informations possible"
+	
 	| method | 
 	
 	self flag: #todo. "supress duplications of methods use createPrimitiveType"
@@ -133,38 +163,31 @@ CallStackJsonReader >> createMethod: aDictionnary [
 
 { #category : 'instance creation' }
 CallStackJsonReader >> createMethodCall: aDictionnary [
+	"Instatiate the MethodCall of a stack line, being the method informations and the given arguments"
 
 	| methodCall |
 	methodCall := model newMethodCall.
 	methodCall method: (self createMethod: (aDictionnary at: #method)).
-	
+
 	self createArguments: (aDictionnary at: #arguments) thenDo: [ :arg | methodCall addArgument: arg ].
 	^ methodCall
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createMethodCall: aFamixCSStackline with: aDictionnary [
-	| methodCall |
-	methodCall := model newMethodCall.
-	aFamixCSStackline methodCall: methodCall.
-	methodCall method: (self createMethod: (aDictionnary at:#method)).
-	
-	self createArguments: (aDictionnary at: #arguments) thenDo: [:arg | methodCall addArgument: arg].
-]
-
-{ #category : 'instance creation' }
 CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
-	self flag: #todo. "sometimes the names of the parameters are not given"
+	"Instantiates all parameters of a method and execute the given block on the instantiated parameters"
+	
 	anArray
 		collect: [ :param |
 				(model newParameterNamed: (param at: #name))
-					typing: (model newEntityTyping declaredType: (self createStubClassNamed: (param at: #type)));
+					typing: (model newEntityTyping declaredType: (self createClassNamed: (param at: #type)));
 					yourself ]
 		thenDo: aBlock
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createPrimitiveType: aString [
+	"Instantiate a PrimitiveType if not already on the model"
 
 	^ createdClasses at: aString ifAbsentPut: [
 			  (model newPrimitiveTypeNamed: aString)
@@ -172,8 +195,9 @@ CallStackJsonReader >> createPrimitiveType: aString [
 				  yourself ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createPrimitiveValue: aDictionary [
+	"Instantiate a PrimitiveValue"
 
 	| primVal primType |
 	primVal := model newPrimitiveValue.
@@ -184,14 +208,26 @@ CallStackJsonReader >> createPrimitiveValue: aDictionary [
 	^ primVal
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createReceiver: aDictionary [
-
+	"Instantiate the receiver of in a stack line"
 	^ self createValueReference: (aDictionary at: #reference)
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
+CallStackJsonReader >> createStackline: aDictionnary [
+  	"Instantiate a line of a stack"
+	| line |
+	line := model newStackline.
+
+	line methodCall: (self createMethodCall: aDictionnary).
+	(aDictionnary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
+	^ line
+]
+
+{ #category : 'instance creation' }
 CallStackJsonReader >> createStringReference: aString withId: uniqueId [
+	"Instantiate a StringReference"
 
 	| ref |
 	ref := model newStringReference.
@@ -203,18 +239,9 @@ CallStackJsonReader >> createStringReference: aString withId: uniqueId [
 	^ ref
 ]
 
-{ #category : 'as yet unclassified' }
-CallStackJsonReader >> createStubClassNamed: aString [
-
-	self flag: #todo. "how to differentiates java.lang.String and java.lang.String[] without 2 object?"
-	^ createdClasses at: aString ifAbsentPut: [
-			  (model newClassNamed: aString)
-				  isStub: true;
-				  yourself ]
-]
-
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> createValueReference: aDictionary [
+	"Instantiate a ValueReference"
 
 	| reference refered |
 	"If already created do not create again"
@@ -227,25 +254,24 @@ CallStackJsonReader >> createValueReference: aDictionary [
 	^ reference
 ]
 
-{ #category : 'as yet unclassified' }
-CallStackJsonReader >> createValueReferenceFor: aCollection  withId: uniqueId [
+{ #category : 'instance creation' }
+CallStackJsonReader >> createValueReferenceFor: aCollection withId: uniqueId [
+	"Choose which subtype of a ValueReference should be instantiated"
 
 	aCollection isDictionary ifTrue: [
-			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields withId: uniqueId].
+			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields withId: uniqueId ].
 			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements withId: uniqueId ] ].
-	self flag: #todo. "could also be a maxdepth message or other things"
+
 	aCollection isByteString ifTrue: [
 			aCollection isCSAttentionTag
 				ifFalse: [ ^ self createStringReference: aCollection withId: uniqueId ]
-				ifTrue: [
-						self flag: #todo. "the actual problem here is that when an object can contain itself it will study it again before being added in foundReference"
-						Error signal: 'Should not be an attentionTag, this should be detected after coming to this method' ] ].
+				ifTrue: [ Error signal: 'Should not be an attentionTag, this should be detected before coming to this method' ] ].
 	Error signal: 'Should either be String, array or an object'
 ]
 
 { #category : 'instance creation' }
 CallStackJsonReader >> createValueWith: aDictionnary [
-	"instanciate the element in different ways depending on if it is a reference or a primitive object"
+	"Choose which subTypes of a Value should be instantiated"
 
 	"Looking for either a reference or a primitive type, if neither are present throw an error"
 
@@ -264,20 +290,15 @@ CallStackJsonReader >> initialize [
 	createdMethods := Dictionary new.
 ]
 
-{ #category : 'instance creation' }
-CallStackJsonReader >> parseFromLine: aDictionnary [
+{ #category : 'accessing' }
+CallStackJsonReader >> model: aModel [
 
-	| line |
-	line := model newStackline.
-
-	line methodCall: (self createMethodCall: aDictionnary).
-	(aDictionnary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
-	^ line
+	model = aModel
 ]
 
-{ #category : 'meta-object-protocol' }
+{ #category : 'instance creation' }
 CallStackJsonReader >> read: json [
-	"Loads parsed json"
+	"Instantiate the JavaCallStack model from a json object"
 
 	| stack lines |
 	json ifEmpty: [ Error signal: 'The json file is empty' ] ifNotEmpty: [
@@ -286,15 +307,16 @@ CallStackJsonReader >> read: json [
 				         yourself.
 			stack := model newStack.
 			lines := json at: #Lines. "Get the lines"
-			lines do: [ :line | stack addStackline: (self parseFromLine: line) ].
+			lines do: [ :line | stack addStackline: (self createStackline: line) ].
 			model entities do: #resetMooseName ]
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> readFrom: aFileReference [ 
-	| reader |
+CallStackJsonReader >> readFrom: aFileReference [
+	"Read the file reference as a json file and start the import as a JavaCallStack model"
 
-	filename := aFileReference basename. 
+	| reader |
+	filename := aFileReference basename.
 	reader := NeoJSONReader on: aFileReference readStream.
 	self read: reader next.
 	reader close.
