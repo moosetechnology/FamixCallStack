@@ -28,6 +28,27 @@ FamixCSTEntityCreator >> newArgument [
 ]
 
 { #category : 'entity creation' }
+FamixCSTEntityCreator >> newArrayReference [
+
+	<generated>
+	^ self add: FamixCSArrayReference new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newArrayValue [
+
+	<generated>
+	^ self add: FamixCSArrayValue new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newClassReference [
+
+	<generated>
+	^ self add: FamixCSClassReference new
+]
+
+{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newEntity [
 
 	<generated>
@@ -35,10 +56,17 @@ FamixCSTEntityCreator >> newEntity [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newInstance [
+FamixCSTEntityCreator >> newField [
 
 	<generated>
-	^ self add: FamixCSInstance new
+	^ self add: FamixCSField new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newMethodCall [
+
+	<generated>
+	^ self add: FamixCSMethodCall new
 ]
 
 { #category : 'entity creation' }
@@ -49,17 +77,17 @@ FamixCSTEntityCreator >> newObjectReference [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newPrimitiveType [
+FamixCSTEntityCreator >> newPrimitiveValue [
 
 	<generated>
-	^ self add: FamixCSPrimitiveType new
+	^ self add: FamixCSPrimitiveValue new
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newReceiver [
+FamixCSTEntityCreator >> newStack [
 
 	<generated>
-	^ self add: FamixCSReceiver new
+	^ self add: FamixCSStack new
 ]
 
 { #category : 'entity creation' }
@@ -67,4 +95,18 @@ FamixCSTEntityCreator >> newStackline [
 
 	<generated>
 	^ self add: FamixCSStackline new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newStringReference [
+
+	<generated>
+	^ self add: FamixCSStringReference new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newValue [
+
+	<generated>
+	^ self add: FamixCSValue new
 ]

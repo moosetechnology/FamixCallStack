@@ -2,15 +2,10 @@
 ## Relations
 ======================
 
-### Children
-| Relation | Origin | Opposite | Type | Comment |
-|---|
-| `instances` | `FamixCSObjectReference` | `objectReference` | `FamixCSInstance` | |
-
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `receiverUsage` | `FamixCSObjectReference` | `value` | `FamixCSReceiver` | |
+| `receiverUsages` | `FamixCSObjectReference` | `receiver` | `FamixCSStackline` | |
 
 
 ## Properties
@@ -18,16 +13,17 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `fields` | `Object` | nil | |
+| `type` | `String` | nil | |
+| `uniqueID` | `Number` | nil | |
 
 "
 Class {
 	#name : 'FamixCSObjectReference',
-	#superclass : 'FamixCSInstance',
+	#superclass : 'FamixCSValue',
 	#instVars : [
-		'#fields => FMProperty',
-		'#instances => FMMany type: #FamixCSInstance opposite: #objectReference',
-		'#receiverUsage => FMOne type: #FamixCSReceiver opposite: #value'
+		'#type => FMProperty',
+		'#uniqueID => FMProperty',
+		'#receiverUsages => FMMany type: #FamixCSStackline opposite: #receiver'
 	],
 	#category : 'Famix-Callstack-Entities-Entities',
 	#package : 'Famix-Callstack-Entities',
@@ -37,67 +33,64 @@ Class {
 { #category : 'meta' }
 FamixCSObjectReference class >> annotation [
 
-	<FMClass: #ObjectReference super: #FamixCSInstance>
+	<FMClass: #ObjectReference super: #FamixCSValue>
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
 ]
 
 { #category : 'adding' }
-FamixCSObjectReference >> addInstance: anObject [
+FamixCSObjectReference >> addReceiverUsage: anObject [
 	<generated>
-	^ self instances add: anObject
+	^ self receiverUsages add: anObject
+]
+
+{ #category : 'printing' }
+FamixCSObjectReference >> mooseNameOn: aStream [
+
+	aStream nextPutAll: '[' , uniqueID asString , '] : '
 ]
 
 { #category : 'accessing' }
-FamixCSObjectReference >> fields [
-
-	<FMProperty: #fields type: #Object>
-	<generated>
-	^ fields
-]
-
-{ #category : 'accessing' }
-FamixCSObjectReference >> fields: anObject [
-	<generated>
-	fields := anObject
-]
-
-{ #category : 'accessing' }
-FamixCSObjectReference >> instances [
-	"Relation named: #instances type: #FamixCSInstance opposite: #objectReference"
+FamixCSObjectReference >> receiverUsages [
+	"Relation named: #receiverUsages type: #FamixCSStackline opposite: #receiver"
 
 	<generated>
 	<derived>
-	^ instances
+	^ receiverUsages
 ]
 
 { #category : 'accessing' }
-FamixCSObjectReference >> instances: anObject [
+FamixCSObjectReference >> receiverUsages: anObject [
 
 	<generated>
-	instances value: anObject
-]
-
-{ #category : 'navigation' }
-FamixCSObjectReference >> instancesGroup [
-	<generated>
-	<navigation: 'Instances'>
-	^ MooseSpecializedGroup withAll: self instances asSet
+	receiverUsages value: anObject
 ]
 
 { #category : 'accessing' }
-FamixCSObjectReference >> receiverUsage [
-	"Relation named: #receiverUsage type: #FamixCSReceiver opposite: #value"
+FamixCSObjectReference >> type [
 
+	<FMProperty: #type type: #String>
 	<generated>
-	<derived>
-	^ receiverUsage
+	^ type
 ]
 
 { #category : 'accessing' }
-FamixCSObjectReference >> receiverUsage: anObject [
-
+FamixCSObjectReference >> type: anObject [
 	<generated>
-	receiverUsage := anObject
+	type := anObject
+]
+
+{ #category : 'accessing' }
+FamixCSObjectReference >> uniqueID [
+
+	<FMProperty: #uniqueID type: #Number>
+	<generated>
+	^ uniqueID
+]
+
+{ #category : 'accessing' }
+FamixCSObjectReference >> uniqueID: anObject [
+	<generated>
+	uniqueID := anObject
 ]

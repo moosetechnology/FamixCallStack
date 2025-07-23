@@ -12,5 +12,6 @@ BaselineOfFamixCallstack >> baseline: spec [
 	spec for: #common do: [
 			spec
 				package: 'Famix-CallStack';
-				package: 'Famix-CallStack-Entities' ]
+				package: 'Famix-CallStack-Entities';
+				package: 'Famix-CallStack-Importer' ]
 ]

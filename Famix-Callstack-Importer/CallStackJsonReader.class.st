@@ -1,104 +1,322 @@
+"
+## Usage :
+	file := '/Path/To/.../JDIOutput.cs' asFileReference.
+	
+	model := CallStackJsonReader import: file.
+	
+	
+	
+
+"
 Class {
 	#name : 'CallStackJsonReader',
 	#superclass : 'Object',
 	#instVars : [
 		'filename',
 		'model',
-		'lineNumber',
-		'foundReference',
-		'prevLine'
+		'createdPrimitives',
+		'createdClasses',
+		'createdMethods',
+		'createdReference'
 	],
 	#category : 'Famix-Callstack-Importer',
 	#package : 'Famix-Callstack-Importer'
 }
 
+{ #category : 'api' }
+CallStackJsonReader class >> import: aFileReference [
+
+	^ self new readFrom: aFileReference
+]
+
+{ #category : 'class initialization' }
+CallStackJsonReader class >> initialize [
+
+	self registerExternalDropHandler
+]
+
+{ #category : 'class initialization' }
+CallStackJsonReader class >> registerExternalDropHandler [
+	ExternalDropHandler registerHandler: (ExternalDropHandler type: nil extension: #cs action: [ :fileReference |
+				 (self import: fileReference)
+					 install;
+					 inspect ])
+]
+
 { #category : 'instance creation' }
-CallStackJsonReader >> createArgument: aDictionnary [
-	"instanciate an argument in different ways depending on if it is a reference or a primitive object"
+CallStackJsonReader >> createArgument: aDictionary [
+	"Instiantiate an argument given to a method in a stackline"
 
 	| arg |
-	"Looking for either a reference or a primitive type, if neither are present throw an error"
-	aDictionnary
-		at: #reference
-		ifPresent: [ :reference | self halt ]
-		ifAbsent: [ aDictionnary at: #primitiveType ifPresent: [ :primitive | self halt ] ifAbsent: [ Error signal: 'Unexcepted argument value' ] ].
-
 	arg := model newArgument.
+	aDictionary ifNotNil: [
+			aDictionary isCSAttentionTag
+				ifTrue: [
+						self flag: #todo. "Should react when an attention tag is seen can be <<UNACCESSIBLE>>"
+						(aDictionary includesSubstring: 'UNACC') ifFalse: [ self halt ].
+						nil ]
+				ifFalse: [ arg value: (self createValueWith: aDictionary) ] ].
 	^ arg
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createArgument: aFamixCSStackline with: aDictionnary [
-	aDictionnary collect: [ :argument | self createArgument: argument ] thenDo: [ :famixArgument | aFamixCSStackline addArgument: famixArgument ]
+CallStackJsonReader >> createArguments: anArray thenDo: aBlock [
+	"Instantiate all arguments of a method and apply a block on the instantiated arguments"
+
+	anArray collect: [ :instance | self createArgument: instance ] thenDo: aBlock
 ]
 
-{ #category : 'as yet unclassified' }
-CallStackJsonReader >> createMethod: aFamixCSStackline with: aDictionnary [
+{ #category : 'instance creation' }
+CallStackJsonReader >> createArrayReference: aCollection withId: uniqueId [
+	"Instantiate an ArrayReference and all its values"
 
-	| method |
-	self flag:#todo. "should we make the method a stub to know it has to be completed by another model?"
-	self flag:#todo. "maybe we could add more information on the class implementing the used method in the parsing?"
-	method := model newMethodNamed: (aDictionnary at: #name).
-	method stackline: aFamixCSStackline.
+	| ref |
+	ref := model newArrayReference.
 
-	self flag: #todo. "what we give to the parameter is actually the type, but how are we supposed to create a FamixJavaParameter with just the type? is this really usefull ?"
-	self flag:#todo. "Maybe FamixJavaMethod already have somewhere to put the parameters, and should not be defined by the callstack generator"
-	method parameters: ((aDictionnary at: #parameters) collect: [ :type | (model newParameterNamed: type) method: method ])
+	ref uniqueID: uniqueId.
+	createdReference at: uniqueId put: ref.
+
+	ref size: aCollection size.
+	aCollection do: [ :elem | ref addElement: (self createArrayValueWith: elem) ].
+	^ ref
 ]
 
-{ #category : 'as yet unclassified' }
-CallStackJsonReader >> createReceiver: aFamixCSStackline with: aDictionnary [
+{ #category : 'instance creation' }
+CallStackJsonReader >> createArrayValueWith: aCollection [
+	"Instantiate an ArrayValue"
 
-	aDictionnary ifNotNil: [ :dict |
-			dict
-				at: #reference
-				ifPresent: [ :informations | foundReference at: (informations at: #uniqueId) ifPresent: [ self halt ] ifAbsentPut: [ self halt ] ]
-				ifAbsent: [ Error signal: 'The only possible key should be #reference' ] ]
+	| arrVal |
+	arrVal := model newArrayValue.
+	"if the collection (so the value) is nil then there is no need to add anything"
+	aCollection ifNotNil: [ aCollection isCSAttentionTag
+				ifTrue: [
+						self flag: #todo. "Should react when an attention tag is seen can be <<MAX_DEPTH_REACHED>>"
+						(aCollection includesSubstring: 'MAX') ifFalse: [ self halt ].
+						nil ]
+				ifFalse: [arrVal value: (self createValueWith: aCollection) ]].
+	^ arrVal
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createClassNamed: aString [
+	"Instantiate a FamixJavaClass with the given name"
+
+	self flag: #todo. "how to differentiates java.lang.String and java.lang.String[] without 2 object?"
+	^ createdClasses at: aString ifAbsentPut: [
+			  (model newClassNamed: aString)
+				  isStub: true;
+				  yourself ]
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
+	"Instantiate a ClassReference and all its fields"
+
+	| ref |
+	ref := model newClassReference.
+	ref uniqueID: uniqueId.
+	createdReference at: uniqueId put: ref.
+	(anArray
+		 collect: [ :col |
+				 col isCSAttentionTag
+					 ifTrue: [
+							 self flag: #todo. "Should react when an attention tag is seen can be <<CLASS_NOT_PREPARED>> or <<UNACCESSIBLE>>"
+							 (col includesSubstring: 'CLASS') | (col includesSubstring: 'UNACC') ifFalse: [ self halt ].
+							 nil ]
+					 ifFalse: [ self createField: (col at: #field) ] ]
+		 thenReject: [ :object | object isNil ]) do: [ :object | ref addField: object ].
+	^ ref
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createField: aDictionary [
+	"Instantiate a field from a ClassReference"
+
+	| field |
+	field := model newField.
+	field name: (aDictionary at: #name).
+	(aDictionary at: #value) ifNotNil: [ :value |
+			value isCSAttentionTag
+				ifTrue: [
+						self flag: #todo. "Should react when an attention tag is seen can be <<MAX_DEPTH_REACHED>>"
+						(value includesSubstring: 'MAX') ifFalse: [ self halt ].
+						nil ]
+				ifFalse: [ field value: (self createValueWith: value) ] ].
+	^ field
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createMethod: aDictionnary [
+	"Instantiate a FamixJavaMethod with the maximum informations possible"
+	
+	| method | 
+	
+	self flag: #todo. "supress duplications of methods use createPrimitiveType"
+	self flag: #todo. "maybe we could add more information on the class implementing the used method in the parsing?"
+	method := (model newMethodNamed: (aDictionnary at: #name))
+		          isStub: true;
+		          yourself.
+
+	self createParameters: (aDictionnary at: #parameters) thenDo: [ :param | method addParameter: param ].
+	^ method
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createMethodCall: aDictionnary [
+	"Instatiate the MethodCall of a stack line, being the method informations and the given arguments"
+
+	| methodCall |
+	methodCall := model newMethodCall.
+	methodCall method: (self createMethod: (aDictionnary at: #method)).
+
+	self createArguments: (aDictionnary at: #arguments) thenDo: [ :arg | methodCall addArgument: arg ].
+	^ methodCall
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
+	"Instantiates all parameters of a method and execute the given block on the instantiated parameters"
+	
+	anArray
+		collect: [ :param |
+				(model newParameterNamed: (param at: #name))
+					typing: (model newEntityTyping declaredType: (self createClassNamed: (param at: #type)));
+					yourself ]
+		thenDo: aBlock
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createPrimitiveType: aString [
+	"Instantiate a PrimitiveType if not already on the model"
+
+	^ createdClasses at: aString ifAbsentPut: [
+			  (model newPrimitiveTypeNamed: aString)
+				  isStub: true;
+				  yourself ]
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createPrimitiveValue: aDictionary [
+	"Instantiate a PrimitiveValue"
+
+	| primVal primType |
+	primVal := model newPrimitiveValue.
+	self flag: #todo. "Change the typing with a typing entity to reify the link like for paramaters"
+	primType := self createPrimitiveType: (aDictionary at: #type).
+	primVal type: primType.
+	primVal value: (aDictionary at: #value).
+	^ primVal
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createReceiver: aDictionary [
+	"Instantiate the receiver of in a stack line"
+	^ self createValueReference: (aDictionary at: #reference)
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createStackline: aDictionnary [
+  	"Instantiate a line of a stack"
+	| line |
+	line := model newStackline.
+
+	line methodCall: (self createMethodCall: aDictionnary).
+	(aDictionnary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
+	^ line
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createStringReference: aString withId: uniqueId [
+	"Instantiate a StringReference"
+
+	| ref |
+	ref := model newStringReference.
+
+	ref uniqueID: uniqueId.
+	createdReference at: uniqueId put: ref.
+
+	ref value: aString.
+	^ ref
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createValueReference: aDictionary [
+	"Instantiate a ValueReference"
+
+	| reference refered |
+	"If already created do not create again"
+	createdReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ].
+
+	refered := aDictionary at: #refered.
+	reference := self createValueReferenceFor: refered withId: (aDictionary at: #uniqueId).
+	reference type: (aDictionary at: #type).
+
+	^ reference
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createValueReferenceFor: aCollection withId: uniqueId [
+	"Choose which subtype of a ValueReference should be instantiated"
+
+	aCollection isDictionary ifTrue: [
+			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields withId: uniqueId ].
+			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements withId: uniqueId ] ].
+
+	aCollection isByteString ifTrue: [
+			aCollection isCSAttentionTag
+				ifFalse: [ ^ self createStringReference: aCollection withId: uniqueId ]
+				ifTrue: [ Error signal: 'Should not be an attentionTag, this should be detected before coming to this method' ] ].
+	Error signal: 'Should either be String, array or an object'
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> createValueWith: aDictionnary [
+	"Choose which subTypes of a Value should be instantiated"
+
+	"Looking for either a reference or a primitive type, if neither are present throw an error"
+
+	^ aDictionnary at: #reference ifPresent: [ :reference | self createValueReference: reference ] ifAbsent: [
+			  aDictionnary
+				  at: #primitiveType
+				  ifPresent: [ :primitive | self createPrimitiveValue: primitive ]
+				  ifAbsent: [ Error signal: 'Unexcepted argument value' ] ]
 ]
 
 { #category : 'initialization' }
 CallStackJsonReader >> initialize [ 
-	lineNumber := 1. "Start the count on 1"
-	foundReference := Dictionary new.
-	
+	createdReference := Dictionary new.
+	createdPrimitives := Dictionary new.
+	createdClasses := Dictionary new.
+	createdMethods := Dictionary new.
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> model: aModel [
+
+	model = aModel
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> parseFromLine: aDictionnary [
-
-	| line |
-	line := model newStackline.
-	"setting and incrementing the line number"
-	line number: lineNumber. 
-	lineNumber := lineNumber + 1.
-	"Setting and reseting the previous line"
-	line previous: prevLine.
-	prevLine := line.
-	
-	self createMethod: line with: (aDictionnary at: #method).
-	self createReceiver: line with: (aDictionnary at: #receiver).
-	self flag:#todo."uncommment this when implemented"
-	"self createArgument: line with: (aDictionnary at: #arguments)."
-]
-
-{ #category : 'meta-object-protocol' }
 CallStackJsonReader >> read: json [
-	"Loads parsed json"
+	"Instantiate the JavaCallStack model from a json object"
 
-	| lines |
+	| stack lines |
 	json ifEmpty: [ Error signal: 'The json file is empty' ] ifNotEmpty: [
 			model := FamixCSModel new
 				         name: filename;
 				         yourself.
+			stack := model newStack.
 			lines := json at: #Lines. "Get the lines"
-			lines do: [ :line | self parseFromLine: line ] ]
+			lines do: [ :line | stack addStackline: (self createStackline: line) ].
+			model entities do: #resetMooseName ]
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> readFrom: aFileReference [ 
-	| reader |
+CallStackJsonReader >> readFrom: aFileReference [
+	"Read the file reference as a json file and start the import as a JavaCallStack model"
 
-	filename := aFileReference basename. 
+	| reader |
+	filename := aFileReference basename.
 	reader := NeoJSONReader on: aFileReference readStream.
 	self read: reader next.
 	reader close.

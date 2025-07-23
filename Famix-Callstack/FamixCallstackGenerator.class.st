@@ -3,15 +3,22 @@ Class {
 	#superclass : 'FamixMetamodelGenerator',
 	#instVars : [
 		'stackline',
-		'argument',
 		'entity',
 		'parameter',
-		'invocation',
-		'invocationReceiver',
 		'method',
-		'instance',
+		'methodCall',
+		'arrayReference',
+		'stringReference',
+		'field',
+		'primitiveValue',
+		'primitiveType',
+		'value',
+		'classReference',
 		'objectReference',
-		'primitiveType'
+		'arrayValue',
+		'argument',
+		'tValueContainer',
+		'stack'
 	],
 	#category : 'Famix-Callstack',
 	#package : 'Famix-Callstack'
@@ -40,61 +47,95 @@ FamixCallstackGenerator >> defineClasses [
 	super defineClasses.
 
 	entity := builder newClassNamed: #Entity.
+	stack := builder newClassNamed: #Stack.
 	stackline := builder newClassNamed: #Stackline.
-	argument := builder newClassNamed: #Argument.
-	instance := builder newClassNamed: #Instance.
+	methodCall := builder newClassNamed: #MethodCall.
+
+	value := builder newClassNamed: #Value.
+	primitiveValue := builder newClassNamed: #PrimitiveValue.
 	objectReference := builder newClassNamed: #ObjectReference.
-	primitiveType := builder newClassNamed: #PrimitiveType.
+	classReference := builder newClassNamed: #ClassReference.
+	arrayReference := builder newClassNamed: #ArrayReference.
+	stringReference := builder newClassNamed: #StringReference.
+
+	argument := builder newClassNamed: #Argument.
+	field := builder newClassNamed: #Field.
+	arrayValue := builder newClassNamed: #ArrayValue.
 	
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
-	parameter := self remoteEntity: #Parameter withPrefix: #FamixJava.
-	self flag:#todo. "invocation are not necessary because we don't take this into account?"
-	invocation := self remoteEntity: #Invocation withPrefix: #FamixJava.
-"	invocationReceiver := self remoteEntity: #TInvocationReceiver withPrefix: #Famix."
+	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava
 ]
 
 { #category : 'definition' }
 FamixCallstackGenerator >> defineHierarchy [
 
 	super defineHierarchy.
+	
+	"inheritances"
+	stack --|> entity.
 	stackline --|> entity.
+	methodCall --|> entity.
+	value --|> entity.
+	primitiveValue --|> value.
+	objectReference --|> value.
+	classReference --|> objectReference.
+	arrayReference --|> objectReference.
+	stringReference --|> objectReference.
+	field --|> entity.
+	arrayValue --|> entity.
 	argument --|> entity.
-	instance --|> entity.
-	objectReference --|> instance.
-	primitiveType --|> instance.
+	
+	"trait usages"
+	field --|> tValueContainer.
+	arrayValue --|> tValueContainer.
+	argument --|> tValueContainer.
 ]
 
 { #category : 'definition' }
 FamixCallstackGenerator >> defineProperties [
 
 	super defineProperties.
-
-	self flag: #todo. "stackline>>number and instance>>uniqueID should be number/integer and not Object"
-	self flag: #todo. "Argument and Instance should not have their type as properties but as relations ?"
-	stackline property: #number type: #Object.
-	argument property: #type type: #String.
+	
 	method property: #name type: #String.
 
-	instance property: #uniqueID type: #Object.
-	instance property: #type type: #String.
-	
-	self flag:#todo."Should be a collection?"
-	self flag:#todo." Could also be array values instead of fields"
-	objectReference property: #fields type: #Object.
+	primitiveValue property: #value type: #Object.
+
+	self flag: #todo. "ishould not have their type as properties but as relations to an object representing java types"
+	objectReference property: #type type: #String.
+	objectReference property: #uniqueID type: #Number.
+
+	stringReference property: #value type: #String.
+
+	arrayReference property: #size type: #Number.
+
+	field property: #name type: #String.
+	self flag: #todo "try adding more information on argument (like the name or order of these)"
 ]
 
 { #category : 'definition' }
 FamixCallstackGenerator >> defineRelations [
 
 	super defineRelations.
-	self flag: #todo. "add a name for all thoses relations"
-	stackline <>-* argument.
-	(stackline property: #receiver) <>- (objectReference property: #receiverUsage).
-	stackline *- method.
-	method <>-* parameter.
-	(argument property: #value) *- (instance property: #argumentUsage).
-	objectReference <>-* instance.
+	stack <>-* stackline.
+	stackline <>- methodCall.
+	self flag: #todo. "add the trati TvaluesContainer to stackline"
+	(stackline property: #receiver) *- (objectReference property: #receiverUsages).
 
-	(stackline property: #previous) - (stackline property: #next).
-	self flag: #todo "How to make sure the stack line know their previous and next stackline?"
+	methodCall *- method.
+
+	(classReference property: #field) -* (field property: #parent).
+	(arrayReference property: #elements) -* (arrayValue property: #parent).
+	(methodCall property: #arguments) -* (argument property: #parent).
+
+	(tValueContainer property: #value) *- (value property: #usage).
+
+	(primitiveValue property: #type) - (primitiveType property: #usages)
+]
+
+{ #category : 'definition' }
+FamixCallstackGenerator >> defineTraits [
+
+	super defineTraits.
+
+	tValueContainer := builder newTraitNamed: #TValueContainer
 ]
