@@ -8,7 +8,7 @@ To load in a Moose image, execute:
 ```Smalltalk
 Metacello new
   baseline: 'FamixCallStack';
-  repository: 'github://LeoDefossez/FamixCallStack:main/src';
+  repository: 'github://LeoDefossez/FamixCallStack/src';
   load.
 ```
 
