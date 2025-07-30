@@ -15,10 +15,16 @@ Metacello new
 
 ## Usage :
 
-Import metamodel :
+### Import metamodel :
+- Programmatically (here the extension .cs of the file isn't important, having a .json works as well):
 ```smalltalk
 
 file := '/Path/To/.../JDIOutput.cs' asFileReference.
 
 model := CallStackJsonReader import: file.
 ```
+
+- With drag and drops :  
+Just drag the file "JDIOutput.cs" and drop it on your Moose image (here the extension .cs is really important, without it the importation will fail)
+
+
