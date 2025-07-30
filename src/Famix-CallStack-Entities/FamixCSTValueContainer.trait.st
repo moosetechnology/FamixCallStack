@@ -14,14 +14,14 @@
 | Name | Type | Default value | Comment |
 |---|
 | `maxDepthReached` | `Boolean` | false | |
-| `unAccesssible` | `Boolean` | false | |
+| `unaccessible` | `Boolean` | false | |
 
 "
 Trait {
 	#name : 'FamixCSTValueContainer',
 	#instVars : [
 		'#maxDepthReached => FMProperty defaultValue: false',
-		'#unAccesssible => FMProperty defaultValue: false',
+		'#unaccessible => FMProperty defaultValue: false',
 		'#value => FMOne type: #FamixCSValue opposite: #usage'
 	],
 	#category : 'Famix-CallStack-Entities-Traits',
@@ -53,17 +53,17 @@ FamixCSTValueContainer >> maxDepthReached: anObject [
 ]
 
 { #category : 'accessing' }
-FamixCSTValueContainer >> unAccesssible [
+FamixCSTValueContainer >> unaccessible [
 
-	<FMProperty: #unAccesssible type: #Boolean defaultValue: false>
+	<FMProperty: #unaccessible type: #Boolean defaultValue: false>
 	<generated>
-	^ unAccesssible ifNil: [ unAccesssible := false ]
+	^ unaccessible ifNil: [ unaccessible := false ]
 ]
 
 { #category : 'accessing' }
-FamixCSTValueContainer >> unAccesssible: anObject [
+FamixCSTValueContainer >> unaccessible: anObject [
 	<generated>
-	unAccesssible := anObject
+	unaccessible := anObject
 ]
 
 { #category : 'accessing' }

@@ -16,7 +16,7 @@
 |---|
 | `maxDepthReached` | `Boolean` | false | |
 | `name` | `String` | nil | |
-| `unAccesssible` | `Boolean` | false | |
+| `unaccessible` | `Boolean` | false | |
 
 "
 Class {
