@@ -1,6 +1,6 @@
 Extension { #name : 'FamixJavaPrimitiveType' }
 
-{ #category : '*Famix-CallStack-Entities-accessing' }
+{ #category : '*Famix-Callstack-Entities-accessing' }
 FamixJavaPrimitiveType >> usages [
 	"Relation named: #usages type: #FamixCSPrimitiveValue opposite: #type"
 
@@ -11,7 +11,7 @@ FamixJavaPrimitiveType >> usages [
 	^ self attributeAt: #usages ifAbsent: [ nil ]
 ]
 
-{ #category : '*Famix-CallStack-Entities-accessing' }
+{ #category : '*Famix-Callstack-Entities-accessing' }
 FamixJavaPrimitiveType >> usages: anObject [
 
 	<generated>

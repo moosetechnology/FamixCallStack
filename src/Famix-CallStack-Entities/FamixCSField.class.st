@@ -14,7 +14,9 @@
 
 | Name | Type | Default value | Comment |
 |---|
+| `maxDepthReached` | `Boolean` | false | |
 | `name` | `String` | nil | |
+| `unAccesssible` | `Boolean` | false | |
 
 "
 Class {

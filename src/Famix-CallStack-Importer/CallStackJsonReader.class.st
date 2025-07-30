@@ -44,18 +44,18 @@ CallStackJsonReader class >> registerExternalDropHandler [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createArgument: aDictionary [
+CallStackJsonReader >> createArgument: aCollection [
 	"Instiantiate an argument given to a method in a stackline"
 
 	| arg |
 	arg := model newArgument.
-	aDictionary ifNotNil: [
-			aDictionary isCSAttentionTag
+	aCollection ifNotNil: [
+			aCollection isCSAttentionTag
 				ifTrue: [
-						self flag: #todo. "Should react when an attention tag is seen can be <<UNACCESSIBLE>>"
-						(aDictionary includesSubstring: 'UNACC') ifFalse: [ self halt ].
-						nil ]
-				ifFalse: [ arg value: (self createValueWith: aDictionary) ] ].
+						(aCollection sameAs: '<<UNACCESSIBLE>>')
+							ifTrue: [ arg unAccesssible: true ]
+							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
+				ifFalse: [ arg value: (self createValueWith: aCollection) ] ].
 	^ arg
 ]
 
@@ -88,12 +88,13 @@ CallStackJsonReader >> createArrayValueWith: aCollection [
 	| arrVal |
 	arrVal := model newArrayValue.
 	"if the collection (so the value) is nil then there is no need to add anything"
-	aCollection ifNotNil: [ aCollection isCSAttentionTag
+	aCollection ifNotNil: [
+			aCollection isCSAttentionTag
 				ifTrue: [
-						self flag: #todo. "Should react when an attention tag is seen can be <<MAX_DEPTH_REACHED>>"
-						(aCollection includesSubstring: 'MAX') ifFalse: [ self halt ].
-						nil ]
-				ifFalse: [arrVal value: (self createValueWith: aCollection) ]].
+						(aCollection sameAs: '<<MAX_DEPTH_REACHED>>')
+							ifTrue: [ arrVal maxDepthReached: true ]
+							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
+				ifFalse: [ arrVal value: (self createValueWith: aCollection) ] ].
 	^ arrVal
 ]
 
@@ -116,14 +117,16 @@ CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
 	ref := model newClassReference.
 	ref uniqueID: uniqueId.
 	createdReference at: uniqueId put: ref.
+	self flag: #todo. "The fact that the message Class_Not_Prepared is said only on the fields is a problem, the parser should log this directly on the class "
 	(anArray
-		 collect: [ :col |
-				 col isCSAttentionTag
+		 collect: [ :field |
+				 field isCSAttentionTag
 					 ifTrue: [
-							 self flag: #todo. "Should react when an attention tag is seen can be <<CLASS_NOT_PREPARED>> or <<UNACCESSIBLE>>"
-							 (col includesSubstring: 'CLASS') | (col includesSubstring: 'UNACC') ifFalse: [ self halt ].
-							 nil ]
-					 ifFalse: [ self createField: (col at: #field) ] ]
+							 (field sameAs: '<<CLASS_NOT_PREPARED>>') ifTrue: [ ^ ref unprepared: true].
+							 (field sameAs: '<<UNACCESSIBLE>>')
+								 ifTrue: [ field maxDepthReached: true ]
+								 ifFalse: [ Error signal: 'unhandled attention tag : ' , field ] ]
+					 ifFalse: [ self createField: (field at: #field) ] ]
 		 thenReject: [ :object | object isNil ]) do: [ :object | ref addField: object ].
 	^ ref
 ]
@@ -138,9 +141,9 @@ CallStackJsonReader >> createField: aDictionary [
 	(aDictionary at: #value) ifNotNil: [ :value |
 			value isCSAttentionTag
 				ifTrue: [
-						self flag: #todo. "Should react when an attention tag is seen can be <<MAX_DEPTH_REACHED>>"
-						(value includesSubstring: 'MAX') ifFalse: [ self halt ].
-						nil ]
+						(value sameAs: '<<MAX_DEPTH_REACHED>>')
+							ifTrue: [ field maxDepthReached: true ]
+							ifFalse: [ Error signal: 'unhandled attention tag : ' , value ] ]
 				ifFalse: [ field value: (self createValueWith: value) ] ].
 	^ field
 ]

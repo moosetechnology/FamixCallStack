@@ -1,6 +1,6 @@
 Extension { #name : 'FamixJavaMethod' }
 
-{ #category : '*Famix-CallStack-Entities-accessing' }
+{ #category : '*Famix-Callstack-Entities-accessing' }
 FamixJavaMethod >> methodCalls [
 	"Relation named: #methodCalls type: #FamixCSMethodCall opposite: #method"
 
@@ -11,7 +11,7 @@ FamixJavaMethod >> methodCalls [
 	^ self attributeAt: #methodCalls ifAbsentPut: [ FMMultivalueLink on: self opposite: #method: ]
 ]
 
-{ #category : '*Famix-CallStack-Entities-accessing' }
+{ #category : '*Famix-Callstack-Entities-accessing' }
 FamixJavaMethod >> methodCalls: anObject [
 
 	<generated>

@@ -109,6 +109,11 @@ FamixCallStackGenerator >> defineProperties [
 	arrayReference property: #size type: #Number.
 
 	field property: #name type: #String.
+	
+	tValueContainer property: #maxDepthReached type: #Boolean defaultValue: false .
+	tValueContainer property: #unAccesssible type: #Boolean defaultValue: false.
+	
+	classReference property: #unprepared type: #Boolean defaultValue: false.
 	self flag: #todo "try adding more information on argument (like the name or order of these)"
 ]
 

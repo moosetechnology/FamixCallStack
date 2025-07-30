@@ -15,17 +15,9 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `next` | `FamixCSStackline` | `previous` | `FamixCSStackline` | |
-| `previous` | `FamixCSStackline` | `next` | `FamixCSStackline` | |
 | `receiver` | `FamixCSStackline` | `receiverUsages` | `FamixCSObjectReference` | |
 
 
-## Properties
-======================
-
-| Name | Type | Default value | Comment |
-|---|
-| `number` | `Number` | nil | |
 
 "
 Class {
@@ -33,9 +25,6 @@ Class {
 	#superclass : 'FamixCSEntity',
 	#instVars : [
 		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
-		'#next => FMOne type: #FamixCSStackline opposite: #previous',
-		'#number => FMProperty',
-		'#previous => FMOne type: #FamixCSStackline opposite: #next',
 		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
 		'#stack => FMOne type: #FamixCSStack opposite: #stacklines'
 	],
@@ -88,20 +77,6 @@ FamixCSStackline >> next [
 	<FMComment: 'The next stackline in the stack'>
 	self flag: #todo. "Should we add some pragmas ?"
 	^ self stack nextTo: self
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> number [
-
-	<FMProperty: #number type: #Number>
-	<generated>
-	^ number
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> number: anObject [
-	<generated>
-	number := anObject
 ]
 
 { #category : 'as yet unclassified' }
