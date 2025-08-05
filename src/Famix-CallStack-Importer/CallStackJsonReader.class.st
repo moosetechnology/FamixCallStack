@@ -152,12 +152,14 @@ CallStackJsonReader >> createField: aDictionary [
 { #category : 'instance creation' }
 CallStackJsonReader >> createMethod: aDictionnary [
 	"Instantiate a FamixJavaMethod with the maximum informations possible"
-	
-	| method | 
-	
+
+	| method |
 	self flag: #todo. "supress duplications of methods use createPrimitiveType"
 	self flag: #todo. "maybe we could add more information on the class implementing the used method in the parsing?"
 	method := (model newMethodNamed: (aDictionnary at: #name))
+		          isStatic: ((aDictionnary at: #static) asLowercase = #true
+				           ifTrue: [ true ]
+				           ifFalse: [ false ]);
 		          isStub: true;
 		          yourself.
 

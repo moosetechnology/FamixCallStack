@@ -1,5 +1,19 @@
 Extension { #name : 'FamixJavaMethod' }
 
+{ #category : '*Famix-CallStack-Entities' }
+FamixJavaMethod >> isStatic [
+
+	<FMProperty: #isStatic type: #Boolean>
+	
+	^ isStatic
+]
+
+{ #category : '*Famix-CallStack-Entities' }
+FamixJavaMethod >> isStatic: anObject [
+	
+	isStatic := anObject
+]
+
 { #category : '*Famix-Callstack-Entities-accessing' }
 FamixJavaMethod >> methodCalls [
 	"Relation named: #methodCalls type: #FamixCSMethodCall opposite: #method"
