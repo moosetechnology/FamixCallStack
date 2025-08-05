@@ -18,7 +18,8 @@ Class {
 		'arrayValue',
 		'argument',
 		'tValueContainer',
-		'stack'
+		'stack',
+		'tEntityMetaLevelDependency'
 	],
 	#category : 'Famix-CallStack',
 	#package : 'Famix-CallStack'
@@ -70,7 +71,7 @@ FamixCallStackGenerator >> defineClasses [
 FamixCallStackGenerator >> defineHierarchy [
 
 	super defineHierarchy.
-	
+
 	"inheritances"
 	stack --|> entity.
 	stackline --|> entity.
@@ -84,20 +85,34 @@ FamixCallStackGenerator >> defineHierarchy [
 	field --|> entity.
 	arrayValue --|> entity.
 	argument --|> entity.
-	
+
 	"trait usages"
 	field --|> tValueContainer.
 	arrayValue --|> tValueContainer.
 	argument --|> tValueContainer.
+
+	"querryable"
+	stack --|> tEntityMetaLevelDependency.
+	stackline --|> tEntityMetaLevelDependency.
+	methodCall --|> tEntityMetaLevelDependency.
+	value --|> tEntityMetaLevelDependency.
+	primitiveValue --|> tEntityMetaLevelDependency.
+	objectReference --|> tEntityMetaLevelDependency.
+	classReference --|> tEntityMetaLevelDependency.
+	arrayReference --|> tEntityMetaLevelDependency.
+	stringReference --|> tEntityMetaLevelDependency.
+	field --|> tEntityMetaLevelDependency.
+	arrayValue --|> tEntityMetaLevelDependency.
+	argument --|> tEntityMetaLevelDependency
 ]
 
 { #category : 'definition' }
 FamixCallStackGenerator >> defineProperties [
 
 	super defineProperties.
+	self flag:#todo. "the attribute isStatic doesn't appear to be generated, this attibute is acutally being added manually"
+	method property: #isStatic type: #Boolean.
 	
-	method property: #name type: #String.
-
 	primitiveValue property: #value type: #Object.
 
 	self flag: #todo. "ishould not have their type as properties but as relations to an object representing java types"
@@ -142,5 +157,7 @@ FamixCallStackGenerator >> defineTraits [
 
 	super defineTraits.
 
-	tValueContainer := builder newTraitNamed: #TValueContainer
+	tValueContainer := builder newTraitNamed: #TValueContainer.
+
+	tEntityMetaLevelDependency := builder newTraitNamed: #TEntityMetaLevelDependency
 ]

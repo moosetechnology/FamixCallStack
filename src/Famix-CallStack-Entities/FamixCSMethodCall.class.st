@@ -19,9 +19,11 @@
 Class {
 	#name : 'FamixCSMethodCall',
 	#superclass : 'FamixCSEntity',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
-		'#stackline => FMOne type: #FamixCSStackline opposite: #methodCall',
-		'#arguments => FMMany type: #FamixCSArgument opposite: #parent'
+		'#arguments => FMMany type: #FamixCSArgument opposite: #parent',
+		'#stackline => FMOne type: #FamixCSStackline opposite: #methodCall'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',

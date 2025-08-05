@@ -22,8 +22,8 @@
 Class {
 	#name : 'FamixCSField',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTValueContainer',
-	#classTraits : 'FamixCSTValueContainer classTrait',
+	#traits : 'FamixCSTEntityMetaLevelDependency + FamixCSTValueContainer',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait + FamixCSTValueContainer classTrait',
 	#instVars : [
 		'#name => FMProperty',
 		'#parent => FMOne type: #FamixCSClassReference opposite: #field'
@@ -44,9 +44,12 @@ FamixCSField class >> annotation [
 
 { #category : 'printing' }
 FamixCSField >> mooseNameOn: aStream [
-
-	aStream nextPutAll: name , ' = '.
-	value ifNil: [ aStream nextPutAll: 'nil' ] ifNotNil: [ value mooseNameOn: aStream ]
+	self flag:#todo. "Reduce this complexity, and push some parts to FamixCSTValueContainer"
+	self unaccessible
+		ifTrue: [ aStream nextPutAll: 'unaccessible' ]
+		ifFalse: [
+				aStream nextPutAll: name , ' = '.
+				value ifNil: [ self maxDepthReached ifTrue:[ aStream nextPutAll: 'maxDepthReached'] ifFalse:[  aStream nextPutAll: nil asString]] ifNotNil: [ value mooseNameOn: aStream ] ]
 ]
 
 { #category : 'accessing' }

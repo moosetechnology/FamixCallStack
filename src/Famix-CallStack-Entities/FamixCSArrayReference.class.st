@@ -19,9 +19,11 @@
 Class {
 	#name : 'FamixCSArrayReference',
 	#superclass : 'FamixCSObjectReference',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
-		'#size => FMProperty',
-		'#elements => FMMany type: #FamixCSArrayValue opposite: #parent'
+		'#elements => FMMany type: #FamixCSArrayValue opposite: #parent',
+		'#size => FMProperty'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',

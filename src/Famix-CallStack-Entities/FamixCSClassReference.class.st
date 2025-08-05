@@ -19,6 +19,8 @@
 Class {
 	#name : 'FamixCSClassReference',
 	#superclass : 'FamixCSObjectReference',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#field => FMMany type: #FamixCSField opposite: #parent',
 		'#unprepared => FMProperty defaultValue: false'

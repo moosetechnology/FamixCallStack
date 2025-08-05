@@ -20,10 +20,12 @@
 Class {
 	#name : 'FamixCSObjectReference',
 	#superclass : 'FamixCSValue',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
+		'#receiverUsages => FMMany type: #FamixCSStackline opposite: #receiver',
 		'#type => FMProperty',
-		'#uniqueID => FMProperty',
-		'#receiverUsages => FMMany type: #FamixCSStackline opposite: #receiver'
+		'#uniqueID => FMProperty'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',

@@ -19,6 +19,8 @@
 Class {
 	#name : 'FamixCSPrimitiveValue',
 	#superclass : 'FamixCSValue',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#value => FMProperty'
 	],

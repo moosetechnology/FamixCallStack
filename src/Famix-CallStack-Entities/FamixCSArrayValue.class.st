@@ -21,8 +21,8 @@
 Class {
 	#name : 'FamixCSArrayValue',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTValueContainer',
-	#classTraits : 'FamixCSTValueContainer classTrait',
+	#traits : 'FamixCSTEntityMetaLevelDependency + FamixCSTValueContainer',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait + FamixCSTValueContainer classTrait',
 	#instVars : [
 		'#parent => FMOne type: #FamixCSArrayReference opposite: #elements'
 	],

@@ -13,6 +13,8 @@
 Class {
 	#name : 'FamixCSStack',
 	#superclass : 'FamixCSEntity',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#lines',
 		'#stacklines => FMMany type: #FamixCSStackline opposite: #stack'
@@ -42,7 +44,6 @@ FamixCSStack >> nextTo: aStackline [
 
 	<derived>
 	<FMComment: 'The line next to the given line in the stack'>
-	self flag: #todo. "Should we add some pragmas ?"
 	^ stacklines after: aStackline ifAbsent: [ nil ]
 ]
 
@@ -51,7 +52,6 @@ FamixCSStack >> previousTo: aStackline [
 
 	<derived>
 	<FMComment: 'The line before to the given line in the stack'>
-	self flag: #todo. "Should we add some pragmas ?"
 	^ stacklines before: aStackline ifAbsent: [ nil ]
 ]
 

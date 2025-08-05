@@ -23,6 +23,8 @@
 Class {
 	#name : 'FamixCSStackline',
 	#superclass : 'FamixCSEntity',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
 		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
@@ -75,7 +77,7 @@ FamixCSStackline >> next [
 
 	<derived>
 	<FMComment: 'The next stackline in the stack'>
-	self flag: #todo. "Should we add some pragmas ?"
+	<FMProperty: #next type: #FamixCSStackline>
 	^ self stack nextTo: self
 ]
 
@@ -93,8 +95,8 @@ FamixCSStackline >> previous [
 
 	<derived>
 	<FMComment: 'The previous stackline in the stack'>
-	self flag: #todo. "Should we add some pragmas ?"
-	^ self stack previousTo: self.
+	<FMProperty: #previous type: #FamixCSStackline>
+	^ self stack previousTo: self
 ]
 
 { #category : 'accessing' }

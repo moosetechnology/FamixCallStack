@@ -13,6 +13,8 @@
 Class {
 	#name : 'FamixCSValue',
 	#superclass : 'FamixCSEntity',
+	#traits : 'FamixCSTEntityMetaLevelDependency',
+	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#usage => FMMany type: #FamixCSTValueContainer opposite: #value'
 	],
