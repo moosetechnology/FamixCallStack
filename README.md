@@ -13,9 +13,9 @@ Metacello new
 ```
 
 
-## Usage :
+## Usage
 
-### Import metamodel :
+### Import metamodel 
 - Programmatically (here the extension .cs of the file isn't important, having a .json works as well):
 ```smalltalk
 
