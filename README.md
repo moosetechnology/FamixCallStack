@@ -2,9 +2,10 @@
 
 This project offers a metamodel for Java call stacks, enabling dynamic analysis of Java applications directly within Moose.
 
-This project can imports file created with a parser of java call stacks found at : https://github.com/LeoDefossez/JavaCallStackExtractor
+This project can imports file created with the [JavaCallStackExtractor](https://github.com/moosetechnology/JavaCallStackExtractor) project.
 
-To load in a Moose image, execute: 
+## Loading the project into Moose
+To load FamixCallStack into a Moose image, execute the following code:
 ```Smalltalk
 Metacello new
   baseline: 'FamixCallStack';
@@ -15,16 +16,15 @@ Metacello new
 
 ## Usage
 
-### Import metamodel 
-- Programmatically (here the extension .cs of the file isn't important, having a .json works as well):
+### Importing a Call Stack Model
+You can import a call stack in two ways:
+#### 1. Programmatically
+The file extension .cs is not strictly required, a .json would also work:
 ```smalltalk
-
 file := '/Path/To/.../JDIOutput.cs' asFileReference.
-
 model := CallStackJsonReader import: file.
 ```
-
-- With drag and drops :  
-Just drag the file "JDIOutput.cs" and drop it on your Moose image (here the extension .cs is really important, without it the importation will fail)
-
+#### 2. With drag and drops
+Simply drag the JDIOutput.cs file onto your Moose image.  
+**Note:** In this case, the file must have a .cs extension, otherwise, the import will fail.
 
