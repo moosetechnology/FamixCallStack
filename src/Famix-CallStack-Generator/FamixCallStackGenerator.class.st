@@ -23,8 +23,8 @@ Class {
 		'tTypedEntity',
 		'receiver'
 	],
-	#category : 'Famix-CallStack',
-	#package : 'Famix-CallStack'
+	#category : 'Famix-CallStack-Generator',
+	#package : 'Famix-CallStack-Generator'
 }
 
 { #category : 'accessing' }
