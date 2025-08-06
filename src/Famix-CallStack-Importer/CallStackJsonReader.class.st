@@ -153,6 +153,7 @@ CallStackJsonReader >> createMethod: aDictionnary [
 		          isStatic: ((aDictionnary at: #static) asLowercase = #true
 				           ifTrue: [ true ]
 				           ifFalse: [ false ]);
+		          parentType: (self createClassNamed: (aDictionnary at: #parentType));
 		          isStub: true;
 		          yourself.
 
