@@ -19,7 +19,8 @@ Class {
 		'argument',
 		'tValueContainer',
 		'stack',
-		'tEntityMetaLevelDependency'
+		'tEntityMetaLevelDependency',
+		'tTypedEntity'
 	],
 	#category : 'Famix-CallStack',
 	#package : 'Famix-CallStack'
@@ -62,9 +63,10 @@ FamixCallStackGenerator >> defineClasses [
 	argument := builder newClassNamed: #Argument.
 	field := builder newClassNamed: #Field.
 	arrayValue := builder newClassNamed: #ArrayValue.
-	
+
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
-	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava
+	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava.
+	tTypedEntity := self remoteEntity: #TTypedEntity withPrefix: #Famix
 ]
 
 { #category : 'definition' }
@@ -85,6 +87,7 @@ FamixCallStackGenerator >> defineHierarchy [
 	field --|> entity.
 	arrayValue --|> entity.
 	argument --|> entity.
+	tValueContainer --|> tTypedEntity.
 
 	"trait usages"
 	field --|> tValueContainer.
@@ -95,15 +98,7 @@ FamixCallStackGenerator >> defineHierarchy [
 	stack --|> tEntityMetaLevelDependency.
 	stackline --|> tEntityMetaLevelDependency.
 	methodCall --|> tEntityMetaLevelDependency.
-	value --|> tEntityMetaLevelDependency.
-	primitiveValue --|> tEntityMetaLevelDependency.
-	objectReference --|> tEntityMetaLevelDependency.
-	classReference --|> tEntityMetaLevelDependency.
-	arrayReference --|> tEntityMetaLevelDependency.
-	stringReference --|> tEntityMetaLevelDependency.
-	field --|> tEntityMetaLevelDependency.
-	arrayValue --|> tEntityMetaLevelDependency.
-	argument --|> tEntityMetaLevelDependency
+	tValueContainer --|> tEntityMetaLevelDependency.
 ]
 
 { #category : 'definition' }
@@ -139,7 +134,8 @@ FamixCallStackGenerator >> defineRelations [
 	super defineRelations.
 	stack <>-* stackline.
 	stackline <>- methodCall.
-	self flag: #todo. "add the trati TvaluesContainer to stackline"
+	self flag: #todo. "add the trait TvaluesContainer to stackline instead of jsut having the receiver
+		or: add an object receiver like an argument but for stackline, that will have TvaluesContainer"
 	(stackline property: #receiver) *- (objectReference property: #receiverUsages).
 
 	methodCall *- method.
