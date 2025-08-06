@@ -182,12 +182,9 @@ CallStackJsonReader >> createMethodCall: aDictionnary [
 { #category : 'instance creation' }
 CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
 	"Instantiates all parameters of a method and execute the given block on the instantiated parameters"
-	
+
 	anArray
-		collect: [ :param |
-				(model newParameterNamed: (param at: #name))
-					typing: (model newEntityTyping declaredType: (self createClassNamed: (param at: #type)));
-					yourself ]
+		collect: [ :param | self createTypingFor: (model newParameterNamed: (param at: #name)) with: (self createClassNamed: (param at: #type)) ]
 		thenDo: aBlock
 ]
 
@@ -243,6 +240,14 @@ CallStackJsonReader >> createStringReference: aString withId: uniqueId [
 
 	ref value: aString.
 	^ ref
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createTypingFor: anObject with: type [
+
+	^ anObject
+		  typing: (model newEntityTyping declaredType: type);
+		  yourself
 ]
 
 { #category : 'accessing' }

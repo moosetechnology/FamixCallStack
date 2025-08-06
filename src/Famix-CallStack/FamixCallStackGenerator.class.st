@@ -123,6 +123,7 @@ FamixCallStackGenerator >> defineProperties [
 
 	arrayReference property: #size type: #Number.
 
+	self flag:#todo. "Maybe field should use TNamedEntity?"
 	field property: #name type: #String.
 	
 	tValueContainer property: #maxDepthReached type: #Boolean defaultValue: false .
