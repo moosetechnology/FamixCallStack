@@ -313,7 +313,7 @@ CallStackJsonReader >> initialize [
 { #category : 'accessing' }
 CallStackJsonReader >> model: aModel [
 
-	model = aModel
+	model := aModel
 ]
 
 { #category : 'instance creation' }
