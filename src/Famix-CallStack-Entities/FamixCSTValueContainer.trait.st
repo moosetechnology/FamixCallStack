@@ -24,6 +24,8 @@ Trait {
 		'#unaccessible => FMProperty defaultValue: false',
 		'#value => FMOne type: #FamixCSValue opposite: #usage'
 	],
+	#traits : 'TEntityMetaLevelDependency',
+	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#category : 'Famix-CallStack-Entities-Traits',
 	#package : 'Famix-CallStack-Entities',
 	#tag : 'Traits'

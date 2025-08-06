@@ -23,8 +23,8 @@
 Class {
 	#name : 'FamixCSStackline',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
+	#traits : 'TEntityMetaLevelDependency',
+	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
 		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
@@ -87,7 +87,7 @@ FamixCSStackline >> positionInStack [
 	<FMProperty: #positionInStack type: #Number>
 	<derived>
 	<FMComment: 'The position of this stack line in the stack'>
-	^ self stack stacklines indexOf: self
+	^ stack ifNotNil:[ stack indexOfLine: self].
 ]
 
 { #category : 'accessing' }

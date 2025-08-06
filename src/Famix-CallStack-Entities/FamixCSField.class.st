@@ -22,8 +22,8 @@
 Class {
 	#name : 'FamixCSField',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTEntityMetaLevelDependency + FamixCSTValueContainer',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait + FamixCSTValueContainer classTrait',
+	#traits : 'FamixCSTValueContainer',
+	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
 		'#name => FMProperty',
 		'#parent => FMOne type: #FamixCSClassReference opposite: #field'

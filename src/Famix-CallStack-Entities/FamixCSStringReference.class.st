@@ -10,8 +10,6 @@
 Class {
 	#name : 'FamixCSStringReference',
 	#superclass : 'FamixCSObjectReference',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#value => FMProperty'
 	],

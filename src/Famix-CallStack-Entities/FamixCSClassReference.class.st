@@ -19,8 +19,6 @@
 Class {
 	#name : 'FamixCSClassReference',
 	#superclass : 'FamixCSObjectReference',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#field => FMMany type: #FamixCSField opposite: #parent',
 		'#unprepared => FMProperty defaultValue: false'
@@ -63,8 +61,9 @@ FamixCSClassReference >> field: anObject [
 
 { #category : 'printing' }
 FamixCSClassReference >> mooseNameOn: aStream [
+
 	super mooseNameOn: aStream.
-	aStream nextPutAll: type asString.
+	typing ifNil: [ aStream nextPutAll: nil asString ] ifNotNil: [ typing declaredType mooseNameOn: aStream ]
 ]
 
 { #category : 'accessing' }

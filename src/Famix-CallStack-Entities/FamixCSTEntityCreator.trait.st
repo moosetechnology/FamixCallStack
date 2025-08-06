@@ -49,13 +49,6 @@ FamixCSTEntityCreator >> newClassReference [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newEntity [
-
-	<generated>
-	^ self add: FamixCSEntity new
-]
-
-{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newField [
 
 	<generated>
@@ -81,6 +74,13 @@ FamixCSTEntityCreator >> newPrimitiveValue [
 
 	<generated>
 	^ self add: FamixCSPrimitiveValue new
+]
+
+{ #category : 'entity creation' }
+FamixCSTEntityCreator >> newReceiver [
+
+	<generated>
+	^ self add: FamixCSReceiver new
 ]
 
 { #category : 'entity creation' }

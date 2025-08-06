@@ -202,11 +202,9 @@ CallStackJsonReader >> createPrimitiveType: aString [
 CallStackJsonReader >> createPrimitiveValue: aDictionary [
 	"Instantiate a PrimitiveValue"
 
-	| primVal primType |
+	| primVal |
 	primVal := model newPrimitiveValue.
-	self flag: #todo. "Change the typing with a typing entity to reify the link like for paramaters"
-	primType := self createPrimitiveType: (aDictionary at: #type).
-	primVal type: primType.
+	self createTypingFor: primVal with: (self createPrimitiveType: (aDictionary at: #type)).
 	primVal value: (aDictionary at: #value).
 	^ primVal
 ]

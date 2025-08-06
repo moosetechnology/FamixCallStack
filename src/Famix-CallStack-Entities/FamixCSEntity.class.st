@@ -12,7 +12,15 @@ FamixCSEntity class >> annotation [
 	<FMClass: #Entity super: #MooseEntity>
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
+	<abstract>
 	^ self
+]
+
+{ #category : 'testing' }
+FamixCSEntity class >> isAbstract [
+
+	<generated>
+	^ self == FamixCSEntity
 ]
 
 { #category : 'meta' }
@@ -20,4 +28,11 @@ FamixCSEntity class >> metamodel [
 
 	<generated>
 	^ FamixCSModel metamodel
+]
+
+{ #category : 'testing' }
+FamixCSEntity >> isQueryable [
+
+	<generated>
+	^ false
 ]
