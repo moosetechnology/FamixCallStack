@@ -11,7 +11,6 @@ Class {
 		'stringReference',
 		'field',
 		'primitiveValue',
-		'primitiveType',
 		'value',
 		'classReference',
 		'objectReference',
@@ -67,7 +66,6 @@ FamixCallStackGenerator >> defineClasses [
 	receiver := builder newClassNamed: #Receiver.
 
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
-	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava.
 ]
 
 { #category : 'definition' }
