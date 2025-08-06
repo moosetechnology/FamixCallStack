@@ -185,9 +185,10 @@ CallStackJsonReader >> createParameters: anArray [
 { #category : 'instance creation' }
 CallStackJsonReader >> createPrimitiveType: aString [
 	"Instantiate a PrimitiveType if not already on the model"
-
-	^ createdClasses at: aString ifAbsentPut: [
-			  (model newPrimitiveTypeNamed: aString)
+	| name |
+	name := aString removeSuffix: '[]'.
+	^ createdClasses at: name ifAbsentPut: [
+			  (model newPrimitiveTypeNamed: name)
 				  isStub: true;
 				  yourself ]
 ]
@@ -256,14 +257,19 @@ CallStackJsonReader >> createUnaccessibleField [
 CallStackJsonReader >> createValueReference: aDictionary [
 	"Instantiate a ValueReference"
 
-	| reference refered |
+	| reference type |
 	"If already created do not create again"
 	createdReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ].
 
-	refered := aDictionary at: #refered.
-	reference := self createValueReferenceFor: refered withId: (aDictionary at: #uniqueId).
-	self flag:#todo. "maybe the type could be a primitive type for array ?"
-	self createTypingFor: reference with: (self createClassNamed: (aDictionary at: #type)).
+	reference := self createValueReferenceFor: (aDictionary at: #refered) withId: (aDictionary at: #uniqueId).
+
+	"Here we asume that 
+	- a class will be defined with its package in its name meaning containing at least a dot
+	- while a primitive type wont have a package so no dots"
+	type := ((aDictionary at: #type) includesSubstring: '.')
+		        ifTrue: [ self createClassNamed: (aDictionary at: #type) ]
+		        ifFalse: [ self createPrimitiveType: (aDictionary at: #type) ].
+	self createTypingFor: reference with: type.
 
 	^ reference
 ]
