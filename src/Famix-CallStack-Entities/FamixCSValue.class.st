@@ -2,6 +2,11 @@
 ## Relations
 ======================
 
+### Outgoing dependencies
+| Relation | Origin | Opposite | Type | Comment |
+|---|
+| `typing` | `FamixTTypedEntity` | `typedEntity` | `FamixTEntityTyping` | Association linking this entity to its declared type.|
+
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
@@ -13,8 +18,8 @@
 Class {
 	#name : 'FamixCSValue',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
+	#traits : 'FamixTTypedEntity + TEntityMetaLevelDependency',
+	#classTraits : 'FamixTTypedEntity classTrait + TEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#usage => FMMany type: #FamixCSTValueContainer opposite: #value'
 	],

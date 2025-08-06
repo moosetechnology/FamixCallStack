@@ -11,11 +11,7 @@
 | Relation | Origin | Opposite | Type | Comment |
 |---|
 | `methodCall` | `FamixCSStackline` | `stackline` | `FamixCSMethodCall` | |
-
-### Other
-| Relation | Origin | Opposite | Type | Comment |
-|---|
-| `receiver` | `FamixCSStackline` | `receiverUsages` | `FamixCSObjectReference` | |
+| `receiver` | `FamixCSStackline` | `stackline` | `FamixCSReceiver` | |
 
 
 
@@ -23,11 +19,11 @@
 Class {
 	#name : 'FamixCSStackline',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
+	#traits : 'TEntityMetaLevelDependency',
+	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
-		'#receiver => FMOne type: #FamixCSObjectReference opposite: #receiverUsages',
+		'#receiver => FMOne type: #FamixCSReceiver opposite: #stackline',
 		'#stack => FMOne type: #FamixCSStack opposite: #stacklines'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -87,7 +83,7 @@ FamixCSStackline >> positionInStack [
 	<FMProperty: #positionInStack type: #Number>
 	<derived>
 	<FMComment: 'The position of this stack line in the stack'>
-	^ self stack stacklines indexOf: self
+	^ stack ifNotNil:[ stack indexOfLine: self].
 ]
 
 { #category : 'accessing' }
@@ -101,7 +97,7 @@ FamixCSStackline >> previous [
 
 { #category : 'accessing' }
 FamixCSStackline >> receiver [
-	"Relation named: #receiver type: #FamixCSObjectReference opposite: #receiverUsages"
+	"Relation named: #receiver type: #FamixCSReceiver opposite: #stackline"
 
 	<generated>
 	^ receiver
@@ -112,6 +108,13 @@ FamixCSStackline >> receiver: anObject [
 
 	<generated>
 	receiver := anObject
+]
+
+{ #category : 'navigation' }
+FamixCSStackline >> receiverGroup [
+	<generated>
+	<navigation: 'Receiver'>
+	^ MooseSpecializedGroup with: self receiver
 ]
 
 { #category : 'accessing' }

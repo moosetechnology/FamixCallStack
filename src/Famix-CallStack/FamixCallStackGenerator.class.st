@@ -20,7 +20,8 @@ Class {
 		'tValueContainer',
 		'stack',
 		'tEntityMetaLevelDependency',
-		'tTypedEntity'
+		'tTypedEntity',
+		'receiver'
 	],
 	#category : 'Famix-CallStack',
 	#package : 'Famix-CallStack'
@@ -63,10 +64,10 @@ FamixCallStackGenerator >> defineClasses [
 	argument := builder newClassNamed: #Argument.
 	field := builder newClassNamed: #Field.
 	arrayValue := builder newClassNamed: #ArrayValue.
+	receiver := builder newClassNamed: #Receiver.
 
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
 	primitiveType := self remoteEntity: #PrimitiveType withPrefix: #FamixJava.
-	tTypedEntity := self remoteEntity: #TTypedEntity withPrefix: #Famix
 ]
 
 { #category : 'definition' }
@@ -87,18 +88,20 @@ FamixCallStackGenerator >> defineHierarchy [
 	field --|> entity.
 	arrayValue --|> entity.
 	argument --|> entity.
-	tValueContainer --|> tTypedEntity.
 
 	"trait usages"
+	value --|> #TTypedEntity.
 	field --|> tValueContainer.
 	arrayValue --|> tValueContainer.
 	argument --|> tValueContainer.
+	receiver --|> tValueContainer.
 
 	"querryable"
-	stack --|> tEntityMetaLevelDependency.
-	stackline --|> tEntityMetaLevelDependency.
-	methodCall --|> tEntityMetaLevelDependency.
-	tValueContainer --|> tEntityMetaLevelDependency.
+	stack --|> #TEntityMetaLevelDependency.
+	stackline --|> #TEntityMetaLevelDependency.
+	methodCall --|> #TEntityMetaLevelDependency.
+	tValueContainer --|> #TEntityMetaLevelDependency.
+	value --|> #TEntityMetaLevelDependency.
 ]
 
 { #category : 'definition' }
@@ -110,8 +113,6 @@ FamixCallStackGenerator >> defineProperties [
 	
 	primitiveValue property: #value type: #Object.
 
-	self flag: #todo. "ishould not have their type as properties but as relations to an object representing java types"
-	objectReference property: #type type: #String.
 	objectReference property: #uniqueID type: #Number.
 
 	stringReference property: #value type: #String.
@@ -134,9 +135,7 @@ FamixCallStackGenerator >> defineRelations [
 	super defineRelations.
 	stack <>-* stackline.
 	stackline <>- methodCall.
-	self flag: #todo. "add the trait TvaluesContainer to stackline instead of jsut having the receiver
-		or: add an object receiver like an argument but for stackline, that will have TvaluesContainer"
-	(stackline property: #receiver) *- (objectReference property: #receiverUsages).
+	stackline <>- receiver.
 
 	methodCall *- method.
 
@@ -144,9 +143,7 @@ FamixCallStackGenerator >> defineRelations [
 	(arrayReference property: #elements) -* (arrayValue property: #parent).
 	(methodCall property: #arguments) -* (argument property: #parent).
 
-	(tValueContainer property: #value) *- (value property: #usage).
-
-	(primitiveValue property: #type) - (primitiveType property: #usages)
+	(tValueContainer property: #value) *- (value property: #usage)
 ]
 
 { #category : 'definition' }
@@ -155,6 +152,4 @@ FamixCallStackGenerator >> defineTraits [
 	super defineTraits.
 
 	tValueContainer := builder newTraitNamed: #TValueContainer.
-
-	tEntityMetaLevelDependency := builder newTraitNamed: #TEntityMetaLevelDependency
 ]

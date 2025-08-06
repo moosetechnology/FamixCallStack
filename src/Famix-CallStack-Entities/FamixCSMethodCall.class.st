@@ -19,8 +19,8 @@
 Class {
 	#name : 'FamixCSMethodCall',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
+	#traits : 'TEntityMetaLevelDependency',
+	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#arguments => FMMany type: #FamixCSArgument opposite: #parent',
 		'#stackline => FMOne type: #FamixCSStackline opposite: #methodCall'

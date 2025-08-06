@@ -13,8 +13,8 @@
 Class {
 	#name : 'FamixCSStack',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
+	#traits : 'TEntityMetaLevelDependency',
+	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#lines',
 		'#stacklines => FMMany type: #FamixCSStackline opposite: #stack'
@@ -37,6 +37,12 @@ FamixCSStack class >> annotation [
 FamixCSStack >> addStackline: anObject [
 	<generated>
 	^ self stacklines add: anObject
+]
+
+{ #category : 'accessing' }
+FamixCSStack >> indexOfLine: aLine [
+	<derived> 
+	^ stacklines indexOf: aLine
 ]
 
 { #category : 'navigation' }

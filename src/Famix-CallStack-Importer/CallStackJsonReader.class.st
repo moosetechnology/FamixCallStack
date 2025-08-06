@@ -202,11 +202,9 @@ CallStackJsonReader >> createPrimitiveType: aString [
 CallStackJsonReader >> createPrimitiveValue: aDictionary [
 	"Instantiate a PrimitiveValue"
 
-	| primVal primType |
+	| primVal |
 	primVal := model newPrimitiveValue.
-	self flag: #todo. "Change the typing with a typing entity to reify the link like for paramaters"
-	primType := self createPrimitiveType: (aDictionary at: #type).
-	primVal type: primType.
+	self createTypingFor: primVal with: (self createPrimitiveType: (aDictionary at: #type)).
 	primVal value: (aDictionary at: #value).
 	^ primVal
 ]
@@ -214,7 +212,8 @@ CallStackJsonReader >> createPrimitiveValue: aDictionary [
 { #category : 'instance creation' }
 CallStackJsonReader >> createReceiver: aDictionary [
 	"Instantiate the receiver of in a stack line"
-	^ self createValueReference: (aDictionary at: #reference)
+
+	^ model newReceiver value: (self createValueReference: (aDictionary at: #reference))
 ]
 
 { #category : 'instance creation' }
@@ -269,7 +268,8 @@ CallStackJsonReader >> createValueReference: aDictionary [
 
 	refered := aDictionary at: #refered.
 	reference := self createValueReferenceFor: refered withId: (aDictionary at: #uniqueId).
-	reference type: (aDictionary at: #type).
+	self flag:#todo. "maybe the type could be a primitive type for array ?"
+	self createTypingFor: reference with: (self createClassNamed: (aDictionary at: #type)).
 
 	^ reference
 ]

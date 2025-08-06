@@ -1,30 +1,16 @@
 "
-## Relations
-======================
-
-### Other
-| Relation | Origin | Opposite | Type | Comment |
-|---|
-| `receiverUsages` | `FamixCSObjectReference` | `receiver` | `FamixCSStackline` | |
-
-
 ## Properties
 ======================
 
 | Name | Type | Default value | Comment |
 |---|
-| `type` | `String` | nil | |
 | `uniqueID` | `Number` | nil | |
 
 "
 Class {
 	#name : 'FamixCSObjectReference',
 	#superclass : 'FamixCSValue',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
-		'#receiverUsages => FMMany type: #FamixCSStackline opposite: #receiver',
-		'#type => FMProperty',
 		'#uniqueID => FMProperty'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -41,46 +27,10 @@ FamixCSObjectReference class >> annotation [
 	^ self
 ]
 
-{ #category : 'adding' }
-FamixCSObjectReference >> addReceiverUsage: anObject [
-	<generated>
-	^ self receiverUsages add: anObject
-]
-
 { #category : 'printing' }
 FamixCSObjectReference >> mooseNameOn: aStream [
 
 	aStream nextPutAll: '[' , uniqueID asString , '] : '
-]
-
-{ #category : 'accessing' }
-FamixCSObjectReference >> receiverUsages [
-	"Relation named: #receiverUsages type: #FamixCSStackline opposite: #receiver"
-
-	<generated>
-	<derived>
-	^ receiverUsages
-]
-
-{ #category : 'accessing' }
-FamixCSObjectReference >> receiverUsages: anObject [
-
-	<generated>
-	receiverUsages value: anObject
-]
-
-{ #category : 'accessing' }
-FamixCSObjectReference >> type [
-
-	<FMProperty: #type type: #String>
-	<generated>
-	^ type
-]
-
-{ #category : 'accessing' }
-FamixCSObjectReference >> type: anObject [
-	<generated>
-	type := anObject
 ]
 
 { #category : 'accessing' }

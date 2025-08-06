@@ -19,8 +19,6 @@
 Class {
 	#name : 'FamixCSArrayReference',
 	#superclass : 'FamixCSObjectReference',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#elements => FMMany type: #FamixCSArrayValue opposite: #parent',
 		'#size => FMProperty'

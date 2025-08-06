@@ -1,13 +1,4 @@
 "
-## Relations
-======================
-
-### Other
-| Relation | Origin | Opposite | Type | Comment |
-|---|
-| `type` | `FamixCSPrimitiveValue` | `usages` | `FamixJavaPrimitiveType` | |
-
-
 ## Properties
 ======================
 
@@ -19,8 +10,6 @@
 Class {
 	#name : 'FamixCSPrimitiveValue',
 	#superclass : 'FamixCSValue',
-	#traits : 'FamixCSTEntityMetaLevelDependency',
-	#classTraits : 'FamixCSTEntityMetaLevelDependency classTrait',
 	#instVars : [
 		'#value => FMProperty'
 	],
@@ -41,32 +30,10 @@ FamixCSPrimitiveValue class >> annotation [
 { #category : 'printing' }
 FamixCSPrimitiveValue >> mooseNameOn: aStream [
 
-	self type mooseNameOn: aStream.
-	aStream nextPutAll: ' : ' , value asString.
-	
-]
-
-{ #category : 'accessing' }
-FamixCSPrimitiveValue >> type [
-	"Relation named: #type type: #FamixJavaPrimitiveType opposite: #usages"
-
-	<generated>
-	<FMProperty: #type type: #FamixJavaPrimitiveType opposite: #usages>
-	^ self attributeAt: #type ifAbsent: [ nil ]
-]
-
-{ #category : 'accessing' }
-FamixCSPrimitiveValue >> type: anObject [
-
-	<generated>
-	(self attributeAt: #type ifAbsentPut: [nil]) == anObject ifTrue: [ ^ anObject ].
-	anObject ifNil: [ | otherSide |
-		otherSide :=  self type.
-		self attributeAt: #type put: anObject.
-		otherSide usages: nil ]
-	ifNotNil: [ 
-		self attributeAt: #type put: anObject.
-		anObject usages: self ]
+	typing ifNotNil: [
+			typing declaredType mooseNameOn: aStream.
+			aStream nextPutAll: ' : ' ].
+	aStream nextPutAll: value asString
 ]
 
 { #category : 'accessing' }
