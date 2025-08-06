@@ -1,9 +1,9 @@
 "
-## Usage :
-	file := '/Path/To/.../JDIOutput.cs' asFileReference.
-	
-	model := CallStackJsonReader import: file.
-	
+## Usage 
+```
+file := '/Path/To/.../JDIOutput.cs' asFileReference.
+model := CallStackJsonReader import: file.
+```
 	
 	
 
@@ -57,13 +57,6 @@ CallStackJsonReader >> createArgument: aCollection [
 							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
 				ifFalse: [ arg value: (self createValueWith: aCollection) ] ].
 	^ arg
-]
-
-{ #category : 'instance creation' }
-CallStackJsonReader >> createArguments: anArray thenDo: aBlock [
-	"Instantiate all arguments of a method and apply a block on the instantiated arguments"
-
-	anArray collect: [ :instance | self createArgument: instance ] thenDo: aBlock
 ]
 
 { #category : 'instance creation' }
