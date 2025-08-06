@@ -147,17 +147,18 @@ CallStackJsonReader >> createMethod: aDictionnary [
 	"Instantiate a FamixJavaMethod with the maximum informations possible"
 
 	| method |
-	self flag: #todo. "supress duplications of methods use createPrimitiveType"
-	self flag: #todo. "maybe we could add more information on the class implementing the used method in the parsing?"
-	method := (model newMethodNamed: (aDictionnary at: #name))
-		          isStatic: ((aDictionnary at: #static) asLowercase = #true
-				           ifTrue: [ true ]
-				           ifFalse: [ false ]);
-		          parentType: (self createClassNamed: (aDictionnary at: #parentType));
-		          isStub: true;
-		          yourself.
+	"check if the method already exist"
+	createdMethods at: (aDictionnary at: #name) ifPresent: [ :subDict | subDict at: (aDictionnary at: #parentType) ifPresent: [ :m | ^ m ] ].
 
-	self createParameters: (aDictionnary at: #parameters) thenDo: [ :param | method addParameter: param ].
+	method := (model newMethodNamed: (aDictionnary at: #name)) isStub: true.
+	method isStatic: ((aDictionnary at: #static) asLowercase = #true
+			 ifTrue: [ true ]
+			 ifFalse: [ false ]).
+	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
+
+	(self createParameters: (aDictionnary at: #parameters)) do: [ :param | method addParameter: param ].
+	"Add the method to not create it again"
+	createdMethods at: (aDictionnary at: #name) ifAbsentPut: [ Dictionary new at: (aDictionnary at: #parentType) put: method; yourself ].
 	^ method
 ]
 
@@ -174,12 +175,11 @@ CallStackJsonReader >> createMethodCall: aDictionnary [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createParameters: anArray thenDo: aBlock [
-	"Instantiates all parameters of a method and execute the given block on the instantiated parameters"
+CallStackJsonReader >> createParameters: anArray [
+	"Instantiates all parameters of a method"
 
-	anArray
-		collect: [ :param | self createTypingFor: (model newParameterNamed: (param at: #name)) with: (self createClassNamed: (param at: #type)) ]
-		thenDo: aBlock
+	^ anArray collect: [ :param |
+		  self createTypingFor: (model newParameterNamed: (param at: #name)) with: (self createClassNamed: (param at: #type)) ]
 ]
 
 { #category : 'instance creation' }
