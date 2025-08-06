@@ -4,14 +4,14 @@ Extension { #name : 'FamixJavaMethod' }
 FamixJavaMethod >> isStatic [
 
 	<FMProperty: #isStatic type: #Boolean>
-	
+	<derived>
 	^ isStatic
 ]
 
 { #category : '*Famix-CallStack-Entities' }
 FamixJavaMethod >> isStatic: anObject [
-	
-	isStatic := anObject
+	<derived>
+	isStatic := anObject 
 ]
 
 { #category : '*Famix-Callstack-Entities-accessing' }

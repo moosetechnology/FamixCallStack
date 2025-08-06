@@ -1,19 +1,9 @@
 "
-## Relations
-======================
-
-### Other
-| Relation | Origin | Opposite | Type | Comment |
-|---|
-| `receiverUsages` | `FamixCSObjectReference` | `receiver` | `FamixCSStackline` | |
-
-
 ## Properties
 ======================
 
 | Name | Type | Default value | Comment |
 |---|
-| `type` | `String` | nil | |
 | `uniqueID` | `Number` | nil | |
 
 "

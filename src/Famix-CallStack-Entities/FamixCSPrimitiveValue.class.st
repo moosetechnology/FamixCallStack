@@ -30,8 +30,10 @@ FamixCSPrimitiveValue class >> annotation [
 { #category : 'printing' }
 FamixCSPrimitiveValue >> mooseNameOn: aStream [
 
-	typing ifNotNil: [ typing declaredType mooseNameOn: aStream ] ifNil: [ aStream nextPutAll: nil asString ].
-	aStream nextPutAll: ' : ' , value asString
+	typing ifNotNil: [
+			typing declaredType mooseNameOn: aStream.
+			aStream nextPutAll: ' : ' ].
+	aStream nextPutAll: value asString
 ]
 
 { #category : 'accessing' }
