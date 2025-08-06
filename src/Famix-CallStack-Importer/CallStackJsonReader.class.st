@@ -101,10 +101,10 @@ CallStackJsonReader >> createArrayValueWith: aCollection [
 { #category : 'instance creation' }
 CallStackJsonReader >> createClassNamed: aString [
 	"Instantiate a FamixJavaClass with the given name"
-
-	self flag: #todo. "how to differentiates java.lang.String and java.lang.String[] without 2 object?"
-	^ createdClasses at: aString ifAbsentPut: [
-			  (model newClassNamed: aString)
+	| name |
+	name := aString removeSuffix: '[]'.
+	^ createdClasses at: name ifAbsentPut: [
+			  (model newClassNamed: name )
 				  isStub: true;
 				  yourself ]
 ]
