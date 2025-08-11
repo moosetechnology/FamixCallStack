@@ -103,21 +103,24 @@ CallStackJsonReader >> createClassNamed: aString [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
+CallStackJsonReader >> createClassReference: aCollection withId: uniqueId [
 	"Instantiate a ClassReference and all its fields"
 
 	| ref |
 	ref := model newClassReference.
+	self flag:#todo. "maybe having the uniqueId here is unecessary because is done in another method"
 	ref uniqueID: uniqueId.
 	createdReference at: uniqueId put: ref.
-	self flag: #todo. "The fact that the message Class_Not_Prepared is said only on the fields is a problem, the parser should log this directly on the class "
-	self flag:#todo. "same for all field being inaccessible, should be told before doing all the field"
-	self flag: #todo. "Checking attention tag here is suspect"
-	anArray
+	self flag: #todo. "same for all field being inaccessible, should be told before doing all the field"
+
+	aCollection isString ifTrue: [
+			(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')
+				ifTrue: [ ^ ref prepared: false ]
+				ifFalse: [ Error signal: 'Uneccepted String in class refrence import :' , aCollection ] ].
+	aCollection
 		collect: [ :field |
 				field isCSAttentionTag
 					ifTrue: [
-							(field sameAs: '<<CLASS_NOT_PREPARED>>') ifTrue: [ ^ ref prepared: false ].
 							(field sameAs: '<<INACCESSIBLE>>')
 								ifTrue: [ self createInaccessibleField ]
 								ifFalse: [ Error signal: 'unhandled attention tag : ' , field ] ]
@@ -283,11 +286,14 @@ CallStackJsonReader >> createValueReferenceFor: aCollection withId: uniqueId [
 			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields withId: uniqueId ].
 			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements withId: uniqueId ] ].
 
-	aCollection isByteString ifTrue: [
+	aCollection isString ifTrue: [
 			aCollection isCSAttentionTag
 				ifFalse: [ ^ self createStringReference: aCollection withId: uniqueId ]
-				ifTrue: [ Error signal: 'Should not be an attentionTag, this should be detected before coming to this method' ] ].
-	Error signal: 'Should either be String, array or an object'
+				ifTrue: [
+						(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')
+							ifTrue: [ ^ self createClassReference: aCollection withId: uniqueId ]
+							ifFalse: [ Error signal: 'Uneccepted attention tag in value reference importation : ', aCollection ] ] ].
+	Error signal: 'Should either be String or dictionary'
 ]
 
 { #category : 'instance creation' }
