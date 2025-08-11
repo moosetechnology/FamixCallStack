@@ -51,27 +51,12 @@ CallStackJsonReader >> createArgument: aCollection [
 	arg := model newArgument.
 	aCollection ifNotNil: [
 			aCollection isCSAttentionTag
-				ifTrue: [ 1 halt.
+				ifTrue: [
 						(aCollection sameAs: '<<INACCESSIBLE>>')
 							ifTrue: [ arg accessible: false ]
 							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
 				ifFalse: [ arg value: (self createValueWith: aCollection) ] ].
 	^ arg
-]
-
-{ #category : 'instance creation' }
-CallStackJsonReader >> createArrayReference: aCollection withId: uniqueId [
-	"Instantiate an ArrayReference and all its values"
-
-	| ref |
-	ref := model newArrayReference.
-
-	ref uniqueID: uniqueId.
-	createdReference at: uniqueId put: ref.
-
-	ref size: aCollection size.
-	aCollection do: [ :elem | ref addElement: (self createArrayValueWith: elem) ].
-	^ ref
 ]
 
 { #category : 'instance creation' }
@@ -100,31 +85,6 @@ CallStackJsonReader >> createClassNamed: aString [
 			  (model newClassNamed: name )
 				  isStub: true;
 				  yourself ]
-]
-
-{ #category : 'instance creation' }
-CallStackJsonReader >> createClassReference: aCollection withId: uniqueId [
-	"Instantiate a ClassReference and all its fields"
-
-	| ref |
-	ref := model newClassReference.
-	ref uniqueID: uniqueId.
-	createdReference at: uniqueId put: ref.
-
-	aCollection isString ifTrue: [
-			(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')
-				ifTrue: [ ^ ref prepared: false ]
-				ifFalse: [ Error signal: 'Uneccepted String in class refrence import :' , aCollection ] ].
-	aCollection
-		collect: [ :field |
-				field isCSAttentionTag
-					ifTrue: [
-							(field sameAs: '<<INACCESSIBLE>>')
-								ifTrue: [ self createInaccessibleField ]
-								ifFalse: [ Error signal: 'unhandled attention tag : ' , field ] ]
-					ifFalse: [ self createField: (field at: #field) ] ]
-		thenDo: [ :object | ref addField: object ].
-	^ ref
 ]
 
 { #category : 'instance creation' }
@@ -162,7 +122,7 @@ CallStackJsonReader >> createMethod: aDictionnary [
 	createdMethods at: (aDictionnary at: #name) ifPresent: [ :subDict | subDict at: (aDictionnary at: #parentType) ifPresent: [ :m | ^ m ] ].
 
 	method := (model newMethodNamed: (aDictionnary at: #name)) isStub: true.
-	method isStatic: ((aDictionnary at: #static) asLowercase = #true
+	method isClassSide: ((aDictionnary at: #static) asLowercase = #true
 			 ifTrue: [ true ]
 			 ifFalse: [ false ]).
 	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
@@ -233,20 +193,6 @@ CallStackJsonReader >> createStackline: aDictionnary [
 	^ line
 ]
 
-{ #category : 'instance creation' }
-CallStackJsonReader >> createStringReference: aString withId: uniqueId [
-	"Instantiate a StringReference"
-
-	| ref |
-	ref := model newStringReference.
-
-	ref uniqueID: uniqueId.
-	createdReference at: uniqueId put: ref.
-
-	ref value: aString.
-	^ ref
-]
-
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createTypingFor: anObject with: type [
 
@@ -261,9 +207,12 @@ CallStackJsonReader >> createValueReference: aDictionary [
 
 	| reference type |
 	"If already created do not create again"
-	createdReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ].
-
-	reference := self createValueReferenceFor: (aDictionary at: #refered) withId: (aDictionary at: #uniqueId).
+	reference:= createdReference
+		at: (aDictionary at: #uniqueId)
+		ifPresent: [ :value | ^ value ]
+		ifAbsentPut: [ (self instantiateReferenceEntityFrom: aDictionary) uniqueID: (aDictionary at: #uniqueId) ].
+		
+	reference fillFrom: (aDictionary at: #refered) reader: self.
 
 	"Here we asume that 
 	- a class will be defined with its package in its name meaning containing at least a dot
@@ -274,24 +223,6 @@ CallStackJsonReader >> createValueReference: aDictionary [
 	self createTypingFor: reference with: type.
 
 	^ reference
-]
-
-{ #category : 'instance creation' }
-CallStackJsonReader >> createValueReferenceFor: aCollection withId: uniqueId [
-	"Choose which subtype of a ValueReference should be instantiated"
-
-	aCollection isDictionary ifTrue: [
-			aCollection at: #fields ifPresent: [ :fields | ^ self createClassReference: fields withId: uniqueId ].
-			aCollection at: #elements ifPresent: [ :elements | ^ self createArrayReference: elements withId: uniqueId ] ].
-
-	aCollection isString ifTrue: [
-			aCollection isCSAttentionTag
-				ifFalse: [ ^ self createStringReference: aCollection withId: uniqueId ]
-				ifTrue: [
-						(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')
-							ifTrue: [ ^ self createClassReference: aCollection withId: uniqueId ]
-							ifFalse: [ Error signal: 'Uneccepted attention tag in value reference importation : ', aCollection ] ] ].
-	Error signal: 'Should either be String or dictionary'
 ]
 
 { #category : 'instance creation' }
@@ -313,6 +244,25 @@ CallStackJsonReader >> initialize [
 	createdPrimitives := Dictionary new.
 	createdClasses := Dictionary new.
 	createdMethods := Dictionary new.
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> instantiateReferenceEntityFrom: aDictionary [
+
+	| refered |
+	refered := aDictionary at: #refered.
+	refered isDictionary ifTrue: [
+			refered at: #fields ifPresent: [ :fields | ^ model newClassReference ].
+			refered at: #elements ifPresent: [ :elements | ^ model newArrayReference ] ].
+
+	refered isString ifTrue: [
+			refered isCSAttentionTag
+				ifFalse: [ ^ model newStringReference ]
+				ifTrue: [
+						(refered sameAs: '<<CLASS_NOT_PREPARED>>')
+							ifTrue: [ ^ model newClassReference prepared: false; yourself]
+							ifFalse: [ Error signal: 'Uneccepted attention tag in value reference importation : ' , refered ] ] ].
+	Error signal: 'Should either be String or dictionary'
 ]
 
 { #category : 'accessing' }

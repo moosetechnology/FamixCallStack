@@ -76,12 +76,6 @@ FamixCSArrayReference >> mooseNameOn: aStream [
 FamixCSArrayReference >> size [
 
 	<FMProperty: #size type: #Number>
-	<generated>
-	^ size
-]
-
-{ #category : 'accessing' }
-FamixCSArrayReference >> size: anObject [
-	<generated>
-	size := anObject
+	<derived>
+	^ elements size
 ]
