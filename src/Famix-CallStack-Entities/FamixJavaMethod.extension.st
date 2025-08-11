@@ -11,7 +11,6 @@ FamixJavaMethod >> isStatic [
 { #category : '*Famix-CallStack-Entities' }
 FamixJavaMethod >> isStatic: anObject [
 	<derived>
-	self flag:#todo. "When importing the model isStatic is not a variable known bye FamixJavaMethod"
 	isStatic := anObject 
 ]
 

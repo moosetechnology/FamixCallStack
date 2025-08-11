@@ -51,7 +51,7 @@ CallStackJsonReader >> createArgument: aCollection [
 	arg := model newArgument.
 	aCollection ifNotNil: [
 			aCollection isCSAttentionTag
-				ifTrue: [
+				ifTrue: [ 1 halt.
 						(aCollection sameAs: '<<INACCESSIBLE>>')
 							ifTrue: [ arg accessible: false ]
 							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
@@ -108,10 +108,8 @@ CallStackJsonReader >> createClassReference: aCollection withId: uniqueId [
 
 	| ref |
 	ref := model newClassReference.
-	self flag:#todo. "maybe having the uniqueId here is unecessary because is done in another method"
 	ref uniqueID: uniqueId.
 	createdReference at: uniqueId put: ref.
-	self flag: #todo. "same for all field being inaccessible, should be told before doing all the field"
 
 	aCollection isString ifTrue: [
 			(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')

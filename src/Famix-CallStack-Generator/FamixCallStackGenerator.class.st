@@ -106,25 +106,20 @@ FamixCallStackGenerator >> defineHierarchy [
 FamixCallStackGenerator >> defineProperties [
 
 	super defineProperties.
-	self flag:#todo. "the attribute isStatic doesn't appear to be generated, this attibute is acutally being added manually"
-	method property: #isStatic type: #Boolean.
 	
 	primitiveValue property: #value type: #Object.
 
 	objectReference property: #uniqueID type: #Number.
 
 	stringReference property: #value type: #String.
-
 	arrayReference property: #size type: #Number.
 
-	self flag:#todo. "Maybe field should use TNamedEntity?"
+	self flag:#todo. "should field use #TNamedEntity ?"
 	field property: #name type: #String.
 	
 	tValueContainer property: #maxDepthReached type: #Boolean defaultValue: false .
 	tValueContainer property: #accessible type: #Boolean defaultValue: true.
-	
 	classReference property: #prepared type: #Boolean defaultValue: true.
-	self flag: #todo "try adding more information on argument (like the name or order of these)"
 ]
 
 { #category : 'definition' }
