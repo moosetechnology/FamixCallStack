@@ -52,8 +52,8 @@ CallStackJsonReader >> createArgument: aCollection [
 	aCollection ifNotNil: [
 			aCollection isCSAttentionTag
 				ifTrue: [
-						(aCollection sameAs: '<<UNACCESSIBLE>>')
-							ifTrue: [ arg unaccessible: true ]
+						(aCollection sameAs: '<<INACCESSIBLE>>')
+							ifTrue: [ arg unaccessible: false ]
 							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
 				ifFalse: [ arg value: (self createValueWith: aCollection) ] ].
 	^ arg
@@ -111,14 +111,15 @@ CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
 	ref uniqueID: uniqueId.
 	createdReference at: uniqueId put: ref.
 	self flag: #todo. "The fact that the message Class_Not_Prepared is said only on the fields is a problem, the parser should log this directly on the class "
+	self flag:#todo. "same for all field being inaccessible, should be told before doing all the field"
 	self flag: #todo. "Checking attention tag here is suspect"
 	anArray
 		collect: [ :field |
 				field isCSAttentionTag
 					ifTrue: [
 							(field sameAs: '<<CLASS_NOT_PREPARED>>') ifTrue: [ ^ ref unprepared: true ].
-							(field sameAs: '<<UNACCESSIBLE>>')
-								ifTrue: [ self createUnaccessibleField ]
+							(field sameAs: '<<INACCESSIBLE>>')
+								ifTrue: [ self createInaccessibleField ]
 								ifFalse: [ Error signal: 'unhandled attention tag : ' , field ] ]
 					ifFalse: [ self createField: (field at: #field) ] ]
 		thenDo: [ :object | ref addField: object ].
@@ -139,6 +140,15 @@ CallStackJsonReader >> createField: aDictionary [
 							ifTrue: [ field maxDepthReached: true ]
 							ifFalse: [ Error signal: 'unhandled attention tag : ' , value ] ]
 				ifFalse: [ field value: (self createValueWith: value) ] ].
+	^ field
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> createInaccessibleField [
+
+	| field |
+	field := model newField.
+	field unaccessible: true.
 	^ field
 ]
 
