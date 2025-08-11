@@ -53,7 +53,7 @@ CallStackJsonReader >> createArgument: aCollection [
 			aCollection isCSAttentionTag
 				ifTrue: [
 						(aCollection sameAs: '<<INACCESSIBLE>>')
-							ifTrue: [ arg unaccessible: false ]
+							ifTrue: [ arg accessible: false ]
 							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
 				ifFalse: [ arg value: (self createValueWith: aCollection) ] ].
 	^ arg
@@ -117,7 +117,7 @@ CallStackJsonReader >> createClassReference: anArray withId: uniqueId [
 		collect: [ :field |
 				field isCSAttentionTag
 					ifTrue: [
-							(field sameAs: '<<CLASS_NOT_PREPARED>>') ifTrue: [ ^ ref unprepared: true ].
+							(field sameAs: '<<CLASS_NOT_PREPARED>>') ifTrue: [ ^ ref prepared: false ].
 							(field sameAs: '<<INACCESSIBLE>>')
 								ifTrue: [ self createInaccessibleField ]
 								ifFalse: [ Error signal: 'unhandled attention tag : ' , field ] ]
@@ -148,7 +148,7 @@ CallStackJsonReader >> createInaccessibleField [
 
 	| field |
 	field := model newField.
-	field unaccessible: true.
+	field accessible: false.
 	^ field
 ]
 

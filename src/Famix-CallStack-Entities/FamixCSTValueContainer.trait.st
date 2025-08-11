@@ -13,15 +13,15 @@
 
 | Name | Type | Default value | Comment |
 |---|
+| `accessible` | `Boolean` | true | |
 | `maxDepthReached` | `Boolean` | false | |
-| `unaccessible` | `Boolean` | false | |
 
 "
 Trait {
 	#name : 'FamixCSTValueContainer',
 	#instVars : [
+		'#accessible => FMProperty defaultValue: true',
 		'#maxDepthReached => FMProperty defaultValue: false',
-		'#unaccessible => FMProperty defaultValue: false',
 		'#value => FMOne type: #FamixCSValue opposite: #usage'
 	],
 	#traits : 'TEntityMetaLevelDependency',
@@ -41,6 +41,20 @@ FamixCSTValueContainer classSide >> annotation [
 ]
 
 { #category : 'accessing' }
+FamixCSTValueContainer >> accessible [
+
+	<FMProperty: #accessible type: #Boolean defaultValue: true>
+	<generated>
+	^ accessible ifNil: [ accessible := true ]
+]
+
+{ #category : 'accessing' }
+FamixCSTValueContainer >> accessible: anObject [
+	<generated>
+	accessible := anObject
+]
+
+{ #category : 'accessing' }
 FamixCSTValueContainer >> maxDepthReached [
 
 	<FMProperty: #maxDepthReached type: #Boolean defaultValue: false>
@@ -52,20 +66,6 @@ FamixCSTValueContainer >> maxDepthReached [
 FamixCSTValueContainer >> maxDepthReached: anObject [
 	<generated>
 	maxDepthReached := anObject
-]
-
-{ #category : 'accessing' }
-FamixCSTValueContainer >> unaccessible [
-
-	<FMProperty: #unaccessible type: #Boolean defaultValue: false>
-	<generated>
-	^ unaccessible ifNil: [ unaccessible := false ]
-]
-
-{ #category : 'accessing' }
-FamixCSTValueContainer >> unaccessible: anObject [
-	<generated>
-	unaccessible := anObject
 ]
 
 { #category : 'accessing' }

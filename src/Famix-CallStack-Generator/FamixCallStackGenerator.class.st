@@ -121,9 +121,9 @@ FamixCallStackGenerator >> defineProperties [
 	field property: #name type: #String.
 	
 	tValueContainer property: #maxDepthReached type: #Boolean defaultValue: false .
-	tValueContainer property: #unaccessible type: #Boolean defaultValue: false.
+	tValueContainer property: #accessible type: #Boolean defaultValue: true.
 	
-	classReference property: #unprepared type: #Boolean defaultValue: false.
+	classReference property: #prepared type: #Boolean defaultValue: true.
 	self flag: #todo "try adding more information on argument (like the name or order of these)"
 ]
 

@@ -13,7 +13,7 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `unprepared` | `Boolean` | false | |
+| `prepared` | `Boolean` | true | |
 
 "
 Class {
@@ -21,7 +21,7 @@ Class {
 	#superclass : 'FamixCSObjectReference',
 	#instVars : [
 		'#field => FMMany type: #FamixCSField opposite: #parent',
-		'#unprepared => FMProperty defaultValue: false'
+		'#prepared => FMProperty defaultValue: true'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',
@@ -67,15 +67,15 @@ FamixCSClassReference >> mooseNameOn: aStream [
 ]
 
 { #category : 'accessing' }
-FamixCSClassReference >> unprepared [
+FamixCSClassReference >> prepared [
 
-	<FMProperty: #unprepared type: #Boolean defaultValue: false>
+	<FMProperty: #prepared type: #Boolean defaultValue: true>
 	<generated>
-	^ unprepared ifNil: [ unprepared := false ]
+	^ prepared ifNil: [ prepared := true ]
 ]
 
 { #category : 'accessing' }
-FamixCSClassReference >> unprepared: anObject [
+FamixCSClassReference >> prepared: anObject [
 	<generated>
-	unprepared := anObject
+	prepared := anObject
 ]
