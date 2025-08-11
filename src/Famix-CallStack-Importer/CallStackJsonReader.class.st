@@ -254,15 +254,6 @@ CallStackJsonReader >> createTypingFor: anObject with: type [
 		  yourself
 ]
 
-{ #category : 'accessing' }
-CallStackJsonReader >> createUnaccessibleField [
-
-	| field |
-	field := model newField.
-	field unaccessible: true.
-	^ field
-]
-
 { #category : 'instance creation' }
 CallStackJsonReader >> createValueReference: aDictionary [
 	"Instantiate a ValueReference"
