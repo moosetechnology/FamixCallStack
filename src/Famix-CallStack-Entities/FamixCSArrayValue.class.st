@@ -14,7 +14,6 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `accessible` | `Boolean` | true | |
 | `maxDepthReached` | `Boolean` | false | |
 
 "

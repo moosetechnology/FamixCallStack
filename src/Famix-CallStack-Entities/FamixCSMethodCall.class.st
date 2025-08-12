@@ -14,6 +14,12 @@
 | `method` | `FamixCSMethodCall` | `methodCalls` | `FamixJavaMethod` | |
 
 
+## Properties
+======================
+
+| Name | Type | Default value | Comment |
+|---|
+| `argsAccessible` | `Boolean` | true | |
 
 "
 Class {
@@ -22,6 +28,7 @@ Class {
 	#traits : 'TEntityMetaLevelDependency',
 	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
+		'#argsAccessible => FMProperty defaultValue: true',
 		'#arguments => FMMany type: #FamixCSArgument opposite: #parent',
 		'#stackline => FMOne type: #FamixCSStackline opposite: #methodCall'
 	],
@@ -43,6 +50,20 @@ FamixCSMethodCall class >> annotation [
 FamixCSMethodCall >> addArgument: anObject [
 	<generated>
 	^ self arguments add: anObject
+]
+
+{ #category : 'accessing' }
+FamixCSMethodCall >> argsAccessible [
+
+	<FMProperty: #argsAccessible type: #Boolean defaultValue: true>
+	<generated>
+	^ argsAccessible ifNil: [ argsAccessible := true ]
+]
+
+{ #category : 'accessing' }
+FamixCSMethodCall >> argsAccessible: anObject [
+	<generated>
+	argsAccessible := anObject
 ]
 
 { #category : 'accessing' }

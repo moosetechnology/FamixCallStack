@@ -13,14 +13,12 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `accessible` | `Boolean` | true | |
 | `maxDepthReached` | `Boolean` | false | |
 
 "
 Trait {
 	#name : 'FamixCSTValueContainer',
 	#instVars : [
-		'#accessible => FMProperty defaultValue: true',
 		'#maxDepthReached => FMProperty defaultValue: false',
 		'#value => FMOne type: #FamixCSValue opposite: #usage'
 	],
@@ -38,20 +36,6 @@ FamixCSTValueContainer classSide >> annotation [
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
-]
-
-{ #category : 'accessing' }
-FamixCSTValueContainer >> accessible [
-
-	<FMProperty: #accessible type: #Boolean defaultValue: true>
-	<generated>
-	^ accessible ifNil: [ accessible := true ]
-]
-
-{ #category : 'accessing' }
-FamixCSTValueContainer >> accessible: anObject [
-	<generated>
-	accessible := anObject
 ]
 
 { #category : 'accessing' }

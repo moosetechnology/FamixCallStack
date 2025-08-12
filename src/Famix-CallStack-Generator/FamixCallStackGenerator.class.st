@@ -118,7 +118,8 @@ FamixCallStackGenerator >> defineProperties [
 	
 	self flag:#todo. "argument and receiver should not have the property maxDepthReached"
 	tValueContainer property: #maxDepthReached type: #Boolean defaultValue: false .
-	tValueContainer property: #accessible type: #Boolean defaultValue: true.
+	field property: #accessible type: #Boolean defaultValue: true.
+	methodCall property: #argsAccessible type: #Boolean defaultValue: true.
 	classReference property: #prepared type: #Boolean defaultValue: true.
 ]
 

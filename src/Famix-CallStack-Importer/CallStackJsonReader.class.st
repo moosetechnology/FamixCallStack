@@ -49,13 +49,7 @@ CallStackJsonReader >> createArgument: aCollection [
 
 	| arg |
 	arg := model newArgument.
-	aCollection ifNotNil: [
-			aCollection isCSAttentionTag
-				ifTrue: [
-						(aCollection sameAs: '<<INACCESSIBLE>>')
-							ifTrue: [ arg accessible: false ]
-							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
-				ifFalse: [ arg value: (self createValueWith: aCollection) ] ].
+	aCollection ifNotNil: [ arg value: (self createValueWith: aCollection) ].
 	^ arg
 ]
 
@@ -128,11 +122,17 @@ CallStackJsonReader >> createMethod: aDictionnary [
 CallStackJsonReader >> createMethodCall: aDictionnary [
 	"Instatiate the MethodCall of a stack line, being the method informations and the given arguments"
 
-	| methodCall |
+	| methodCall args |
 	methodCall := model newMethodCall.
 	methodCall method: (self createMethod: (aDictionnary at: #method)).
 
-	(aDictionnary at: #arguments) collect: [ :instance | self createArgument: instance ] thenDo: [ :arg | methodCall addArgument: arg ].
+	args := aDictionnary at: #arguments.
+	"If no precision on accessibility by default we consider it accessible"
+	args at: #accessible ifPresent: [ :bool | methodCall argsAccessible: bool ].
+	args
+		at: #argsValues
+		ifPresent: [ :argsValues |
+		argsValues collect: [ :instance | self createArgument: instance ] thenDo: [ :arg | methodCall addArgument: arg ] ].
 	^ methodCall
 ]
 
@@ -201,7 +201,7 @@ CallStackJsonReader >> createValueReference: aDictionary [
 	reference:= createdReference
 		at: (aDictionary at: #uniqueId)
 		ifPresent: [ :value | ^ value ]
-		ifAbsentPut: [ (self instantiateReferenceEntityFrom: aDictionary) uniqueID: (aDictionary at: #uniqueId) ].
+		ifAbsentPut: [(self instantiateReferenceEntityFrom: aDictionary) uniqueID: (aDictionary at: #uniqueId) ].
 		
 	reference fillFrom: (aDictionary at: #refered) reader: self.
 

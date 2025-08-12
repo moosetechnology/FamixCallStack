@@ -25,6 +25,7 @@ Class {
 	#traits : 'FamixCSTValueContainer',
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
+		'#accessible => FMProperty defaultValue: true',
 		'#name => FMProperty',
 		'#parent => FMOne type: #FamixCSClassReference opposite: #field'
 	],
@@ -40,6 +41,20 @@ FamixCSField class >> annotation [
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
+]
+
+{ #category : 'accessing' }
+FamixCSField >> accessible [
+
+	<FMProperty: #accessible type: #Boolean defaultValue: true>
+	<generated>
+	^ accessible ifNil: [ accessible := true ]
+]
+
+{ #category : 'accessing' }
+FamixCSField >> accessible: anObject [
+	<generated>
+	accessible := anObject
 ]
 
 { #category : 'printing' }
