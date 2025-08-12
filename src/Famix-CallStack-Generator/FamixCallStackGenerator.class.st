@@ -112,8 +112,6 @@ FamixCallStackGenerator >> defineProperties [
 	objectReference property: #uniqueID type: #Number.
 
 	stringReference property: #value type: #String.
-	self flag:#todo. "size could be a derived method"
-	arrayReference property: #size type: #Number.
 
 	self flag:#todo. "should field use #TNamedEntity ?"
 	field property: #name type: #String.

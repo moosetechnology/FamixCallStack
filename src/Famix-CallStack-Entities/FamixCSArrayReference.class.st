@@ -8,20 +8,13 @@
 | `elements` | `FamixCSArrayReference` | `parent` | `FamixCSArrayValue` | |
 
 
-## Properties
-======================
-
-| Name | Type | Default value | Comment |
-|---|
-| `size` | `Number` | nil | |
 
 "
 Class {
 	#name : 'FamixCSArrayReference',
 	#superclass : 'FamixCSObjectReference',
 	#instVars : [
-		'#elements => FMMany type: #FamixCSArrayValue opposite: #parent',
-		'#size => FMProperty'
+		'#elements => FMMany type: #FamixCSArrayValue opposite: #parent'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',

@@ -120,11 +120,8 @@ CallStackJsonReader >> createMethod: aDictionnary [
 	| method |
 	"check if the method already exist"
 	createdMethods at: (aDictionnary at: #name) ifPresent: [ :subDict | subDict at: (aDictionnary at: #parentType) ifPresent: [ :m | ^ m ] ].
-
 	method := (model newMethodNamed: (aDictionnary at: #name)) isStub: true.
-	method isClassSide: ((aDictionnary at: #static) asLowercase = #true
-			 ifTrue: [ true ]
-			 ifFalse: [ false ]).
+	method isClassSide: (aDictionnary at: #isClassSide).
 	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
 
 	(self createParameters: (aDictionnary at: #parameters)) do: [ :param | method addParameter: param ].
