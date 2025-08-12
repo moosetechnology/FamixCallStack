@@ -45,11 +45,10 @@ FamixCSField class >> annotation [
 { #category : 'printing' }
 FamixCSField >> mooseNameOn: aStream [
 
-	self flag: #todo. "Reduce this complexity, and push some parts to FamixCSTValueContainer"
+	aStream nextPutAll: name , ' = '.
 	self accessible
 		ifFalse: [ aStream nextPutAll: 'inaccessible' ]
 		ifTrue: [
-				aStream nextPutAll: name , ' = '.
 				value
 					ifNil: [
 							self maxDepthReached

@@ -94,22 +94,16 @@ CallStackJsonReader >> createField: aDictionary [
 	| field |
 	field := model newField.
 	field name: (aDictionary at: #name).
-	(aDictionary at: #value) ifNotNil: [ :value |
-			value isCSAttentionTag
-				ifTrue: [
-						(value sameAs: '<<MAX_DEPTH_REACHED>>')
-							ifTrue: [ field maxDepthReached: true ]
-							ifFalse: [ Error signal: 'unhandled attention tag : ' , value ] ]
-				ifFalse: [ field value: (self createValueWith: value) ] ].
-	^ field
-]
-
-{ #category : 'accessing' }
-CallStackJsonReader >> createInaccessibleField [
-
-	| field |
-	field := model newField.
-	field accessible: false.
+	"If no precision on accessibility by default we consider it accessible"
+	aDictionary at: #accessible ifPresent: [ :bool | field accessible: bool ].
+	aDictionary at: #value ifPresent: [ :value |
+			value ifNotNil: [
+					value isCSAttentionTag
+						ifTrue: [
+								(value sameAs: '<<MAX_DEPTH_REACHED>>')
+									ifTrue: [ field maxDepthReached: true ]
+									ifFalse: [ Error signal: 'unhandled attention tag : ' , value ] ]
+						ifFalse: [ field value: (self createValueWith: value) ] ] ].
 	^ field
 ]
 

@@ -116,6 +116,7 @@ FamixCallStackGenerator >> defineProperties [
 	self flag:#todo. "should field use #TNamedEntity ?"
 	field property: #name type: #String.
 	
+	self flag:#todo. "argument and receiver should not have the property maxDepthReached"
 	tValueContainer property: #maxDepthReached type: #Boolean defaultValue: false .
 	tValueContainer property: #accessible type: #Boolean defaultValue: true.
 	classReference property: #prepared type: #Boolean defaultValue: true.
