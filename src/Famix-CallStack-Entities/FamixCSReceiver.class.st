@@ -13,12 +13,6 @@
 | `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
 
-## Properties
-======================
-
-| Name | Type | Default value | Comment |
-|---|
-| `maxDepthReached` | `Boolean` | false | |
 
 "
 Class {

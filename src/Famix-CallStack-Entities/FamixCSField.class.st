@@ -26,6 +26,7 @@ Class {
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
 		'#accessible => FMProperty defaultValue: true',
+		'#maxDepthReached => FMProperty defaultValue: false',
 		'#name => FMProperty',
 		'#parent => FMOne type: #FamixCSClassReference opposite: #field'
 	],
@@ -55,6 +56,20 @@ FamixCSField >> accessible [
 FamixCSField >> accessible: anObject [
 	<generated>
 	accessible := anObject
+]
+
+{ #category : 'accessing' }
+FamixCSField >> maxDepthReached [
+
+	<FMProperty: #maxDepthReached type: #Boolean defaultValue: false>
+	<generated>
+	^ maxDepthReached ifNil: [ maxDepthReached := false ]
+]
+
+{ #category : 'accessing' }
+FamixCSField >> maxDepthReached: anObject [
+	<generated>
+	maxDepthReached := anObject
 ]
 
 { #category : 'printing' }

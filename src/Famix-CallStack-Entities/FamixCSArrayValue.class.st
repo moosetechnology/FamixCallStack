@@ -23,6 +23,7 @@ Class {
 	#traits : 'FamixCSTValueContainer',
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
+		'#maxDepthReached => FMProperty defaultValue: false',
 		'#parent => FMOne type: #FamixCSArrayReference opposite: #elements'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -37,6 +38,20 @@ FamixCSArrayValue class >> annotation [
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
+]
+
+{ #category : 'accessing' }
+FamixCSArrayValue >> maxDepthReached [
+
+	<FMProperty: #maxDepthReached type: #Boolean defaultValue: false>
+	<generated>
+	^ maxDepthReached ifNil: [ maxDepthReached := false ]
+]
+
+{ #category : 'accessing' }
+FamixCSArrayValue >> maxDepthReached: anObject [
+	<generated>
+	maxDepthReached := anObject
 ]
 
 { #category : 'printing' }

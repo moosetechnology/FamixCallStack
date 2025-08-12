@@ -8,18 +8,11 @@
 | `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
 
-## Properties
-======================
-
-| Name | Type | Default value | Comment |
-|---|
-| `maxDepthReached` | `Boolean` | false | |
 
 "
 Trait {
 	#name : 'FamixCSTValueContainer',
 	#instVars : [
-		'#maxDepthReached => FMProperty defaultValue: false',
 		'#value => FMOne type: #FamixCSValue opposite: #usage'
 	],
 	#traits : 'TEntityMetaLevelDependency',
@@ -36,20 +29,6 @@ FamixCSTValueContainer classSide >> annotation [
 	<package: #'Famix-Callstack-Entities'>
 	<generated>
 	^ self
-]
-
-{ #category : 'accessing' }
-FamixCSTValueContainer >> maxDepthReached [
-
-	<FMProperty: #maxDepthReached type: #Boolean defaultValue: false>
-	<generated>
-	^ maxDepthReached ifNil: [ maxDepthReached := false ]
-]
-
-{ #category : 'accessing' }
-FamixCSTValueContainer >> maxDepthReached: anObject [
-	<generated>
-	maxDepthReached := anObject
 ]
 
 { #category : 'accessing' }
