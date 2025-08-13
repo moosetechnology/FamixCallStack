@@ -44,30 +44,10 @@ CallStackJsonReader class >> registerExternalDropHandler [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createArgument: aCollection [
-	"Instiantiate an argument given to a method in a stackline"
-
-	| arg |
-	arg := model newArgument.
-	aCollection ifNotNil: [ arg value: (self createValueWith: aCollection) ].
-	^ arg
-]
-
-{ #category : 'instance creation' }
 CallStackJsonReader >> createArrayValueWith: aCollection [
 	"Instantiate an ArrayValue"
 
-	| arrVal |
-	arrVal := model newArrayValue.
-	"if the collection (so the value) is nil then there is no need to add anything"
-	aCollection ifNotNil: [
-			aCollection isCSAttentionTag
-				ifTrue: [
-						(aCollection sameAs: '<<MAX_DEPTH_REACHED>>')
-							ifTrue: [ arrVal maxDepthReached: true ]
-							ifFalse: [ Error signal: 'unhandled attention tag : ' , aCollection ] ]
-				ifFalse: [ arrVal value: (self createValueWith: aCollection) ] ].
-	^ arrVal
+	^ self fillValueCheckingMaxDepthOn: model newArrayValue with: aCollection.
 ]
 
 { #category : 'instance creation' }
@@ -85,20 +65,7 @@ CallStackJsonReader >> createClassNamed: aString [
 CallStackJsonReader >> createField: aDictionary [
 	"Instantiate a field from a ClassReference"
 
-	| field |
-	field := model newField.
-	field name: (aDictionary at: #name).
-	"If no precision on accessibility by default we consider it accessible"
-	aDictionary at: #accessible ifPresent: [ :bool | field accessible: bool ].
-	aDictionary at: #value ifPresent: [ :value |
-			value ifNotNil: [
-					value isCSAttentionTag
-						ifTrue: [
-								(value sameAs: '<<MAX_DEPTH_REACHED>>')
-									ifTrue: [ field maxDepthReached: true ]
-									ifFalse: [ Error signal: 'unhandled attention tag : ' , value ] ]
-						ifFalse: [ field value: (self createValueWith: value) ] ] ].
-	^ field
+	^ model newField fillFrom: aDictionary reader: self.
 ]
 
 { #category : 'instance creation' }
@@ -129,10 +96,8 @@ CallStackJsonReader >> createMethodCall: aDictionnary [
 	args := aDictionnary at: #arguments.
 	"If no precision on accessibility by default we consider it accessible"
 	args at: #accessible ifPresent: [ :bool | methodCall argsAccessible: bool ].
-	args
-		at: #argsValues
-		ifPresent: [ :argsValues |
-		argsValues collect: [ :instance | self createArgument: instance ] thenDo: [ :arg | methodCall addArgument: arg ] ].
+	args at: #argsValues ifPresent: [ :argsValues |
+		argsValues collect: [ :dict | model newArgument fillFrom: dict reader: self ] thenDo: [ :arg | methodCall addArgument: arg ] ].
 	^ methodCall
 ]
 
@@ -240,6 +205,20 @@ CallStackJsonReader >> createValueWith: aDictionnary [
 				  ifAbsent: [ Error signal: 'Unexcepted argument value' ] ]
 ]
 
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> fillValueCheckingMaxDepthOn: aCSObject with: aCollection [
+
+	^ aCollection
+		  ifNotNil: [
+				  aCollection isString
+					  ifTrue: [
+							  (aCollection sameAs: '<<MAX_DEPTH_REACHED>>')
+								  ifTrue: [ aCSObject maxDepthReached: true ]
+								  ifFalse: [ Error signal: 'Uneccepted String in field import :' , aCollection ] ]
+					  ifFalse: [ aCSObject value: (self createValueWith: aCollection) ] ]
+		  ifNil: [ aCSObject ]
+]
+
 { #category : 'initialization' }
 CallStackJsonReader >> initialize [ 
 	createdReference := Dictionary new.
@@ -258,7 +237,7 @@ CallStackJsonReader >> instantiateReferenceEntityFrom: aDictionary [
 			refered at: #elements ifPresent: [ :elements | ^ model newArrayReference ] ].
 
 	refered isString ifTrue: [
-			refered isCSAttentionTag
+			refered isCSAttentionTag 
 				ifFalse: [ ^ model newStringReference ]
 				ifTrue: [
 						(refered sameAs: '<<CLASS_NOT_PREPARED>>')
