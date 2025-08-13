@@ -41,7 +41,7 @@ FamixCSStack >> addStackline: anObject [
 
 { #category : 'accessing' }
 FamixCSStack >> indexOfLine: aLine [
-	<derived> 
+
 	^ stacklines indexOf: aLine
 ]
 

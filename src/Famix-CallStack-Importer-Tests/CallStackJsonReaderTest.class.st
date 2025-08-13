@@ -239,3 +239,101 @@ CallStackJsonReaderTest >> testCreateMethodIsStub [
 	
 	self assert: method isStub.
 ]
+
+{ #category : 'createMethod' }
+CallStackJsonReaderTest >> testCreateMethodParameters [
+	"Test the creation of parameters, with multiples and with none"
+	self fail.
+]
+
+{ #category : 'createMethod' }
+CallStackJsonReaderTest >> testCreateMethodParentType [
+	"Create two time the same method, and check if the is only one"
+	| method name |
+	method := (reader createMethod: (self simpleMethod
+				  at: #parentType put: (name := #Pharo);
+				  yourself)).
+				
+	self assert: method parentType isClass.
+	self assert: method parentType name equals: name.
+]
+
+{ #category : 'createParameters' }
+CallStackJsonReaderTest >> testCreateParameters [
+	"To test:
+	-Name
+	-Typing"
+	self fail.
+]
+
+{ #category : 'createPrimitiveType' }
+CallStackJsonReaderTest >> testCreatePrimitiveType [
+	"To test:
+	- suffix, with and without (same as create class)
+	- isStub"
+	self fail.
+]
+
+{ #category : 'createPrimitiveType' }
+CallStackJsonReaderTest >> testCreatePrimitiveValue [
+	"To test:
+	- Typing
+	- value with and without (without is an error)"
+	self fail.
+]
+
+{ #category : 'createStackline' }
+CallStackJsonReaderTest >> testCreateStackline [
+	"To test:
+	- receveir nil and not nil
+	- method call can't be nil"
+	self fail.
+]
+
+{ #category : 'createValueReference' }
+CallStackJsonReaderTest >> testCreateValueReference [
+	"To test:
+	- ref already found : 
+		-if none, 
+		- if one, 
+		- if indicated as alreadyfound but not yet
+		- if trying to create an object already created
+	- a reference is created (we don't care which one, but we want to know if instantiateReferenceEntityFrom: is called and same for fillFrom:reader: *use mocks*)
+	- type : how to choose between a class and a primitive type (with dots)
+	- check if the typing of reference match"
+	self fail.
+]
+
+{ #category : 'createValueWith' }
+CallStackJsonReaderTest >> testCreateValueWith [
+	"To test:
+	- reference created
+	- primitiveType create
+	- fail if no reference or no primitiveType found"
+	self fail.
+]
+
+{ #category : 'reading' }
+CallStackJsonReaderTest >> testRead [
+	"to test
+	- creation of stack line having multiples
+	- moose name reseting? or at least add a comment"
+	self fail.
+]
+
+{ #category : 'fillValueCheckingMaxDepth' }
+CallStackJsonReaderTest >> testfillValueCheckingMaxDepth [
+	"to test:
+	- with and without the MAXDEPTH tag
+	- with a String but not the tag (with and without <<>> both are errors)
+	- ifCollection is nil and if not"
+	self fail.
+]
+
+{ #category : 'instantiateReferenceEntity' }
+CallStackJsonReaderTest >> testinstantiateReferenceEntity [
+	"to test:
+	- class/array/string
+	- class not prepared"
+	self fail.
+]
