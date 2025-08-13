@@ -103,7 +103,7 @@ CallStackJsonReaderTest >> testCreateFieldAccessible [
 
 	self assert: (reader model includes: field).
 	self assert: field name equals: name.
-	self assert: field accessible
+	self assert: field isAccessible
 ]
 
 { #category : 'createField' }
@@ -128,7 +128,7 @@ CallStackJsonReaderTest >> testCreateFieldNoPrecsionOnAccessible [
 
 	self assert: (reader model includes: field).
 	self assert: field name equals: name.
-	self assert: field accessible
+	self assert: field isAccessible
 ]
 
 { #category : 'createField' }
@@ -165,7 +165,7 @@ CallStackJsonReaderTest >> testCreateFieldNotAccessible [
 
 	self assert: (reader model includes: field).
 	self assert: field name equals: name.
-	self assert: field accessible not
+	self assert: field isAccessible not
 ]
 
 { #category : 'createField' }
