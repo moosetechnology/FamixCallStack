@@ -197,12 +197,23 @@ CallStackJsonReader >> createValueReference: aDictionary [
 	"Instantiate a ValueReference"
 
 	| reference type |
-	"If already created do not create again"
-	reference:= createdReference
-		at: (aDictionary at: #uniqueId)
-		ifPresent: [ :value | ^ value ]
-		ifAbsentPut: [(self instantiateReferenceEntityFrom: aDictionary) uniqueID: (aDictionary at: #uniqueId) ].
-		
+	aDictionary
+		at: #alreadyFound
+		ifPresent: [ :bool | "The only important case is if its true, because if its false or absent we need to create it either ways"
+				bool ifTrue: [
+						createdReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ] ifAbsent: [
+								Error signal:
+									'The objectReference with ID:' , (aDictionary at: #uniqueId) asString
+									, ' is indicated to be already found, but is not in the saved references' ] ] ].
+						
+	reference := createdReference
+		             at: (aDictionary at: #uniqueId)
+		             ifPresent: [
+			             Error signal:
+				             'Trying to create an object with ID:' , (aDictionary at: #uniqueId) asString
+				             , ' while an existing ObjectReference already has this ID' ]
+		             ifAbsentPut: [ (self instantiateReferenceEntityFrom: aDictionary) uniqueID: (aDictionary at: #uniqueId) ].
+
 	reference fillFrom: (aDictionary at: #refered) reader: self.
 
 	"Here we asume that 
