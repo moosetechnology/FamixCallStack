@@ -14,7 +14,7 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `maxDepthReached` | `Boolean` | false | |
+| `isAtMaxDepth` | `Boolean` | false | |
 
 "
 Class {
@@ -23,7 +23,7 @@ Class {
 	#traits : 'FamixCSTValueContainer',
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
-		'#maxDepthReached => FMProperty defaultValue: false',
+		'#isAtMaxDepth => FMProperty defaultValue: false',
 		'#parent => FMOne type: #FamixCSArrayReference opposite: #elements'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -41,17 +41,17 @@ FamixCSArrayValue class >> annotation [
 ]
 
 { #category : 'accessing' }
-FamixCSArrayValue >> maxDepthReached [
+FamixCSArrayValue >> isAtMaxDepth [
 
-	<FMProperty: #maxDepthReached type: #Boolean defaultValue: false>
+	<FMProperty: #isAtMaxDepth type: #Boolean defaultValue: false>
 	<generated>
-	^ maxDepthReached ifNil: [ maxDepthReached := false ]
+	^ isAtMaxDepth ifNil: [ isAtMaxDepth := false ]
 ]
 
 { #category : 'accessing' }
-FamixCSArrayValue >> maxDepthReached: anObject [
+FamixCSArrayValue >> isAtMaxDepth: anObject [
 	<generated>
-	maxDepthReached := anObject
+	isAtMaxDepth := anObject
 ]
 
 { #category : 'printing' }

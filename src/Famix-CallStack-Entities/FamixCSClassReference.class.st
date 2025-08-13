@@ -13,7 +13,7 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `prepared` | `Boolean` | true | |
+| `isPrepared` | `Boolean` | true | |
 
 "
 Class {
@@ -21,7 +21,7 @@ Class {
 	#superclass : 'FamixCSObjectReference',
 	#instVars : [
 		'#field => FMMany type: #FamixCSField opposite: #parent',
-		'#prepared => FMProperty defaultValue: true'
+		'#isPrepared => FMProperty defaultValue: true'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',
@@ -59,23 +59,23 @@ FamixCSClassReference >> field: anObject [
 	field value: anObject
 ]
 
+{ #category : 'accessing' }
+FamixCSClassReference >> isPrepared [
+
+	<FMProperty: #isPrepared type: #Boolean defaultValue: true>
+	<generated>
+	^ isPrepared ifNil: [ isPrepared := true ]
+]
+
+{ #category : 'accessing' }
+FamixCSClassReference >> isPrepared: anObject [
+	<generated>
+	isPrepared := anObject
+]
+
 { #category : 'printing' }
 FamixCSClassReference >> mooseNameOn: aStream [
 
 	super mooseNameOn: aStream.
 	typing ifNil: [ aStream nextPutAll: nil asString ] ifNotNil: [ typing declaredType mooseNameOn: aStream ]
-]
-
-{ #category : 'accessing' }
-FamixCSClassReference >> prepared [
-
-	<FMProperty: #prepared type: #Boolean defaultValue: true>
-	<generated>
-	^ prepared ifNil: [ prepared := true ]
-]
-
-{ #category : 'accessing' }
-FamixCSClassReference >> prepared: anObject [
-	<generated>
-	prepared := anObject
 ]

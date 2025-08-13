@@ -19,7 +19,7 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `argsAccessible` | `Boolean` | true | |
+| `isArgsAccessible` | `Boolean` | true | |
 
 "
 Class {
@@ -28,8 +28,8 @@ Class {
 	#traits : 'TEntityMetaLevelDependency',
 	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
-		'#argsAccessible => FMProperty defaultValue: true',
 		'#arguments => FMMany type: #FamixCSArgument opposite: #parent',
+		'#isArgsAccessible => FMProperty defaultValue: true',
 		'#stackline => FMOne type: #FamixCSStackline opposite: #methodCall'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -53,20 +53,6 @@ FamixCSMethodCall >> addArgument: anObject [
 ]
 
 { #category : 'accessing' }
-FamixCSMethodCall >> argsAccessible [
-
-	<FMProperty: #argsAccessible type: #Boolean defaultValue: true>
-	<generated>
-	^ argsAccessible ifNil: [ argsAccessible := true ]
-]
-
-{ #category : 'accessing' }
-FamixCSMethodCall >> argsAccessible: anObject [
-	<generated>
-	argsAccessible := anObject
-]
-
-{ #category : 'accessing' }
 FamixCSMethodCall >> arguments [
 	"Relation named: #arguments type: #FamixCSArgument opposite: #parent"
 
@@ -80,6 +66,20 @@ FamixCSMethodCall >> arguments: anObject [
 
 	<generated>
 	arguments value: anObject
+]
+
+{ #category : 'accessing' }
+FamixCSMethodCall >> isArgsAccessible [
+
+	<FMProperty: #isArgsAccessible type: #Boolean defaultValue: true>
+	<generated>
+	^ isArgsAccessible ifNil: [ isArgsAccessible := true ]
+]
+
+{ #category : 'accessing' }
+FamixCSMethodCall >> isArgsAccessible: anObject [
+	<generated>
+	isArgsAccessible := anObject
 ]
 
 { #category : 'accessing' }
