@@ -44,9 +44,17 @@ CallStackJsonReader class >> registerExternalDropHandler [
 ]
 
 { #category : 'instance creation' }
+CallStackJsonReader >> createArgument: aCollection [
+	"Instiantiate an argument given to a method in a stackline"
+	| arg |
+	arg := model newArgument.
+	aCollection ifNotNil: [ arg value: (self createValueWith: aCollection) ].
+	^ arg
+]
+
+{ #category : 'instance creation' }
 CallStackJsonReader >> createArrayValueWith: aCollection [
 	"Instantiate an ArrayValue"
-
 	^ self fillValueCheckingMaxDepthOn: model newArrayValue with: aCollection.
 ]
 
@@ -65,7 +73,13 @@ CallStackJsonReader >> createClassNamed: aString [
 CallStackJsonReader >> createField: aDictionary [
 	"Instantiate a field from a ClassReference"
 
-	^ model newField fillFrom: aDictionary reader: self.
+	| field |
+	field := model newField.
+	field name: (aDictionary at: #name).
+	"If no precision on accessibility by default we consider it accessible"
+	aDictionary at: #accessible ifPresent: [ :bool | field accessible: bool ].
+	aDictionary at: #value ifPresent: [ :valueCol | self fillValueCheckingMaxDepthOn: field with: valueCol ].
+	^ field
 ]
 
 { #category : 'instance creation' }
@@ -97,7 +111,7 @@ CallStackJsonReader >> createMethodCall: aDictionnary [
 	"If no precision on accessibility by default we consider it accessible"
 	args at: #accessible ifPresent: [ :bool | methodCall argsAccessible: bool ].
 	args at: #argsValues ifPresent: [ :argsValues |
-		argsValues collect: [ :dict | model newArgument fillFrom: dict reader: self ] thenDo: [ :arg | methodCall addArgument: arg ] ].
+		argsValues collect: [ :dict | self createArgument: dict  ] thenDo: [ :arg | methodCall addArgument: arg ] ].
 	^ methodCall
 ]
 
