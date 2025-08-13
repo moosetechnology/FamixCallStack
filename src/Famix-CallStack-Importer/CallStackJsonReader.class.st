@@ -78,7 +78,13 @@ CallStackJsonReader >> createField: aDictionary [
 	field name: (aDictionary at: #name).
 	"If no precision on accessibility by default we consider it accessible"
 	aDictionary at: #accessible ifPresent: [ :bool | field accessible: bool ].
-	aDictionary at: #value ifPresent: [ :valueCol | self fillValueCheckingMaxDepthOn: field with: valueCol ].
+	aDictionary
+		at: #value
+		ifPresent: [ :valueCol |
+				field accessible
+					ifTrue: [ self fillValueCheckingMaxDepthOn: field with: valueCol ]
+					ifFalse: [ Error signal: 'Field have a value while being inaccessible' ] ]
+		ifAbsent: [ field accessible ifTrue: [ Error signal: 'Field have a no value while being accessible' ] ].
 	^ field
 ]
 
@@ -90,12 +96,16 @@ CallStackJsonReader >> createMethod: aDictionnary [
 	"check if the method already exist"
 	createdMethods at: (aDictionnary at: #name) ifPresent: [ :subDict | subDict at: (aDictionnary at: #parentType) ifPresent: [ :m | ^ m ] ].
 	method := (model newMethodNamed: (aDictionnary at: #name)) isStub: true.
+	
 	method isClassSide: (aDictionnary at: #isClassSide).
 	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
 
 	(self createParameters: (aDictionnary at: #parameters)) do: [ :param | method addParameter: param ].
 	"Add the method to not create it again"
-	createdMethods at: (aDictionnary at: #name) ifAbsentPut: [ Dictionary new at: (aDictionnary at: #parentType) put: method; yourself ].
+	createdMethods at: (aDictionnary at: #name) ifAbsentPut: [
+			Dictionary new
+				at: (aDictionnary at: #parentType) put: method;
+				yourself ].
 	^ method
 ]
 
@@ -212,11 +222,9 @@ CallStackJsonReader >> createValueWith: aDictionnary [
 
 	"Looking for either a reference or a primitive type, if neither are present throw an error"
 
-	^ aDictionnary at: #reference ifPresent: [ :reference | self createValueReference: reference ] ifAbsent: [
-			  aDictionnary
-				  at: #primitiveType
-				  ifPresent: [ :primitive | self createPrimitiveValue: primitive ]
-				  ifAbsent: [ Error signal: 'Unexcepted argument value' ] ]
+	aDictionnary at: #reference ifPresent: [ :reference | ^ self createValueReference: reference ].
+	aDictionnary at: #primitiveType ifPresent: [ :primitive | ^ self createPrimitiveValue: primitive ].
+	Error signal: 'Unexcepted argument value'
 ]
 
 { #category : 'as yet unclassified' }
@@ -258,6 +266,11 @@ CallStackJsonReader >> instantiateReferenceEntityFrom: aDictionary [
 							ifTrue: [ ^ model newClassReference prepared: false; yourself]
 							ifFalse: [ Error signal: 'Uneccepted attention tag in value reference importation : ' , refered ] ] ].
 	Error signal: 'Should either be String or dictionary'
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> model [
+	^ model
 ]
 
 { #category : 'accessing' }
