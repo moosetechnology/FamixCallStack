@@ -116,11 +116,11 @@ FamixCallStackGenerator >> defineProperties [
 	self flag:#todo. "should field use #TNamedEntity ?"
 	field property: #name type: #String.
 	
-	field property: #maxDepthReached type: #Boolean defaultValue: false .
-	arrayValue property: #maxDepthReached type: #Boolean defaultValue: false .
-	field property: #accessible type: #Boolean defaultValue: true.
-	methodCall property: #argsAccessible type: #Boolean defaultValue: true.
-	classReference property: #prepared type: #Boolean defaultValue: true.
+	field property: #isAtMaxDepth type: #Boolean defaultValue: false .
+	arrayValue property: #isAtMaxDepth type: #Boolean defaultValue: false .
+	field property: #isAccessible type: #Boolean defaultValue: true.
+	methodCall property: #isArgsAccessible type: #Boolean defaultValue: true.
+	classReference property: #isPrepared type: #Boolean defaultValue: true.
 ]
 
 { #category : 'definition' }
