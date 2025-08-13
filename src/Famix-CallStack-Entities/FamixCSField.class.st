@@ -14,8 +14,8 @@
 
 | Name | Type | Default value | Comment |
 |---|
-| `accessible` | `Boolean` | true | |
-| `maxDepthReached` | `Boolean` | false | |
+| `isAccessible` | `Boolean` | true | |
+| `isAtMaxDepth` | `Boolean` | false | |
 | `name` | `String` | nil | |
 
 "
@@ -25,8 +25,8 @@ Class {
 	#traits : 'FamixCSTValueContainer',
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
-		'#accessible => FMProperty defaultValue: true',
-		'#maxDepthReached => FMProperty defaultValue: false',
+		'#isAccessible => FMProperty defaultValue: true',
+		'#isAtMaxDepth => FMProperty defaultValue: false',
 		'#name => FMProperty',
 		'#parent => FMOne type: #FamixCSClassReference opposite: #field'
 	],
@@ -45,31 +45,31 @@ FamixCSField class >> annotation [
 ]
 
 { #category : 'accessing' }
-FamixCSField >> accessible [
+FamixCSField >> isAccessible [
 
-	<FMProperty: #accessible type: #Boolean defaultValue: true>
+	<FMProperty: #isAccessible type: #Boolean defaultValue: true>
 	<generated>
-	^ accessible ifNil: [ accessible := true ]
+	^ isAccessible ifNil: [ isAccessible := true ]
 ]
 
 { #category : 'accessing' }
-FamixCSField >> accessible: anObject [
+FamixCSField >> isAccessible: anObject [
 	<generated>
-	accessible := anObject
+	isAccessible := anObject
 ]
 
 { #category : 'accessing' }
-FamixCSField >> maxDepthReached [
+FamixCSField >> isAtMaxDepth [
 
-	<FMProperty: #maxDepthReached type: #Boolean defaultValue: false>
+	<FMProperty: #isAtMaxDepth type: #Boolean defaultValue: false>
 	<generated>
-	^ maxDepthReached ifNil: [ maxDepthReached := false ]
+	^ isAtMaxDepth ifNil: [ isAtMaxDepth := false ]
 ]
 
 { #category : 'accessing' }
-FamixCSField >> maxDepthReached: anObject [
+FamixCSField >> isAtMaxDepth: anObject [
 	<generated>
-	maxDepthReached := anObject
+	isAtMaxDepth := anObject
 ]
 
 { #category : 'printing' }
