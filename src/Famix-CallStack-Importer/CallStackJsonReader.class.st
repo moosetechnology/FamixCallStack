@@ -77,14 +77,14 @@ CallStackJsonReader >> createField: aDictionary [
 	field := model newField.
 	field name: (aDictionary at: #name).
 	"If no precision on accessibility by default we consider it accessible"
-	aDictionary at: #accessible ifPresent: [ :bool | field accessible: bool ].
+	aDictionary at: #accessible ifPresent: [ :bool | field isAccessible: bool ].
 	aDictionary
 		at: #value
 		ifPresent: [ :valueCol |
-				field accessible
+				field isAccessible
 					ifTrue: [ self fillValueCheckingMaxDepthOn: field with: valueCol ]
 					ifFalse: [ Error signal: 'Field have a value while being inaccessible' ] ]
-		ifAbsent: [ field accessible ifTrue: [ Error signal: 'Field have a no value while being accessible' ] ].
+		ifAbsent: [ field isAccessible ifTrue: [ Error signal: 'Field have a no value while being accessible' ] ].
 	^ field
 ]
 
@@ -119,7 +119,7 @@ CallStackJsonReader >> createMethodCall: aDictionnary [
 
 	args := aDictionnary at: #arguments.
 	"If no precision on accessibility by default we consider it accessible"
-	args at: #accessible ifPresent: [ :bool | methodCall argsAccessible: bool ].
+	args at: #accessible ifPresent: [ :bool | methodCall isArgsAccessible: bool ].
 	args at: #argsValues ifPresent: [ :argsValues |
 		argsValues collect: [ :dict | self createArgument: dict  ] thenDo: [ :arg | methodCall addArgument: arg ] ].
 	^ methodCall
@@ -235,7 +235,7 @@ CallStackJsonReader >> fillValueCheckingMaxDepthOn: aCSObject with: aCollection 
 				  aCollection isString
 					  ifTrue: [
 							  (aCollection sameAs: '<<MAX_DEPTH_REACHED>>')
-								  ifTrue: [ aCSObject maxDepthReached: true ]
+								  ifTrue: [ aCSObject isAtMaxDepth: true ]
 								  ifFalse: [ Error signal: 'Uneccepted String in field import :' , aCollection ] ]
 					  ifFalse: [ aCSObject value: (self createValueWith: aCollection) ] ]
 		  ifNil: [ aCSObject ]
@@ -263,7 +263,7 @@ CallStackJsonReader >> instantiateReferenceEntityFrom: aDictionary [
 				ifFalse: [ ^ model newStringReference ]
 				ifTrue: [
 						(refered sameAs: '<<CLASS_NOT_PREPARED>>')
-							ifTrue: [ ^ model newClassReference prepared: false; yourself]
+							ifTrue: [ ^ model newClassReference isPrepared: false; yourself]
 							ifFalse: [ Error signal: 'Uneccepted attention tag in value reference importation : ' , refered ] ] ].
 	Error signal: 'Should either be String or dictionary'
 ]

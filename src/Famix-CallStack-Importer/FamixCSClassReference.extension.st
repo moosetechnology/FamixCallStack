@@ -6,7 +6,7 @@ FamixCSClassReference >> fillFrom: aCollection reader: aCSReader [
 	| fields |
 	aCollection isString ifTrue: [
 			(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')
-				ifTrue: [ ^ self prepared: false ]
+				ifTrue: [ ^ self isPrepared: false ]
 				ifFalse: [ Error signal: 'Uneccepted String in class refrence import :' , aCollection ] ].
 
 	fields := aCollection at: 'fields'.
