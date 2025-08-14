@@ -191,6 +191,20 @@ CallStackJsonReaderTest >> testCreateFieldValueWhileInaccessible [
 	self should: [ field := reader createField: dict ] raise: Error.
 ]
 
+{ #category : 'createField' }
+CallStackJsonReaderTest >> testCreateFieldValueWithNilValue [
+	"Create a collection to test createField"
+
+	| dict field name |
+	dict := Dictionary new.
+	dict at: #name put: (name := #aField).
+	dict at: #accessible put: false.
+	dict at: #value put: nil.
+	
+	field := reader createField: dict. 
+	self assert: field value isNil
+]
+
 { #category : 'createMethodCall' }
 CallStackJsonReaderTest >> testCreateMethodCall [
 	"To test:

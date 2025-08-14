@@ -73,18 +73,24 @@ CallStackJsonReader >> createClassNamed: aString [
 CallStackJsonReader >> createField: aDictionary [
 	"Instantiate a field from a ClassReference"
 
-	| field |
-	field := model newField.
-	field name: (aDictionary at: #name).
-	"If no precision on accessibility by default we consider it accessible"
-	aDictionary at: #accessible ifPresent: [ :bool | field isAccessible: bool ].
-	aDictionary
-		at: #value
-		ifPresent: [ :valueCol |
-				field isAccessible
-					ifTrue: [ self fillValueCheckingMaxDepthOn: field with: valueCol ]
-					ifFalse: [ Error signal: 'Field have a value while being inaccessible' ] ]
-		ifAbsent: [ field isAccessible ifTrue: [ Error signal: 'Field have a no value while being accessible' ] ].
+	| field valueDict |
+	field := model newField
+		         name: (aDictionary at: #name);
+		         yourself.
+
+	"Default: accessible if not specified"
+	field isAccessible: (aDictionary at: #accessible ifAbsent: [ true ]).
+	
+	
+	"Since a field can be nil, it is imperative to check that aDictionary dont include the key value, and not use valueDict form below"
+	(field isAccessible and: [ (aDictionary includesKey: #value) not ]) ifTrue: [ Error signal: 'Field has no value while being accessible' ].
+
+	valueDict := aDictionary at: #value ifAbsent: [ nil ].
+
+	(field isAccessible not and: [ valueDict notNil ]) ifTrue: [ Error signal: 'Field has a value while being inaccessible' ].
+
+	(field isAccessible and: [ valueDict notNil ]) ifTrue: [ self fillValueCheckingMaxDepthOn: field with: valueDict ].
+
 	^ field
 ]
 
