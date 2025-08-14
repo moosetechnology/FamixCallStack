@@ -5,7 +5,7 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `field` | `FamixCSClassReference` | `parent` | `FamixCSField` | |
+| `fields` | `FamixCSClassReference` | `parent` | `FamixCSField` | |
 
 
 ## Properties
@@ -20,7 +20,7 @@ Class {
 	#name : 'FamixCSClassReference',
 	#superclass : 'FamixCSObjectReference',
 	#instVars : [
-		'#field => FMMany type: #FamixCSField opposite: #parent',
+		'#fields => FMMany type: #FamixCSField opposite: #parent',
 		'#isPrepared => FMProperty defaultValue: true'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -40,23 +40,23 @@ FamixCSClassReference class >> annotation [
 { #category : 'adding' }
 FamixCSClassReference >> addField: anObject [
 	<generated>
-	^ self field add: anObject
+	^ self fields add: anObject
 ]
 
 { #category : 'accessing' }
-FamixCSClassReference >> field [
-	"Relation named: #field type: #FamixCSField opposite: #parent"
+FamixCSClassReference >> fields [
+	"Relation named: #fields type: #FamixCSField opposite: #parent"
 
 	<generated>
 	<derived>
-	^ field
+	^ fields
 ]
 
 { #category : 'accessing' }
-FamixCSClassReference >> field: anObject [
+FamixCSClassReference >> fields: anObject [
 
 	<generated>
-	field value: anObject
+	fields value: anObject
 ]
 
 { #category : 'testing' }

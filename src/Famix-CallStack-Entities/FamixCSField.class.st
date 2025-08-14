@@ -5,7 +5,7 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `parent` | `FamixCSField` | `field` | `FamixCSClassReference` | |
+| `parent` | `FamixCSField` | `fields` | `FamixCSClassReference` | |
 | `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
 
@@ -28,7 +28,7 @@ Class {
 		'#isAccessible => FMProperty defaultValue: true',
 		'#isAtMaxDepth => FMProperty defaultValue: false',
 		'#name => FMProperty',
-		'#parent => FMOne type: #FamixCSClassReference opposite: #field'
+		'#parent => FMOne type: #FamixCSClassReference opposite: #fields'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',
@@ -109,7 +109,7 @@ FamixCSField >> name: anObject [
 
 { #category : 'accessing' }
 FamixCSField >> parent [
-	"Relation named: #parent type: #FamixCSClassReference opposite: #field"
+	"Relation named: #parent type: #FamixCSClassReference opposite: #fields"
 
 	<generated>
 	^ parent

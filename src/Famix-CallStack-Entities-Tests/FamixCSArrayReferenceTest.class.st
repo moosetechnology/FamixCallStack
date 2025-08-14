@@ -22,12 +22,23 @@ FamixCSArrayReferenceTest >> setUp [
 	reader := CallStackJsonReader new.
 	reader model: (FamixCSModel new
 			 name: 'testing';
-			 yourself)
+			 yourself).
 ]
 
 { #category : 'importing' }
 FamixCSArrayReferenceTest >> testsize [
 	"to test:
 	- adding an element augment the size, and reseting element reset the size"
-	self fail
+
+	| arrayReference |
+	arrayReference := FamixCSArrayReference new.
+	"Start at 0"
+	self assert: arrayReference size equals: 0.
+	"Add one element"
+	arrayReference addElement: FamixCSArrayValue new.
+	self assert: arrayReference size equals: 1.
+
+	"Remove the element"
+	arrayReference elements: {  }.
+	self assert: arrayReference size equals: 0
 ]

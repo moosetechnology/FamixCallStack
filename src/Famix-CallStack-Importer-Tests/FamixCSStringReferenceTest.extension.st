@@ -2,7 +2,10 @@ Extension { #name : 'FamixCSStringReferenceTest' }
 
 { #category : '*Famix-CallStack-Importer-Tests' }
 FamixCSStringReferenceTest >> testFillFromDoesAddElements [
-	"To test:
-	- Does add the String as a value"
-	self fail.
+
+	| stringReference value |
+	value := #imAString.
+	stringReference := reader model newStringReference.
+	stringReference fillFrom: value reader: reader.
+	self assert: stringReference value equals: value
 ]

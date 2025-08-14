@@ -11,21 +11,40 @@ Class {
 
 { #category : 'tests' }
 FamixCSStacklineTest >> testIndex [
-	"to test:
-	- adding one make it at an superior index than the last one added"
-	self fail
+
+	| stack stackline1 stackline2 |
+	stack := FamixCSStack new.
+
+	stack := FamixCSStack new.
+	stack addStackline: (stackline1 := FamixCSStackline new).
+	stack addStackline: (stackline2 := FamixCSStackline new).
+
+	self assert: stackline1 positionInStack equals: 1.
+	self assert: stackline2 positionInStack equals: 2
 ]
 
 { #category : 'tests' }
 FamixCSStacklineTest >> testNext [
-	"to test:
-	- add two line and test if the second is next to the first"
-	self fail
+
+	| stack stackline1 stackline2 |
+	stack := FamixCSStack new.
+
+	stack := FamixCSStack new.
+	stack addStackline: (stackline1 := FamixCSStackline new).
+	stack addStackline: (stackline2 := FamixCSStackline new).
+
+	self assert: stackline1 next equals: stackline2
 ]
 
 { #category : 'tests' }
 FamixCSStacklineTest >> testPrevious [
-	"to test:
-	- add two line and test if the first is previous to the second"
-	self fail
+
+	| stack stackline1 stackline2 |
+	stack := FamixCSStack new.
+
+	stack := FamixCSStack new.
+	stack addStackline: (stackline1 := FamixCSStackline new).
+	stack addStackline: (stackline2 := FamixCSStackline new).
+
+	self assert: stackline2 previous equals: stackline1
 ]
