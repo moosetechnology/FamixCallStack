@@ -526,13 +526,44 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueWithoutValue [
 	self should: [ reader createPrimitiveValue: primValDict ] raise: Error
 ]
 
+{ #category : 'createReceiver' }
+CallStackJsonReaderTest >> testCreateReceiver [
+	self fail. "test if an error is signaled if using a primitiveType instead of an objectReference"
+]
+
 { #category : 'createStackline' }
-CallStackJsonReaderTest >> testCreateStackline [
-	"To test:
-	- is in the model
-	- receveir nil and not nil
-	- method call can't be nil"
-	self fail.
+CallStackJsonReaderTest >> testCreateStacklineCreatedStacklineIsInTheModel [
+
+	| stackline |
+	stackline := reader createStackline: CSStructureCreator simpleStacklineDict.
+
+	self assert: (reader model includes: stackline)
+]
+
+{ #category : 'createStackline' }
+CallStackJsonReaderTest >> testCreateStacklineReceiverNil [
+
+	| stacklineDict stackline |
+	stacklineDict := CSStructureCreator simpleStacklineDict
+		                 at: #receiver put: nil;
+		                 yourself.
+
+	stackline := reader createStackline: stacklineDict.
+
+	self assert: stackline receiver isNil
+]
+
+{ #category : 'createStackline' }
+CallStackJsonReaderTest >> testCreateStacklineReceiverNotNil [
+
+	| stacklineDict stackline |
+	stacklineDict := CSStructureCreator simpleStacklineDict
+		                 at: #receiver put: CSStructureCreator simpleArrayReference;
+		                 yourself.
+
+	stackline := reader createStackline: stacklineDict.
+
+	self assert: stackline receiver isNotNil
 ]
 
 { #category : 'createValueReference' }

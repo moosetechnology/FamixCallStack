@@ -6,6 +6,20 @@ Class {
 }
 
 { #category : 'setup' }
+CSStructureCreator class >> simpleArrayReference [
+
+	^ Dictionary new
+		  at: #reference put: (Dictionary new
+				   at: #refered put: (Dictionary new
+						    at: #elements put: {  };
+						    yourself);
+				   at: #uniqueId put: 1;
+				   at: #type put: 'int[]';
+				   yourself);
+		  yourself
+]
+
+{ #category : 'setup' }
 CSStructureCreator class >> simpleFieldDict [
 
 	| fieldDict |
@@ -58,6 +72,14 @@ CSStructureCreator class >> simplePrimitiveValueDict [
 	^ Dictionary new
 		  at: #type put: #int;
 		  at: #value put: 42;
+		  yourself
+]
+
+{ #category : 'setup' }
+CSStructureCreator class >> simpleStacklineDict [
+
+	^ self simpleMethodCallDict
+		  at: #receiver put: self simpleArrayReference;
 		  yourself
 ]
 

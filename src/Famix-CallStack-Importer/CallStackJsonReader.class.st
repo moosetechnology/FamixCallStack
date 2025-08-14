@@ -201,32 +201,32 @@ CallStackJsonReader >> createTypingFor: anObject with: type [
 CallStackJsonReader >> createValueReference: aDictionary [
 	"Instantiate a ValueReference"
 
-	| reference type |
-	aDictionary
-		at: #alreadyFound
-		ifPresent: [ :bool | "The only important case is if its true, because if its false or absent we need to create it either ways"
-				bool ifTrue: [
-						createdReference at: (aDictionary at: #uniqueId) ifPresent: [ :value | ^ value ] ifAbsent: [
-								Error signal:
-									'The objectReference with ID:' , (aDictionary at: #uniqueId) asString
-									, ' is indicated to be already found, but is not in the saved references' ] ] ].
-						
-	reference := createdReference
-		             at: (aDictionary at: #uniqueId)
-		             ifPresent: [
-			             Error signal:
-				             'Trying to create an object with ID:' , (aDictionary at: #uniqueId) asString
-				             , ' while an existing ObjectReference already has this ID' ]
-		             ifAbsentPut: [ (self instantiateReferenceEntityFrom: aDictionary) uniqueID: (aDictionary at: #uniqueId) ].
+	| reference type uniqueId typeName |
+	uniqueId := aDictionary at: #uniqueId.
+	typeName := aDictionary at: #type.
 
+	"Check alreadyFound case"
+	(aDictionary at: #alreadyFound ifAbsent: [ false ]) ifTrue: [
+			^ createdReference at: uniqueId ifAbsent: [
+				  Error signal:
+					  'The objectReference with ID: ' , uniqueId asString , ' is indicated to be already found, but is not in the saved references' ] ].
+
+	"Ensure no duplicate creation"
+	reference := createdReference
+		             at: uniqueId
+		             ifPresent: [
+		             Error signal:
+			             'Trying to create an object with ID: ' , uniqueId asString , ' while an existing ObjectReference already has this ID' ]
+		             ifAbsentPut: [ (self instantiateReferenceEntityFrom: aDictionary) uniqueID: uniqueId ].
+
+	"Fill reference"
 	reference fillFrom: (aDictionary at: #refered) reader: self.
 
-	"Here we asume that 
-	- a class will be defined with its package in its name meaning containing at least a dot
-	- while a primitive type wont have a package so no dots"
-	type := ((aDictionary at: #type) includesSubstring: '.')
-		        ifTrue: [ self createClassNamed: (aDictionary at: #type) ]
-		        ifFalse: [ self createPrimitiveType: (aDictionary at: #type) ].
+	"Determine type"
+	type := (typeName includesSubstring: '.')
+		        ifTrue: [ self createClassNamed: typeName ]
+		        ifFalse: [ self createPrimitiveType: typeName ].
+
 	self createTypingFor: reference with: type.
 
 	^ reference
