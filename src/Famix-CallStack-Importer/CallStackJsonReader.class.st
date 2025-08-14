@@ -80,14 +80,15 @@ CallStackJsonReader >> createField: aDictionary [
 
 	"Default: accessible if not specified"
 	field isAccessible: (aDictionary at: #accessible ifAbsent: [ true ]).
-	
-	
+
+
 	"Since a field can be nil, it is imperative to check that aDictionary dont include the key value, and not use valueDict form below"
 	(field isAccessible and: [ (aDictionary includesKey: #value) not ]) ifTrue: [ Error signal: 'Field has no value while being accessible' ].
 
+	(field isAccessible not and: [ aDictionary includesKey: #value ]) ifTrue: [ Error signal: 'Field has a value while being inaccessible' ].
+
 	valueDict := aDictionary at: #value ifAbsent: [ nil ].
 
-	(field isAccessible not and: [ valueDict notNil ]) ifTrue: [ Error signal: 'Field has a value while being inaccessible' ].
 
 	(field isAccessible and: [ valueDict notNil ]) ifTrue: [ self fillValueCheckingMaxDepthOn: field with: valueDict ].
 
