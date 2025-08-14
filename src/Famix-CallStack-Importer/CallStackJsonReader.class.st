@@ -109,18 +109,26 @@ CallStackJsonReader >> createMethod: aDictionary [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createMethodCall: aDictionnary [
+CallStackJsonReader >> createMethodCall: aDictionary [
 	"Instatiate the MethodCall of a stack line, being the method informations and the given arguments"
 
-	| methodCall args |
+	| methodCall argsDict argValuesDict |
 	methodCall := model newMethodCall.
-	methodCall method: (self createMethod: (aDictionnary at: #method)).
+	methodCall method: (self createMethod: (aDictionary at: #method)).
 
-	args := aDictionnary at: #arguments.
-	"If no precision on accessibility by default we consider it accessible"
-	args at: #accessible ifPresent: [ :bool | methodCall isArgsAccessible: bool ].
-	args at: #argsValues ifPresent: [ :argsValues |
-		argsValues collect: [ :dict | self createArgument: dict  ] thenDo: [ :arg | methodCall addArgument: arg ] ].
+	argsDict := aDictionary at: #arguments.
+	"Default: accessible if not specified"
+	methodCall isArgsAccessible: (argsDict at: #accessible ifAbsent: [ true ]).
+
+	argValuesDict := argsDict at: #argsValues ifAbsent: [ nil ].
+	(methodCall isArgsAccessible and: [ argValuesDict isNil ]) ifTrue: [
+		Error signal: 'methodCall has no arguments description while arguments being accessible' ].
+
+	(methodCall isArgsAccessible not and: [ argValuesDict notNil ]) ifTrue: [
+		Error signal: 'methodCall has a arguments description while arguments being inaccessible' ].
+
+	(methodCall isArgsAccessible and: [ argValuesDict notNil ]) ifTrue: [
+		argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | methodCall addArgument: arg ] ].
 	^ methodCall
 ]
 
