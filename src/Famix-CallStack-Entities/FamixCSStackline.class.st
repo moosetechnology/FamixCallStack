@@ -40,6 +40,12 @@ FamixCSStackline class >> annotation [
 	^ self
 ]
 
+{ #category : 'testing' }
+FamixCSStackline >> isStackline [
+
+	^ true
+]
+
 { #category : 'accessing' }
 FamixCSStackline >> methodCall [
 	"Relation named: #methodCall type: #FamixCSMethodCall opposite: #stackline"

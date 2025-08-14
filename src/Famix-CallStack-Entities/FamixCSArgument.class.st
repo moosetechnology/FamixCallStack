@@ -33,6 +33,11 @@ FamixCSArgument class >> annotation [
 	^ self
 ]
 
+{ #category : 'testing' }
+FamixCSArgument >> isArgument [ 
+	^ true.
+]
+
 { #category : 'printing' }
 FamixCSArgument >> mooseNameOn: aStream [
 	self flag: #todo. "how to print? we don't know to which one of the method parameter this argument correspond"

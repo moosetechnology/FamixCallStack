@@ -82,6 +82,12 @@ FamixCSMethodCall >> isArgsAccessible: anObject [
 	isArgsAccessible := anObject
 ]
 
+{ #category : 'testing' }
+FamixCSMethodCall >> isMethodCall [
+
+	^ true
+]
+
 { #category : 'accessing' }
 FamixCSMethodCall >> method [
 	"Relation named: #method type: #FamixJavaMethod opposite: #methodCalls"

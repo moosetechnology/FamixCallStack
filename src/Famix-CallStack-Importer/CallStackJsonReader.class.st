@@ -322,6 +322,7 @@ CallStackJsonReader >> read: json [
 			stack := model newStack.
 			lines := json at: #Lines. "Get the lines"
 			lines do: [ :line | stack addStackline: (self createStackline: line) ].
+			"reset moose name to make sure no error appear"
 			model entities do: #resetMooseName ]
 ]
 

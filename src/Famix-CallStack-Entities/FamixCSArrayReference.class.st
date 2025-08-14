@@ -52,6 +52,12 @@ FamixCSArrayReference >> elements: anObject [
 	elements value: anObject
 ]
 
+{ #category : 'testing' }
+FamixCSArrayReference >> isArrayReference [
+
+	^ true
+]
+
 { #category : 'printing' }
 FamixCSArrayReference >> mooseNameOn: aStream [
 

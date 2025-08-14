@@ -27,6 +27,12 @@ FamixCSPrimitiveValue class >> annotation [
 	^ self
 ]
 
+{ #category : 'testing' }
+FamixCSPrimitiveValue >> isPrimitiveValue [
+
+	^ true
+]
+
 { #category : 'printing' }
 FamixCSPrimitiveValue >> mooseNameOn: aStream [
 

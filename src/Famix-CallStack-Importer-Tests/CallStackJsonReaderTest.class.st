@@ -26,6 +26,7 @@ CallStackJsonReaderTest >> testCreateArgumentCreatedArgumentIsInTheModel [
 	| arg |
 	arg := reader createArgument: nil.
 	
+	self assert: arg isArgument.
 	self assert: (reader model includes: arg).
 ]
 
@@ -54,6 +55,7 @@ CallStackJsonReaderTest >> testCreateClassCreatedClassIsInTheModel [
 	| class |
 	class := reader createClassNamed: 'Myclass[]'.
 	
+	self assert: class isClass.
 	self assert: (reader model includes: class).
 ]
 
@@ -98,6 +100,7 @@ CallStackJsonReaderTest >> testCreateFieldCreatedFieldIsInTheModel [
 
 	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
 
+	self assert: field isField.
 	self assert: (reader model includes: field).
 	
 
@@ -332,6 +335,7 @@ CallStackJsonReaderTest >> testCreateMethodCreatedMethodCallIsInTheModel [
 	| methodCall |
 	methodCall := reader createMethodCall: CSStructureCreator simpleMethodCallDict.
 
+	self assert: methodCall isMethodCall.
 	self assert: (reader model includes: methodCall)
 ]
 
@@ -341,6 +345,7 @@ CallStackJsonReaderTest >> testCreateMethodCreatedMethodIsInTheModel [
 	| method |
 	method := reader createMethod: CSStructureCreator simpleMethodDict.
 
+	self assert: method isMethod.
 	self assert: (reader model includes: method)
 ]
 
@@ -466,6 +471,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveTypeCreatedPrimitiveTypeIsInTheMod
 	| primType |
 	primType := reader createPrimitiveType: #int.
 
+	self assert: primType isPrimitiveType.
 	self assert: (reader model includes: primType)
 ]
 
@@ -492,6 +498,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheM
 	| primVal |
 	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict at: #primitiveValue).
 
+	self assert: primVal isPrimitiveValue.
 	self assert: (reader model includes: primVal)
 ]
 
@@ -529,10 +536,11 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueWithoutValue [
 { #category : 'createReceiver' }
 CallStackJsonReaderTest >> testCreateReceiverIsInTheModel [
 
-	| arrayReference |
-	arrayReference := reader createReceiver: CSStructureCreator simpleArrayReferenceDict.
+	| receiver |
+	receiver := reader createReceiver: CSStructureCreator simpleArrayReferenceDict.
 
-	self assert: (reader model includes: arrayReference)
+ 	self assert: receiver isReceiver.
+	self assert: (reader model includes: receiver)
 ]
 
 { #category : 'createReceiver' }
@@ -553,6 +561,7 @@ CallStackJsonReaderTest >> testCreateStacklineCreatedStacklineIsInTheModel [
 	| stackline |
 	stackline := reader createStackline: CSStructureCreator simpleStacklineDict.
 
+	self assert: stackline isStackline.
 	self assert: (reader model includes: stackline)
 ]
 
@@ -685,14 +694,6 @@ CallStackJsonReaderTest >> testCreateValueWithReference [
 	self shouldnt: [ reader createValueWith: CSStructureCreator simpleArrayReferenceDict ] raise: Error
 ]
 
-{ #category : 'reading' }
-CallStackJsonReaderTest >> testRead [
-	"to test
-	- creation of stack line having multiples
-	- moose name reseting? or at least add a comment"
-	self fail.
-]
-
 { #category : 'fillValueCheckingMaxDepth' }
 CallStackJsonReaderTest >> testfillValueCheckingMaxDepthAtMaxDepth [
 	| aField |
@@ -723,10 +724,43 @@ CallStackJsonReaderTest >> testfillValueCheckingWithAString [
 ]
 
 { #category : 'instantiateReferenceEntity' }
-CallStackJsonReaderTest >> testinstantiateReferenceEntity [
-	"to test:
-	- class/array/string
-		- for each - is in the model
-	- class not prepared"
-	self fail.
+CallStackJsonReaderTest >> testinstantiateReferenceEntityAClassReference [
+
+	| reference |
+	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleObjectReferenceDict at:#reference).
+
+	self assert: reference isClassReference.
+	self assert: (reader model includes: reference)
+]
+
+{ #category : 'instantiateReferenceEntity' }
+CallStackJsonReaderTest >> testinstantiateReferenceEntityAClassReferenceNotPrepared [
+
+	| reference |
+	reference := reader instantiateReferenceEntityFrom: (Dictionary new
+			              at: #refered put: '<<CLASS_NOT_PREPARED>>';
+			              yourself).
+
+	self assert: reference isClassReference.
+	self assert: (reader model includes: reference)
+]
+
+{ #category : 'instantiateReferenceEntity' }
+CallStackJsonReaderTest >> testinstantiateReferenceEntityAStringReference [
+
+	| reference |
+	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleStringReferenceDict at:#reference).
+
+	self assert: reference isStringReference.
+	self assert: (reader model includes: reference)
+]
+
+{ #category : 'instantiateReferenceEntity' }
+CallStackJsonReaderTest >> testinstantiateReferenceEntityArrayReference [
+
+	| reference |
+	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleArrayReferenceDict at:#reference).
+
+	self assert: reference isArrayReference.
+	self assert: (reader model includes: reference)
 ]

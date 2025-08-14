@@ -58,6 +58,20 @@ CSStructureCreator class >> simpleMethodDict [
 ]
 
 { #category : 'setup' }
+CSStructureCreator class >> simpleObjectReferenceDict [
+
+	^ Dictionary new
+		  at: #reference put: (Dictionary new
+				   at: #refered put: (Dictionary new
+						    at: #fields put: {  };
+						    yourself);
+				   at: #uniqueId put: 1;
+				   at: #type put: 'im.an.Object';
+				   yourself);
+		  yourself
+]
+
+{ #category : 'setup' }
 CSStructureCreator class >> simpleParameterDict [
 
 	^ Dictionary new
@@ -82,6 +96,19 @@ CSStructureCreator class >> simpleStacklineDict [
 
 	^ self simpleMethodCallDict
 		  at: #receiver put: self simpleArrayReferenceDict;
+		  yourself
+]
+
+{ #category : 'setup' }
+CSStructureCreator class >> simpleStringReferenceDict [
+
+	^ Dictionary new
+		  at: #reference put: (Dictionary new
+				   at: #refered put: #yesIAM;
+				   yourself);
+		  at: #uniqueId put: 1;
+		  at: #type put: 'java.lang.String';
+		  yourself;
 		  yourself
 ]
 

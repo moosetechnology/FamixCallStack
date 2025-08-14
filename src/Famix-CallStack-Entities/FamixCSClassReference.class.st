@@ -59,6 +59,12 @@ FamixCSClassReference >> field: anObject [
 	field value: anObject
 ]
 
+{ #category : 'testing' }
+FamixCSClassReference >> isClassReference [
+
+	^ true
+]
+
 { #category : 'accessing' }
 FamixCSClassReference >> isPrepared [
 

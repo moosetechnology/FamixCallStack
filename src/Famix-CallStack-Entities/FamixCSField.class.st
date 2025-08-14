@@ -72,6 +72,12 @@ FamixCSField >> isAtMaxDepth: anObject [
 	isAtMaxDepth := anObject
 ]
 
+{ #category : 'testing' }
+FamixCSField >> isField [
+
+	^ true
+]
+
 { #category : 'printing' }
 FamixCSField >> mooseNameOn: aStream [
 
