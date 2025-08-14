@@ -290,12 +290,12 @@ CallStackJsonReader >> instantiateReferenceEntityFrom: aDictionary [
 			refered at: #elements ifPresent: [ :elements | ^ model newArrayReference ] ].
 
 	refered isString ifTrue: [
-			refered isCSAttentionTag 
-				ifFalse: [ ^ model newStringReference ]
-				ifTrue: [
-						(refered sameAs: '<<CLASS_NOT_PREPARED>>')
-							ifTrue: [ ^ model newClassReference isPrepared: false; yourself]
-							ifFalse: [ Error signal: 'Uneccepted attention tag in value reference importation : ' , refered ] ] ].
+			^ (refered sameAs: '<<CLASS_NOT_PREPARED>>')
+				  ifTrue: [
+						  model newClassReference
+							  isPrepared: false;
+							  yourself ]
+				  ifFalse: [ model newStringReference ] ].
 	Error signal: 'Should either be String or dictionary'
 ]
 
