@@ -490,7 +490,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveTypeIsStub [
 CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheModel [
 
 	| primVal |
-	primVal := reader createPrimitiveValue: CSStructureCreator simplePrimitiveValueDict.
+	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict at: #primitiveType).
 
 	self assert: (reader model includes: primVal)
 ]
@@ -499,7 +499,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheM
 CallStackJsonReaderTest >> testCreatePrimitiveValueTyping [
 
 	| primVal |
-	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict
+	primVal := reader createPrimitiveValue: ((CSStructureCreator simplePrimitiveValueDict at:#primitiveType)
 			            at: #type put: #int;
 			            yourself).
 
@@ -510,7 +510,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueTyping [
 CallStackJsonReaderTest >> testCreatePrimitiveValueWithValue [
 
 	| primVal value |
-	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict
+	primVal := reader createPrimitiveValue: ((CSStructureCreator simplePrimitiveValueDict at: #primitiveType)
 			            at: #value put: (value := 42);
 			            yourself).
 
@@ -521,14 +521,21 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueWithValue [
 CallStackJsonReaderTest >> testCreatePrimitiveValueWithoutValue [
 
 	| primValDict |
-	primValDict := CSStructureCreator simplePrimitiveValueDict.
+	primValDict := CSStructureCreator simplePrimitiveValueDict at: #primitiveType.
 	primValDict removeKey: #value ifAbsent: [ "No problem if already absent" ].
 	self should: [ reader createPrimitiveValue: primValDict ] raise: Error
 ]
 
 { #category : 'createReceiver' }
 CallStackJsonReaderTest >> testCreateReceiver [
-	self fail. "test if an error is signaled if using a primitiveType instead of an objectReference"
+
+	self should: [ reader createReceiver: CSStructureCreator simplePrimitiveValueDict ] raise: Error
+]
+
+{ #category : 'createReceiver' }
+CallStackJsonReaderTest >> testCreateReceiverNotAReference [
+
+	self should: [ reader createReceiver: (CSStructureCreator simplePrimitiveValueDict at: #primitiveType) ] raise: Error
 ]
 
 { #category : 'createStackline' }
@@ -558,7 +565,7 @@ CallStackJsonReaderTest >> testCreateStacklineReceiverNotNil [
 
 	| stacklineDict stackline |
 	stacklineDict := CSStructureCreator simpleStacklineDict
-		                 at: #receiver put: CSStructureCreator simpleArrayReference;
+		                 at: #receiver put: CSStructureCreator simpleArrayReferenceDict;
 		                 yourself.
 
 	stackline := reader createStackline: stacklineDict.

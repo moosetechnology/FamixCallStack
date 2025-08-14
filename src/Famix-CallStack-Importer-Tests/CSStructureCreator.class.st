@@ -6,7 +6,7 @@ Class {
 }
 
 { #category : 'setup' }
-CSStructureCreator class >> simpleArrayReference [
+CSStructureCreator class >> simpleArrayReferenceDict [
 
 	^ Dictionary new
 		  at: #reference put: (Dictionary new
@@ -70,8 +70,10 @@ CSStructureCreator class >> simpleParameterDict [
 CSStructureCreator class >> simplePrimitiveValueDict [
 
 	^ Dictionary new
-		  at: #type put: #int;
-		  at: #value put: 42;
+		  at: #primitiveType put: (Dictionary new
+				   at: #type put: #int;
+				   at: #value put: 42;
+				   yourself);
 		  yourself
 ]
 
@@ -79,19 +81,13 @@ CSStructureCreator class >> simplePrimitiveValueDict [
 CSStructureCreator class >> simpleStacklineDict [
 
 	^ self simpleMethodCallDict
-		  at: #receiver put: self simpleArrayReference;
+		  at: #receiver put: self simpleArrayReferenceDict;
 		  yourself
 ]
 
 { #category : 'setup' }
 CSStructureCreator class >> simpleValueDict [
 	"Provide a simple value structure"
-
-	"Used to make a valid structure while not needing to pay attention to the value"
-
-	| primValDict |
-	primValDict := Dictionary new.
-	primValDict at: #primitiveType put: self simplePrimitiveValueDict.
-
-	^ primValDict
+	
+	^ self simplePrimitiveValueDict
 ]

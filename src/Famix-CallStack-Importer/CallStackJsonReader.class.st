@@ -175,7 +175,9 @@ CallStackJsonReader >> createPrimitiveValue: aDictionary [
 CallStackJsonReader >> createReceiver: aDictionary [
 	"Instantiate the receiver of in a stack line"
 
-	^ model newReceiver value: (self createValueReference: (aDictionary at: #reference))
+	aDictionary at: #reference ifPresent: [ :reference | ^ model newReceiver value: (self createValueReference: (aDictionary at: #reference)) ].
+	aDictionary at: #primitiveType ifPresent: [ :primitive | Error signal: 'Receiver should not be a primitiveType argument value' ].
+	Error signal: 'Unexcepted receiver value'
 ]
 
 { #category : 'instance creation' }
@@ -183,7 +185,7 @@ CallStackJsonReader >> createStackline: aDictionnary [
   	"Instantiate a line of a stack"
 	| line |
 	line := model newStackline.
-
+ 
 	line methodCall: (self createMethodCall: aDictionnary).
 	(aDictionnary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
 	^ line
