@@ -10,13 +10,6 @@ Class {
 }
 
 { #category : 'importing' }
-FamixCSArrayReferenceTest >> testFillFrom [
-	"To test:
-	- Does add elements "
-	self fail.
-]
-
-{ #category : 'importing' }
 FamixCSArrayReferenceTest >> testsize [
 	"to test:
 	- adding an element augment the size, and reseting element reset the size"

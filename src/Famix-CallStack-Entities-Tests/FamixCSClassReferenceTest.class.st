@@ -8,11 +8,3 @@ Class {
 	#package : 'Famix-CallStack-Entities-Tests',
 	#tag : 'Entities'
 }
-
-{ #category : 'tests' }
-FamixCSClassReferenceTest >> testFillFrom [
-	"To test:
-	- When prepared and not prepared
-	- Does add values ton fields"
-	self fail.
-]

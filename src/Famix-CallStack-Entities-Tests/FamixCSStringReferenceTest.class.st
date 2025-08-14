@@ -8,10 +8,3 @@ Class {
 	#package : 'Famix-CallStack-Entities-Tests',
 	#tag : 'Entities'
 }
-
-{ #category : 'tests' }
-FamixCSStringReferenceTest >> testFillFrom [
-	"To test:
-	- Does add the String as a value"
-	self fail.
-]

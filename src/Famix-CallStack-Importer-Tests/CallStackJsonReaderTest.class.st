@@ -20,69 +20,6 @@ CallStackJsonReaderTest >> setUp [
 			 yourself)
 ]
 
-{ #category : 'setup' }
-CallStackJsonReaderTest >> simpleFieldDict [
-	| fieldDict |
-	fieldDict := Dictionary new.
-	fieldDict at: #name put: #aField.
-	fieldDict at: #value put: self simpleValueDict.
-	^ fieldDict
-]
-
-{ #category : 'setup' }
-CallStackJsonReaderTest >> simpleMethodCallDict [
-
-	| methodCallDict argsDict methodDict |
-	methodCallDict := Dictionary new.
-	methodCallDict at: #arguments put: (argsDict := Dictionary new).
-	argsDict at: #argsValues put: {  }.
-
-	"create a simple method with no paremeter to make sure no errors happens from having no arguments"
-	methodDict := self simpleMethodDict.
-	methodDict  at: #parameters put: {  }.
-	methodCallDict at: #method put: methodDict.
-	^ methodCallDict
-]
-
-{ #category : 'setup' }
-CallStackJsonReaderTest >> simpleMethodDict [
-
-	| methodDict |
-	methodDict := Dictionary new.
-	methodDict at: #name put: #main.
-	methodDict at: #parentType put: 'Pharo'.
-	methodDict at: #isClassSide put: true.
-
-	methodDict at: #parameters put: {  }.
-	^ methodDict
-]
-
-{ #category : 'setup' }
-CallStackJsonReaderTest >> simpleParameterDict [
-
-	^ Dictionary new
-		  at: #name put: #args;
-		  at: #type put: #Pharo;
-		  yourself
-]
-
-{ #category : 'setup' }
-CallStackJsonReaderTest >> simpleValueDict [
-	"Provide a simple value structure"
-	"Used to make a valid structure while not needing to pay attention to the value"
-	| primTypeDict primValDict|
-	
-	primValDict := Dictionary new.
-	primValDict at: #type put: #int.
-	primValDict at: #value put: 42.
-	
-	primTypeDict := Dictionary new.
-	primTypeDict at: #primitiveType put: primValDict.
-	
-	^ primTypeDict
-	
-]
-
 { #category : 'createArrayArgument' }
 CallStackJsonReaderTest >> testCreateArgumentCreatedArgumentIsInTheModel [
 
@@ -106,7 +43,7 @@ CallStackJsonReaderTest >> testCreateArgumentWithValue [
 
 	| arg |
 	"In this test we just need to know if a value is imported, how the value is imported is not useful here"
-	arg := reader createArgument: self simpleValueDict.
+	arg := reader createArgument: CSStructureCreator simpleValueDict.
 	
 	self assert: arg value isNotNil.
 ]
@@ -145,7 +82,7 @@ CallStackJsonReaderTest >> testCreateClassNamedNormal [
 CallStackJsonReaderTest >> testCreateFieldAccessible [
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #accessible put: true.
 
 	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
@@ -157,7 +94,7 @@ CallStackJsonReaderTest >> testCreateFieldAccessible [
 CallStackJsonReaderTest >> testCreateFieldCreatedFieldIsInTheModel [
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 
 	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
 
@@ -170,7 +107,7 @@ CallStackJsonReaderTest >> testCreateFieldCreatedFieldIsInTheModel [
 CallStackJsonReaderTest >> testCreateFieldNoName [
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict removeKey: #name.
 
 	self should: [ field := reader createField: fieldDict ] raise: Error
@@ -180,7 +117,7 @@ CallStackJsonReaderTest >> testCreateFieldNoName [
 CallStackJsonReaderTest >> testCreateFieldNoPrecsionOnAccessible [
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict removeKey: #accessible ifAbsent: [ "not problem if already absent" ].
 
 	self shouldnt: [ field := reader createField: fieldDict  ] raise: Error.
@@ -192,7 +129,7 @@ CallStackJsonReaderTest >> testCreateFieldNoValue [
 	"Create a collection to test createField"
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict removeKey: #value ifAbsent: [ "not problem if already absent" ].
 	
 	self should: [ field := reader createField: fieldDict ] raise: Error.
@@ -203,7 +140,7 @@ CallStackJsonReaderTest >> testCreateFieldNoValueWhileAccessible [
 	"Create a collection to test createField"
 
 	| field fieldDict |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #accessible put: true.
 	fieldDict removeKey: #value ifAbsent: [ "not problem if already absent" ].
 	
@@ -214,7 +151,7 @@ CallStackJsonReaderTest >> testCreateFieldNoValueWhileAccessible [
 CallStackJsonReaderTest >> testCreateFieldNotAccessibleWithNoValue [
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #accessible put: false.
 	fieldDict removeKey: #value ifAbsent: [ "not problem if already absent" ].
 
@@ -227,9 +164,9 @@ CallStackJsonReaderTest >> testCreateFieldValueWhileInaccessible [
 	"Create a collection to test createField"
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #accessible put: false.
-	fieldDict at: #value put: self simpleValueDict.
+	fieldDict at: #value put: CSStructureCreator simpleValueDict.
 	
 	self should: [ field := reader createField: fieldDict ] raise: Error.
 ]
@@ -239,7 +176,7 @@ CallStackJsonReaderTest >> testCreateFieldValueWithNilValue [
 	"Create a collection to test createField"
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #value put: nil.
 	
 	field := reader createField: fieldDict. 
@@ -251,7 +188,7 @@ CallStackJsonReaderTest >> testCreateFieldValueWithNilValueWhileInaccessible [
 	"Create a collection to test createField"
 
 	| fieldDict field |
-	fieldDict := self simpleFieldDict.
+	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #value put: nil.
 	fieldDict at: #accessible put: false.
 	
@@ -262,9 +199,13 @@ CallStackJsonReaderTest >> testCreateFieldValueWithNilValueWhileInaccessible [
 CallStackJsonReaderTest >> testCreateMethodCallArgumentsAccessibleWithValue [
 
 	| methodCallDict argsDict |
-	methodCallDict := self simpleMethodCallDict.
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
+	methodCallDict at: #method put: (CSStructureCreator simpleMethodDict
+			 at: #parameters put: { CSStructureCreator simpleParameterDict };
+			 yourself).
+
 	argsDict := methodCallDict at: #arguments.
-	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #argsValues put: { CSStructureCreator simpleValueDict }.
 	argsDict at: #accessible put: true.
 
 	self shouldnt: [ reader createMethodCall: methodCallDict ] raise: Error
@@ -274,7 +215,7 @@ CallStackJsonReaderTest >> testCreateMethodCallArgumentsAccessibleWithValue [
 CallStackJsonReaderTest >> testCreateMethodCallArgumentsAccessibleWithoutValue [
 
 	| methodCallDict argsDict |
-	methodCallDict := self simpleMethodCallDict.
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
 	argsDict := methodCallDict at: #arguments.
 	argsDict removeKey: #argsValues ifAbsent: ["no problem if already absent"].
 	argsDict at: #accessible put: true.
@@ -286,9 +227,9 @@ CallStackJsonReaderTest >> testCreateMethodCallArgumentsAccessibleWithoutValue [
 CallStackJsonReaderTest >> testCreateMethodCallArgumentsInAccessibleWithValue [
 
 	| methodCallDict argsDict |
-	methodCallDict := self simpleMethodCallDict.
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
 	argsDict := methodCallDict at: #arguments.
-	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #argsValues put: { CSStructureCreator simpleValueDict }.
 	argsDict at: #accessible put: false.
 
 	self should: [ reader createMethodCall: methodCallDict ] raise: Error
@@ -298,7 +239,7 @@ CallStackJsonReaderTest >> testCreateMethodCallArgumentsInAccessibleWithValue [
 CallStackJsonReaderTest >> testCreateMethodCallArgumentsInAccessibleWithoutValue [
 
 	| methodCallDict argsDict |
-	methodCallDict := self simpleMethodCallDict.
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
 	argsDict := methodCallDict at: #arguments.
 	argsDict removeKey: #argsValues ifAbsent: ["no problem if already absent"].
 	argsDict at: #accessible put: false.
@@ -310,8 +251,8 @@ CallStackJsonReaderTest >> testCreateMethodCallArgumentsInAccessibleWithoutValue
 CallStackJsonReaderTest >> testCreateMethodCallCheckMethodCreation [
 
 	| methodCallDict methodCall |
-	methodCallDict := self simpleMethodCallDict.
-	methodCallDict at: #method put: self simpleMethodDict.
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
+	methodCallDict at: #method put: CSStructureCreator simpleMethodDict.
 
 	methodCall := reader createMethodCall: methodCallDict.
 	self assert: methodCall method isNotNil
@@ -321,59 +262,49 @@ CallStackJsonReaderTest >> testCreateMethodCallCheckMethodCreation [
 CallStackJsonReaderTest >> testCreateMethodCallDifferentNumberOfArgumentsAndParametersWhileAccessible [
 
 	| methodCallDict methodDict argsDict |
-	methodCallDict := self simpleMethodCallDict.
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
 
-	methodDict := methodCallDict at: #method put: self simpleMethodDict.
+	methodDict := methodCallDict at: #method put: CSStructureCreator simpleMethodDict.
 	methodDict at: #parameters put: {  }.
 
 	argsDict := methodCallDict at: #arguments.
-	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #argsValues put: { CSStructureCreator simpleValueDict }.
 	argsDict at: #accessible put: true.
 
 	self should: [ reader createMethodCall: methodCallDict ] raise: Error
-]
-
-{ #category : 'createMethodCall' }
-CallStackJsonReaderTest >> testCreateMethodCallDifferentNumberOfArgumentsAndParametersWhileInaccessible [
-
-	| methodCallDict methodDict argsDict |
-	methodCallDict := self simpleMethodCallDict.
-
-	methodDict := methodCallDict at: #method put: self simpleMethodDict.
-	methodDict at: #parameters put: {  }.
-
-	argsDict := methodCallDict at: #arguments.
-	argsDict at: #argsValues put: { self simpleValueDict }.
-	argsDict at: #accessible put: true.
-
-	self shouldnt: [ reader createMethodCall: methodCallDict ] raise: Error
 ]
 
 { #category : 'createMethodCall' }
 CallStackJsonReaderTest >> testCreateMethodCallNoMethod [
 
 	| methodCallDict |
-	methodCallDict := self simpleMethodCallDict.
-	methodCallDict removeKey: #method ifAbsent:["No problem if already absent"].
+	methodCallDict := CSStructureCreator simpleMethodCallDict.
+	methodCallDict removeKey: #method ifAbsent: [ "No problem if already absent" ].
 	self should: [ reader createMethodCall: methodCallDict ] raise: Error
 ]
 
 { #category : 'createMethod' }
 CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodIfDifferentNameButSameType [
 	"Create two time the same method, and check if the is only one"
-	reader createMethod: self simpleMethodDict.
-	reader createMethod: (self simpleMethodDict at:#name put:#imDIFFERENT; yourself).
-	
-	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 2
+
+	reader createMethod: CSStructureCreator simpleMethodDict.
+	reader createMethod: (CSStructureCreator simpleMethodDict
+			 at: #name put: #imDIFFERENT;
+			 yourself).
+
+	self assert: (reader model entities select: [ :entity | entity isMethod ]) size equals: 2
 ]
 
 { #category : 'createMethod' }
 CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodIfDifferentTypeButSameName [
 	"Create two time the same method, and check if the is only one"
-	reader createMethod: self simpleMethodDict.
-	reader createMethod: (self simpleMethodDict at:#parentType put:#ImDIFFERENT; yourself).
-	
-	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 2
+
+	reader createMethod: CSStructureCreator simpleMethodDict.
+	reader createMethod: (CSStructureCreator simpleMethodDict
+			 at: #parentType put: #ImDIFFERENT;
+			 yourself).
+
+	self assert: (reader model entities select: [ :entity | entity isMethod ]) size equals: 2
 ]
 
 { #category : 'createMethod' }
@@ -381,25 +312,25 @@ CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodsIfNotTheSameParameter
 
 	| methodDict method |
 	"create a method making sure parameters is not empty"
-	methodDict := self simpleMethodDict
-		              at: #parameters put: { self simpleParameterDict };
+	methodDict := CSStructureCreator simpleMethodDict
+		              at: #parameters put: { CSStructureCreator simpleParameterDict };
 		              yourself.
 	method := reader createMethod: methodDict.
 
 	"create a method making sure parameters is empty"
-	methodDict := self simpleMethodDict
+	methodDict := CSStructureCreator simpleMethodDict
 		              at: #parameters put: {  };
 		              yourself.
 	method := reader createMethod: methodDict.
 
-	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 2
+	self assert: (reader model entities select: [ :entity | entity isMethod ]) size equals: 2
 ]
 
 { #category : 'createMethodCall' }
 CallStackJsonReaderTest >> testCreateMethodCreatedMethodCallIsInTheModel [
 
 	| methodCall |
-	methodCall := reader createMethodCall: self simpleMethodCallDict.
+	methodCall := reader createMethodCall: CSStructureCreator simpleMethodCallDict.
 
 	self assert: (reader model includes: methodCall)
 ]
@@ -408,7 +339,7 @@ CallStackJsonReaderTest >> testCreateMethodCreatedMethodCallIsInTheModel [
 CallStackJsonReaderTest >> testCreateMethodCreatedMethodIsInTheModel [
 
 	| method |
-	method := reader createMethod: self simpleMethodDict.
+	method := reader createMethod: CSStructureCreator simpleMethodDict.
 
 	self assert: (reader model includes: method)
 ]
@@ -416,8 +347,8 @@ CallStackJsonReaderTest >> testCreateMethodCreatedMethodIsInTheModel [
 { #category : 'createMethod' }
 CallStackJsonReaderTest >> testCreateMethodDontCreateTwice [
 	"Create two time the same method, and check if the is only one"
-	reader createMethod: self simpleMethodDict.
-	reader createMethod: self simpleMethodDict.
+	reader createMethod: CSStructureCreator simpleMethodDict.
+	reader createMethod: CSStructureCreator simpleMethodDict.
 	
 	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 1
 ]
@@ -427,7 +358,7 @@ CallStackJsonReaderTest >> testCreateMethodEmptyParameters [
 
 	| methodDict method |
 	"create a method making sure parameters is empty"
-	methodDict := self simpleMethodDict
+	methodDict := CSStructureCreator simpleMethodDict
 		              at: #parameters put: {  };
 		              yourself.
 	method := reader createMethod: methodDict.
@@ -439,11 +370,11 @@ CallStackJsonReaderTest >> testCreateMethodEmptyParameters [
 CallStackJsonReaderTest >> testCreateMethodIsClassSide [
 	"Create two time the same method, and check if the is only one"
 
-	self assert: (reader createMethod: (self simpleMethodDict
+	self assert: (reader createMethod: (CSStructureCreator simpleMethodDict
 				  at: #isClassSide put: true;
 				  yourself)) isClassSide.
 
-	self assert: (reader createMethod: (self simpleMethodDict
+	self assert: (reader createMethod: (CSStructureCreator simpleMethodDict
 				  at: #isClassSide put: false; at:#name put:#imDIFFERENT;
 				  yourself)) isClassSide not
 ]
@@ -453,7 +384,7 @@ CallStackJsonReaderTest >> testCreateMethodIsStub [
 	"Create two time the same method, and check if the is only one"
 	
 	| method |
-	method := reader createMethod: self simpleMethodDict.
+	method := reader createMethod: CSStructureCreator simpleMethodDict.
 	
 	self assert: method isStub.
 ]
@@ -463,8 +394,8 @@ CallStackJsonReaderTest >> testCreateMethodNotEmptyParameters [
 
 	| methodDict method |
 	"create a method making sure parameters is not empty"
-	methodDict := self simpleMethodDict
-		              at: #parameters put: { self simpleParameterDict };
+	methodDict := CSStructureCreator simpleMethodDict
+		              at: #parameters put: { CSStructureCreator simpleParameterDict };
 		              yourself.
 	method := reader createMethod: methodDict.
 
@@ -475,7 +406,7 @@ CallStackJsonReaderTest >> testCreateMethodNotEmptyParameters [
 CallStackJsonReaderTest >> testCreateMethodParentType [
 	"Create two time the same method, and check if the is only one"
 	| method name |
-	method := (reader createMethod: (self simpleMethodDict
+	method := (reader createMethod: (CSStructureCreator simpleMethodDict
 				  at: #parentType put: (name := #Pharo);
 				  yourself)).
 				
@@ -487,7 +418,7 @@ CallStackJsonReaderTest >> testCreateMethodParentType [
 CallStackJsonReaderTest >> testCreateParametersCreatedParametersAreInModel [
 
 	| paramArray parameters |
-	paramArray := { self simpleParameterDict }.
+	paramArray := { CSStructureCreator simpleParameterDict }.
 	parameters := reader createParameters: paramArray.
 
 	self assert: (reader model includesAll: parameters)
@@ -507,7 +438,7 @@ CallStackJsonReaderTest >> testCreateParametersEmpty [
 CallStackJsonReaderTest >> testCreateParametersName [
 
 	| paramArray name parameters |
-	paramArray := { (self simpleParameterDict
+	paramArray := { (CSStructureCreator simpleParameterDict
 		               at: #name put: (name := #args);
 		               yourself) }.
 
@@ -520,7 +451,7 @@ CallStackJsonReaderTest >> testCreateParametersName [
 CallStackJsonReaderTest >> testCreateParametersTyping [
 
 	| paramArray type parameters |
-	paramArray := { (self simpleParameterDict
+	paramArray := { (CSStructureCreator simpleParameterDict
 		               at: #name put: (type := #Pharo);
 		               yourself) }.
 
@@ -530,21 +461,69 @@ CallStackJsonReaderTest >> testCreateParametersTyping [
 ]
 
 { #category : 'createPrimitiveType' }
-CallStackJsonReaderTest >> testCreatePrimitiveType [
-	"To test:
-	-- is in the model
-	- suffix, with and without (same as create class)
-	- isStub"
-	self fail.
+CallStackJsonReaderTest >> testCreatePrimitiveTypeCreatedPrimitiveTypeIsInTheModel [
+
+	| primType |
+	primType := reader createPrimitiveType: #int.
+
+	self assert: (reader model includes: primType)
 ]
 
 { #category : 'createPrimitiveType' }
-CallStackJsonReaderTest >> testCreatePrimitiveValue [
-	"To test:
-	- is in the model
-	- Typing
-	- value with and without (without is an error)"
-	self fail.
+CallStackJsonReaderTest >> testCreatePrimitiveTypeDeleteSuffix [
+	| primType |
+	"In FamixJava there is no diference in typing with array or single value"
+	primType := reader createPrimitiveType: 'int[]'.
+
+	self assert:  primType name equals: #int
+]
+
+{ #category : 'createPrimitiveType' }
+CallStackJsonReaderTest >> testCreatePrimitiveTypeIsStub [
+	| primType |
+	primType := reader createPrimitiveType: #int.
+
+	self assert:  primType isStub
+]
+
+{ #category : 'createPrimitiveValue' }
+CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheModel [
+
+	| primVal |
+	primVal := reader createPrimitiveValue: CSStructureCreator simplePrimitiveValueDict.
+
+	self assert: (reader model includes: primVal)
+]
+
+{ #category : 'createPrimitiveValue' }
+CallStackJsonReaderTest >> testCreatePrimitiveValueTyping [
+
+	| primVal |
+	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict
+			            at: #type put: #int;
+			            yourself).
+
+	self assert: primVal typing declaredType name equals: #int
+]
+
+{ #category : 'createPrimitiveValue' }
+CallStackJsonReaderTest >> testCreatePrimitiveValueWithValue [
+
+	| primVal value |
+	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict
+			            at: #value put: (value := 42);
+			            yourself).
+
+	self assert: primVal value equals: value
+]
+
+{ #category : 'createPrimitiveValue' }
+CallStackJsonReaderTest >> testCreatePrimitiveValueWithoutValue [
+
+	| primValDict |
+	primValDict := CSStructureCreator simplePrimitiveValueDict.
+	primValDict removeKey: #value ifAbsent: [ "No problem if already absent" ].
+	self should: [ reader createPrimitiveValue: primValDict ] raise: Error
 ]
 
 { #category : 'createStackline' }

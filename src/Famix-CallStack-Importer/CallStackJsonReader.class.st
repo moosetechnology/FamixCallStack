@@ -135,9 +135,8 @@ CallStackJsonReader >> createMethodCall: aDictionary [
 		argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | methodCall addArgument: arg ] ].
 
 	"Checking that number of parameters and arguments match in case arguments are accessibles"
-	methodCall isArgsAccessible ifFalse: [
-			method parameters size = methodCall arguments size ifFalse: [
-				Error signal: 'MethodCall have accessible arguments, but the number of arguments and number of parameter of its method doesnt match' ] ].
+	(methodCall isArgsAccessible and: [ method parameters size ~= methodCall arguments size ]) ifTrue: [
+		Error signal: 'MethodCall have accessible arguments, but the number of arguments and number of parameter of its method doesnt match' ].
 
 	^ methodCall
 ]
