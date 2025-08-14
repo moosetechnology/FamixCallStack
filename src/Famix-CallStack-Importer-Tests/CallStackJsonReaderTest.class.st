@@ -8,7 +8,7 @@ Class {
 	#package : 'Famix-CallStack-Importer-Tests'
 }
 
-{ #category : 'running' }
+{ #category : 'setup' }
 CallStackJsonReaderTest >> setUp [
 
 	super setUp.
@@ -20,7 +20,7 @@ CallStackJsonReaderTest >> setUp [
 			 yourself)
 ]
 
-{ #category : 'simple structures' }
+{ #category : 'setup' }
 CallStackJsonReaderTest >> simpleFieldDict [
 	| fieldDict |
 	fieldDict := Dictionary new.
@@ -29,20 +29,22 @@ CallStackJsonReaderTest >> simpleFieldDict [
 	^ fieldDict
 ]
 
-{ #category : 'simple structures' }
+{ #category : 'setup' }
 CallStackJsonReaderTest >> simpleMethodCallDict [
 
 	| methodCallDict argsDict methodDict |
 	methodCallDict := Dictionary new.
-	methodCallDict at: #arguements put: (argsDict := Dictionary new).
+	methodCallDict at: #arguments put: (argsDict := Dictionary new).
 	argsDict at: #argsValues put: {  }.
 
 	"create a simple method with no paremeter to make sure no errors happens from having no arguments"
-	methodDict := self simpleMethodDict at: #parameters put: {  }.
-	methodCallDict at: #method put: methodDict
+	methodDict := self simpleMethodDict.
+	methodDict  at: #parameters put: {  }.
+	methodCallDict at: #method put: methodDict.
+	^ methodCallDict
 ]
 
-{ #category : 'simple structures' }
+{ #category : 'setup' }
 CallStackJsonReaderTest >> simpleMethodDict [
 
 	| methodDict |
@@ -55,17 +57,16 @@ CallStackJsonReaderTest >> simpleMethodDict [
 	^ methodDict
 ]
 
-{ #category : 'simple structures' }
+{ #category : 'setup' }
 CallStackJsonReaderTest >> simpleParameterDict [
 
-	| parameterDict |
-	parameterDict := Dictionary new.
-	parameterDict at: #name put: #args.
-	parameterDict at: #type put: #Pharo.
-	^ parameterDict
+	^ Dictionary new
+		  at: #name put: #args;
+		  at: #type put: #Pharo;
+		  yourself
 ]
 
-{ #category : 'simple structures' }
+{ #category : 'setup' }
 CallStackJsonReaderTest >> simpleValueDict [
 	"Provide a simple value structure"
 	"Used to make a valid structure while not needing to pay attention to the value"
@@ -182,7 +183,7 @@ CallStackJsonReaderTest >> testCreateFieldNoPrecsionOnAccessible [
 	fieldDict := self simpleFieldDict.
 	fieldDict removeKey: #accessible ifAbsent: [ "not problem if already absent" ].
 
-	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
+	self shouldnt: [ field := reader createField: fieldDict  ] raise: Error.
 	self assert: field isAccessible
 ]
 
@@ -217,7 +218,7 @@ CallStackJsonReaderTest >> testCreateFieldNotAccessibleWithNoValue [
 	fieldDict at: #accessible put: false.
 	fieldDict removeKey: #value ifAbsent: [ "not problem if already absent" ].
 
-	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
+	self shouldnt: [ field := reader createField: fieldDict  ] raise: Error.
 	self assert: field isAccessible not
 ]
 
@@ -258,15 +259,103 @@ CallStackJsonReaderTest >> testCreateFieldValueWithNilValueWhileInaccessible [
 ]
 
 { #category : 'createMethodCall' }
-CallStackJsonReaderTest >> testCreateMethodCall [
-	"To test:
-	- error if different number of arguments and parameters?
-	- accessibility (same as a field if arguments are inaccessible should not have value, and if accessible should have values)
-	- a method is created, and an error happen if no method can be created"
+CallStackJsonReaderTest >> testCreateMethodCallArgumentsAccessibleWithValue [
 
-	| methodCall |
-	methodCall := self simpleMethodCallDict.
-	self fail
+	| methodCallDict argsDict |
+	methodCallDict := self simpleMethodCallDict.
+	argsDict := methodCallDict at: #arguments.
+	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #accessible put: true.
+
+	self shouldnt: [ reader createMethodCall: methodCallDict ] raise: Error
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallArgumentsAccessibleWithoutValue [
+
+	| methodCallDict argsDict |
+	methodCallDict := self simpleMethodCallDict.
+	argsDict := methodCallDict at: #arguments.
+	argsDict removeKey: #argsValues ifAbsent: ["no problem if already absent"].
+	argsDict at: #accessible put: true.
+
+	self should: [ reader createMethodCall: methodCallDict ] raise: Error
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallArgumentsInAccessibleWithValue [
+
+	| methodCallDict argsDict |
+	methodCallDict := self simpleMethodCallDict.
+	argsDict := methodCallDict at: #arguments.
+	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #accessible put: false.
+
+	self should: [ reader createMethodCall: methodCallDict ] raise: Error
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallArgumentsInAccessibleWithoutValue [
+
+	| methodCallDict argsDict |
+	methodCallDict := self simpleMethodCallDict.
+	argsDict := methodCallDict at: #arguments.
+	argsDict removeKey: #argsValues ifAbsent: ["no problem if already absent"].
+	argsDict at: #accessible put: false.
+
+	self shouldnt: [ reader createMethodCall: methodCallDict ] raise: Error
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallCheckMethodCreation [
+
+	| methodCallDict methodCall |
+	methodCallDict := self simpleMethodCallDict.
+	methodCallDict at: #method put: self simpleMethodDict.
+
+	methodCall := reader createMethodCall: methodCallDict.
+	self assert: methodCall method isNotNil
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallDifferentNumberOfArgumentsAndParametersWhileAccessible [
+
+	| methodCallDict methodDict argsDict |
+	methodCallDict := self simpleMethodCallDict.
+
+	methodDict := methodCallDict at: #method put: self simpleMethodDict.
+	methodDict at: #parameters put: {  }.
+
+	argsDict := methodCallDict at: #arguments.
+	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #accessible put: true.
+
+	self should: [ reader createMethodCall: methodCallDict ] raise: Error
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallDifferentNumberOfArgumentsAndParametersWhileInaccessible [
+
+	| methodCallDict methodDict argsDict |
+	methodCallDict := self simpleMethodCallDict.
+
+	methodDict := methodCallDict at: #method put: self simpleMethodDict.
+	methodDict at: #parameters put: {  }.
+
+	argsDict := methodCallDict at: #arguments.
+	argsDict at: #argsValues put: { self simpleValueDict }.
+	argsDict at: #accessible put: true.
+
+	self shouldnt: [ reader createMethodCall: methodCallDict ] raise: Error
+]
+
+{ #category : 'createMethodCall' }
+CallStackJsonReaderTest >> testCreateMethodCallNoMethod [
+
+	| methodCallDict |
+	methodCallDict := self simpleMethodCallDict.
+	methodCallDict removeKey: #method ifAbsent:["No problem if already absent"].
+	self should: [ reader createMethodCall: methodCallDict ] raise: Error
 ]
 
 { #category : 'createMethod' }
@@ -309,7 +398,10 @@ CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodsIfNotTheSameParameter
 { #category : 'createMethodCall' }
 CallStackJsonReaderTest >> testCreateMethodCreatedMethodCallIsInTheModel [
 
-	self fail.
+	| methodCall |
+	methodCall := reader createMethodCall: self simpleMethodCallDict.
+
+	self assert: (reader model includes: methodCall)
 ]
 
 { #category : 'createMethod' }
@@ -392,12 +484,49 @@ CallStackJsonReaderTest >> testCreateMethodParentType [
 ]
 
 { #category : 'createParameters' }
-CallStackJsonReaderTest >> testCreateParameters [
-	"To test:
-	- is in the model
-	-Name
-	-Typing"
-	self fail.
+CallStackJsonReaderTest >> testCreateParametersCreatedParametersAreInModel [
+
+	| paramArray parameters |
+	paramArray := { self simpleParameterDict }.
+	parameters := reader createParameters: paramArray.
+
+	self assert: (reader model includesAll: parameters)
+]
+
+{ #category : 'createParameters' }
+CallStackJsonReaderTest >> testCreateParametersEmpty [
+
+	| paramArray paramResult |
+	paramArray := {  }.
+	paramResult := reader createParameters: paramArray.
+
+	self assert: paramArray isEmpty
+]
+
+{ #category : 'createParameters' }
+CallStackJsonReaderTest >> testCreateParametersName [
+
+	| paramArray name parameters |
+	paramArray := { (self simpleParameterDict
+		               at: #name put: (name := #args);
+		               yourself) }.
+
+	parameters := reader createParameters: paramArray.
+
+	parameters do: [ :param | self assert: param name equals: name ]
+]
+
+{ #category : 'createParameters' }
+CallStackJsonReaderTest >> testCreateParametersTyping [
+
+	| paramArray type parameters |
+	paramArray := { (self simpleParameterDict
+		               at: #name put: (type := #Pharo);
+		               yourself) }.
+
+	parameters := reader createParameters: paramArray.
+
+	parameters do: [ :param | self assert: param typing declaredType name equals: type ]
 ]
 
 { #category : 'createPrimitiveType' }

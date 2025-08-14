@@ -113,9 +113,12 @@ CallStackJsonReader >> createMethod: aDictionary [
 CallStackJsonReader >> createMethodCall: aDictionary [
 	"Instatiate the MethodCall of a stack line, being the method informations and the given arguments"
 
-	| methodCall argsDict argValuesDict |
+	| methodCall method argsDict argValuesDict |
 	methodCall := model newMethodCall.
-	methodCall method: (self createMethod: (aDictionary at: #method)).
+	aDictionary
+		at: #method
+		ifPresent: [ :methodDict | methodCall method: (method := self createMethod: methodDict) ]
+		ifAbsent: [ Error signal: 'MethodCall has no method' ].
 
 	argsDict := aDictionary at: #arguments.
 	"Default: accessible if not specified"
@@ -130,6 +133,12 @@ CallStackJsonReader >> createMethodCall: aDictionary [
 
 	(methodCall isArgsAccessible and: [ argValuesDict notNil ]) ifTrue: [
 		argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | methodCall addArgument: arg ] ].
+
+	"Checking that number of parameters and arguments match in case arguments are accessibles"
+	methodCall isArgsAccessible ifFalse: [
+			method parameters size = methodCall arguments size ifFalse: [
+				Error signal: 'MethodCall have accessible arguments, but the number of arguments and number of parameter of its method doesnt match' ] ].
+
 	^ methodCall
 ]
 
