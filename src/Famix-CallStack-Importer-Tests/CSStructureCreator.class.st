@@ -70,7 +70,7 @@ CSStructureCreator class >> simpleParameterDict [
 CSStructureCreator class >> simplePrimitiveValueDict [
 
 	^ Dictionary new
-		  at: #primitiveType put: (Dictionary new
+		  at: #primitiveValue put: (Dictionary new
 				   at: #type put: #int;
 				   at: #value put: 42;
 				   yourself);

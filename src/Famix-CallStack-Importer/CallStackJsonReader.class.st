@@ -176,7 +176,7 @@ CallStackJsonReader >> createReceiver: aDictionary [
 	"Instantiate the receiver of in a stack line"
 
 	aDictionary at: #reference ifPresent: [ :reference | ^ model newReceiver value: (self createValueReference: (aDictionary at: #reference)) ].
-	aDictionary at: #primitiveType ifPresent: [ :primitive | Error signal: 'Receiver should not be a primitiveType argument value' ].
+	aDictionary at: #primitiveValue ifPresent: [ :primitive | Error signal: 'Receiver should not be a primitiveType argument value' ].
 	Error signal: 'Unexcepted receiver value'
 ]
 
@@ -205,7 +205,6 @@ CallStackJsonReader >> createValueReference: aDictionary [
 
 	| reference type uniqueId typeName |
 	uniqueId := aDictionary at: #uniqueId.
-	typeName := aDictionary at: #type.
 
 	"Check alreadyFound case"
 	(aDictionary at: #alreadyFound ifAbsent: [ false ]) ifTrue: [
@@ -223,7 +222,8 @@ CallStackJsonReader >> createValueReference: aDictionary [
 
 	"Fill reference"
 	reference fillFrom: (aDictionary at: #refered) reader: self.
-
+	
+	typeName := aDictionary at: #type.
 	"Determine type"
 	type := (typeName includesSubstring: '.')
 		        ifTrue: [ self createClassNamed: typeName ]
@@ -241,7 +241,7 @@ CallStackJsonReader >> createValueWith: aDictionnary [
 	"Looking for either a reference or a primitive type, if neither are present throw an error"
 
 	aDictionnary at: #reference ifPresent: [ :reference | ^ self createValueReference: reference ].
-	aDictionnary at: #primitiveType ifPresent: [ :primitive | ^ self createPrimitiveValue: primitive ].
+	aDictionnary at: #primitiveValue ifPresent: [ :primitive | ^ self createPrimitiveValue: primitive ].
 	Error signal: 'Unexcepted argument value'
 ]
 

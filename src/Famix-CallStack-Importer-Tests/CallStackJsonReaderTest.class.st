@@ -490,7 +490,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveTypeIsStub [
 CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheModel [
 
 	| primVal |
-	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict at: #primitiveType).
+	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict at: #primitiveValue).
 
 	self assert: (reader model includes: primVal)
 ]
@@ -499,7 +499,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheM
 CallStackJsonReaderTest >> testCreatePrimitiveValueTyping [
 
 	| primVal |
-	primVal := reader createPrimitiveValue: ((CSStructureCreator simplePrimitiveValueDict at:#primitiveType)
+	primVal := reader createPrimitiveValue: ((CSStructureCreator simplePrimitiveValueDict at:#primitiveValue)
 			            at: #type put: #int;
 			            yourself).
 
@@ -510,7 +510,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueTyping [
 CallStackJsonReaderTest >> testCreatePrimitiveValueWithValue [
 
 	| primVal value |
-	primVal := reader createPrimitiveValue: ((CSStructureCreator simplePrimitiveValueDict at: #primitiveType)
+	primVal := reader createPrimitiveValue: ((CSStructureCreator simplePrimitiveValueDict at: #primitiveValue)
 			            at: #value put: (value := 42);
 			            yourself).
 
@@ -521,7 +521,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueWithValue [
 CallStackJsonReaderTest >> testCreatePrimitiveValueWithoutValue [
 
 	| primValDict |
-	primValDict := CSStructureCreator simplePrimitiveValueDict at: #primitiveType.
+	primValDict := CSStructureCreator simplePrimitiveValueDict at: #primitiveValue.
 	primValDict removeKey: #value ifAbsent: [ "No problem if already absent" ].
 	self should: [ reader createPrimitiveValue: primValDict ] raise: Error
 ]
