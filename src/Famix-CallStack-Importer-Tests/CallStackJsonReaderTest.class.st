@@ -669,12 +669,20 @@ CallStackJsonReaderTest >> testCreateValueReferenceNotAlreadyFoundWithoutARefere
 ]
 
 { #category : 'createValueWith' }
-CallStackJsonReaderTest >> testCreateValueWith [
-	"To test:
-	- reference created
-	- primitiveType create
-	- fail if no reference or no primitiveType found"
-	self fail.
+CallStackJsonReaderTest >> testCreateValueWithEmptyDictionary [
+
+	self should: [ reader createValueWith: Dictionary new ] raise: Error
+]
+
+{ #category : 'createValueWith' }
+CallStackJsonReaderTest >> testCreateValueWithPrimitiveType [
+	self shouldnt: [ reader createValueWith: CSStructureCreator simplePrimitiveValueDict ] raise: Error
+]
+
+{ #category : 'createValueWith' }
+CallStackJsonReaderTest >> testCreateValueWithReference [
+
+	self shouldnt: [ reader createValueWith: CSStructureCreator simpleArrayReferenceDict ] raise: Error
 ]
 
 { #category : 'reading' }
@@ -686,12 +694,32 @@ CallStackJsonReaderTest >> testRead [
 ]
 
 { #category : 'fillValueCheckingMaxDepth' }
-CallStackJsonReaderTest >> testfillValueCheckingMaxDepth [
-	"to test:
-	- with and without the MAXDEPTH tag
-	- with a String but not the tag (with and without <<>> both are errors)
-	- ifCollection is nil and if not"
-	self fail.
+CallStackJsonReaderTest >> testfillValueCheckingMaxDepthAtMaxDepth [
+	| aField |
+	aField := reader model newField.
+	reader fillValueCheckingMaxDepthOn: aField with: '<<MAX_DEPTH_REACHED>>'.
+
+	self assert: aField isAtMaxDepth 
+]
+
+{ #category : 'fillValueCheckingMaxDepth' }
+CallStackJsonReaderTest >> testfillValueCheckingMaxDepthWithNil [
+
+	| aField |
+	aField := reader model newField.
+	reader fillValueCheckingMaxDepthOn: aField with: nil.
+
+	self assert: aField value isNil
+]
+
+{ #category : 'fillValueCheckingMaxDepth' }
+CallStackJsonReaderTest >> testfillValueCheckingWithAString [
+	| aField |
+	aField := reader model newField.
+	self should:[reader fillValueCheckingMaxDepthOn: aField with: 'imJustAString'] raise: Error.
+	self should:[reader fillValueCheckingMaxDepthOn: aField with: '<<imJustAString>>'] raise: Error.
+
+	
 ]
 
 { #category : 'instantiateReferenceEntity' }
