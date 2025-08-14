@@ -133,7 +133,7 @@ FamixCallStackGenerator >> defineRelations [
 
 	methodCall *- method.
 
-	(classReference property: #field) -* (field property: #parent).
+	(classReference property: #fields) -* (field property: #parent).
 	(arrayReference property: #elements) -* (arrayValue property: #parent).
 	(methodCall property: #arguments) -* (argument property: #parent).
 
