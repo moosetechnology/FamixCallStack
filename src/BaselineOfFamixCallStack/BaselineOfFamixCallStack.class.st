@@ -13,5 +13,7 @@ BaselineOfFamixCallStack >> baseline: spec [
 			spec
 				package: 'Famix-CallStack-Generator';
 				package: 'Famix-CallStack-Entities';
-				package: 'Famix-CallStack-Importer'  with: [spec requires: 'Famix-CallStack-Entities']]
+				package: 'Famix-CallStack-Importer' with: [ spec requires: 'Famix-CallStack-Entities' ];
+				package: 'Famix-CallStack-Entities-Tests' with: [ spec requires: 'Famix-CallStack-Entities' ];
+				package: 'Famix-CallStack-Importer-Tests' with: [ spec requires: 'Famix-CallStack-Importer' ] ]
 ]
