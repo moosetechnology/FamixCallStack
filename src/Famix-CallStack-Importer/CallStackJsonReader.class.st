@@ -89,24 +89,17 @@ CallStackJsonReader >> createField: aDictionary [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createMethod: aDictionnary [
-	"Instantiate a FamixJavaMethod with the maximum informations possible"
+CallStackJsonReader >> createMethod: aDictionary [
+	"Instantiate a FamixJavaMethod with all given informations"
 
-	| method |
-	"check if the method already exist"
-	createdMethods at: (aDictionnary at: #name) ifPresent: [ :subDict | subDict at: (aDictionnary at: #parentType) ifPresent: [ :m | ^ m ] ].
-	method := (model newMethodNamed: (aDictionnary at: #name)) isStub: true.
-	
-	method isClassSide: (aDictionnary at: #isClassSide).
-	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
+	| paramTypeNames methodNameDict methodTypesDict |
+	paramTypeNames := (aDictionary at: #parameters) collect: [ :param | param at: #type ].
 
-	(self createParameters: (aDictionnary at: #parameters)) do: [ :param | method addParameter: param ].
-	"Add the method to not create it again"
-	createdMethods at: (aDictionnary at: #name) ifAbsentPut: [
-			Dictionary new
-				at: (aDictionnary at: #parentType) put: method;
-				yourself ].
-	^ method
+	methodNameDict := createdMethods at: (aDictionary at: #name) ifAbsentPut: [ Dictionary new ].
+
+	methodTypesDict := methodNameDict at: (aDictionary at: #parentType) ifAbsentPut: [ Dictionary new ].
+
+	^ methodTypesDict at: paramTypeNames ifAbsentPut: [ self instantiateMethodFrom: aDictionary ]
 ]
 
 { #category : 'instance creation' }
@@ -247,6 +240,19 @@ CallStackJsonReader >> initialize [
 	createdPrimitives := Dictionary new.
 	createdClasses := Dictionary new.
 	createdMethods := Dictionary new.
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> instantiateMethodFrom: aDictionnary [
+
+	| method |
+	method := (model newMethodNamed: (aDictionnary at: #name)) isStub: true.
+
+	method isClassSide: (aDictionnary at: #isClassSide).
+	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
+
+	(self createParameters: (aDictionnary at: #parameters)) do: [ :param | method addParameter: param ].
+	^ method
 ]
 
 { #category : 'accessing' }

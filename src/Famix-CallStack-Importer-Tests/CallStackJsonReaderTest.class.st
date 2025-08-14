@@ -34,6 +34,16 @@ CallStackJsonReaderTest >> simpleMethod [
 ]
 
 { #category : 'simple structures' }
+CallStackJsonReaderTest >> simpleParameter [
+
+	| parameter |
+	parameter := Dictionary new.
+	parameter at: #name put: #args.
+	parameter at: #type put: #Pharo.
+	^ parameter
+]
+
+{ #category : 'simple structures' }
 CallStackJsonReaderTest >> simpleValue [
 	"Provide a simple value structure"
 	"Used to make a valid structure while not needing to pay attention to the value"
@@ -196,7 +206,7 @@ CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodIfDifferentNameButSame
 	reader createMethod: self simpleMethod.
 	reader createMethod: (self simpleMethod at:#name put:#imDIFFERENT; yourself).
 	
-	self assert: (reader model entities select:[:entity | entity isMethod]) size = 2
+	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 2
 ]
 
 { #category : 'createMethod' }
@@ -205,7 +215,26 @@ CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodIfDifferentTypeButSame
 	reader createMethod: self simpleMethod.
 	reader createMethod: (self simpleMethod at:#parentType put:#ImDIFFERENT; yourself).
 	
-	self assert: (reader model entities select:[:entity | entity isMethod]) size = 2
+	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 2
+]
+
+{ #category : 'createMethod' }
+CallStackJsonReaderTest >> testCreateMethodCreateTwoMethodsIfNotTheSameParameters [
+
+	| methodDict method |
+	"create a method making sure parameters is not empty"
+	methodDict := self simpleMethod
+		              at: #parameters put: { self simpleParameter };
+		              yourself.
+	method := reader createMethod: methodDict.
+
+	"create a method making sure parameters is empty"
+	methodDict := self simpleMethod
+		              at: #parameters put: {  };
+		              yourself.
+	method := reader createMethod: methodDict.
+
+	self assert: (reader model entities select:[:entity | entity isMethod]) size equals: 2
 ]
 
 { #category : 'createMethod' }
@@ -215,6 +244,19 @@ CallStackJsonReaderTest >> testCreateMethodDontCreateTwice [
 	reader createMethod: self simpleMethod.
 	
 	self assert: (reader model entities select:[:entity | entity isMethod]) size = 1
+]
+
+{ #category : 'createMethod' }
+CallStackJsonReaderTest >> testCreateMethodEmptyParameters [
+
+	| methodDict method |
+	"create a method making sure parameters is empty"
+	methodDict := self simpleMethod
+		              at: #parameters put: {  };
+		              yourself.
+	method := reader createMethod: methodDict.
+
+	self assert: method parameters isEmpty
 ]
 
 { #category : 'createMethod' }
@@ -241,9 +283,16 @@ CallStackJsonReaderTest >> testCreateMethodIsStub [
 ]
 
 { #category : 'createMethod' }
-CallStackJsonReaderTest >> testCreateMethodParameters [
-	"Test the creation of parameters, with multiples and with none"
-	self fail.
+CallStackJsonReaderTest >> testCreateMethodNotEmptyParameters [
+
+	| methodDict method |
+	"create a method making sure parameters is not empty"
+	methodDict := self simpleMethod
+		              at: #parameters put: { self simpleParameter };
+		              yourself.
+	method := reader createMethod: methodDict.
+
+	self assert: method parameters isNotEmpty
 ]
 
 { #category : 'createMethod' }
