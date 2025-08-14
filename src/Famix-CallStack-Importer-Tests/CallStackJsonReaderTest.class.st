@@ -527,15 +527,24 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueWithoutValue [
 ]
 
 { #category : 'createReceiver' }
-CallStackJsonReaderTest >> testCreateReceiver [
+CallStackJsonReaderTest >> testCreateReceiverIsInTheModel [
 
-	self should: [ reader createReceiver: CSStructureCreator simplePrimitiveValueDict ] raise: Error
+	| arrayReference |
+	arrayReference := reader createReceiver: CSStructureCreator simpleArrayReferenceDict.
+
+	self assert: (reader model includes: arrayReference)
 ]
 
 { #category : 'createReceiver' }
 CallStackJsonReaderTest >> testCreateReceiverNotAReference [
 
 	self should: [ reader createReceiver: (CSStructureCreator simplePrimitiveValueDict at: #primitiveType) ] raise: Error
+]
+
+{ #category : 'createReceiver' }
+CallStackJsonReaderTest >> testCreateReceiverWithReference [
+
+	self shouldnt: [ reader createReceiver: CSStructureCreator simpleArrayReferenceDict ] raise: Error
 ]
 
 { #category : 'createStackline' }
@@ -574,24 +583,94 @@ CallStackJsonReaderTest >> testCreateStacklineReceiverNotNil [
 ]
 
 { #category : 'createValueReference' }
-CallStackJsonReaderTest >> testCreateValueReference [
-	"To test:
-	- is in the model
-	- ref already found : 
-		-if none, 
-		- if one, 
-		- if indicated as alreadyfound but not yet
-		- if trying to create an object already created
-	- a reference is created (we don't care which one, but we want to know if instantiateReferenceEntityFrom: is called and same for fillFrom:reader: *use mocks*)
-	- type : how to choose between a class and a primitive type (with dots)
-	- check if the typing of reference match"
-	self fail.
+CallStackJsonReaderTest >> testCreateValueReferenceAlreadyFoundWithAReferedValue [
+
+	| arrayReferenceDict |
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+	"Making sure there is a refered value"
+	arrayReferenceDict at: #refered put: (Dictionary new
+			 at: #elements put: {  };
+			 yourself).
+	arrayReferenceDict at: #alreadyFound put: true.
+
+	self should: [ reader createValueReference: arrayReferenceDict ] raise: Error
+]
+
+{ #category : 'createValueReference' }
+CallStackJsonReaderTest >> testCreateValueReferenceAlreadyFoundWithoutAReferedValue [
+
+	| arrayReferenceDict |
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+	arrayReferenceDict at: #alreadyFound put: false.
+	"Create it to make the reader able to find a link with the first appearance"
+	reader createValueReference: arrayReferenceDict.
+	
+	"Making sure there is a no refered value"
+	arrayReferenceDict removeKey: #refered ifAbsent: [ "No problem if already absent" ].
+	arrayReferenceDict at: #alreadyFound put: true.
+
+	self shouldnt: [ reader createValueReference: arrayReferenceDict ] raise: Error
+]
+
+{ #category : 'createValueReference' }
+CallStackJsonReaderTest >> testCreateValueReferenceChooseClassAsTyping [
+
+	| arrayReferenceDict arrayReference|
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+
+	"Making sure there is a no refered value"
+	arrayReferenceDict at:#type put:'my.app.Pharo'.
+	
+	arrayReference := reader createValueReference: arrayReferenceDict.
+	
+	self assert: arrayReference typing declaredType isClass.
+]
+
+{ #category : 'createValueReference' }
+CallStackJsonReaderTest >> testCreateValueReferenceChoosePrimitiveTypeAsTyping [
+
+	| arrayReferenceDict arrayReference|
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+
+	"Making sure there is a no refered value"
+	arrayReferenceDict at:#type put:#int.
+	
+	arrayReference := reader createValueReference: arrayReferenceDict.
+	
+	self assert: arrayReference typing declaredType isPrimitiveType.
+	
+]
+
+{ #category : 'createValueReference' }
+CallStackJsonReaderTest >> testCreateValueReferenceNotAlreadyFoundWithAReferedValue [
+
+	| arrayReferenceDict |
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+	"Making sure there is a refered value"
+	arrayReferenceDict at: #refered put: (Dictionary new
+			 at: #elements put: {  };
+			 yourself).
+	arrayReferenceDict at: #alreadyFound put: false.
+
+	self shouldnt: [ reader createValueReference: arrayReferenceDict ] raise: Error
+]
+
+{ #category : 'createValueReference' }
+CallStackJsonReaderTest >> testCreateValueReferenceNotAlreadyFoundWithoutAReferedValue [
+
+	| arrayReferenceDict |
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+
+	"Making sure there is a no refered value"
+	arrayReferenceDict removeKey: #refered ifAbsent: [ "No problem if already absent" ].
+	arrayReferenceDict at: #alreadyFound put: false.
+
+	self should: [ reader createValueReference: arrayReferenceDict ] raise: Error
 ]
 
 { #category : 'createValueWith' }
 CallStackJsonReaderTest >> testCreateValueWith [
 	"To test:
-	- is in the model
 	- reference created
 	- primitiveType create
 	- fail if no reference or no primitiveType found"
