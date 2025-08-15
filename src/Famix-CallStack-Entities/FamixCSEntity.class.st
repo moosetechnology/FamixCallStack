@@ -55,12 +55,6 @@ FamixCSEntity >> isField [
 ]
 
 { #category : 'testing' }
-FamixCSEntity >> isMethodCall [
-
-	^ false
-]
-
-{ #category : 'testing' }
 FamixCSEntity >> isQueryable [
 
 	<generated>

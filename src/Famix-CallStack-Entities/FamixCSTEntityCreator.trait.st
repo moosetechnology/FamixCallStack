@@ -56,13 +56,6 @@ FamixCSTEntityCreator >> newField [
 ]
 
 { #category : 'entity creation' }
-FamixCSTEntityCreator >> newMethodCall [
-
-	<generated>
-	^ self add: FamixCSMethodCall new
-]
-
-{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newObjectReference [
 
 	<generated>

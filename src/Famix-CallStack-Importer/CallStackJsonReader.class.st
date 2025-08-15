@@ -52,6 +52,24 @@ CallStackJsonReader >> createArgument: aCollection [
 	^ arg
 ]
 
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> createArguments: aDictionary forStackline: aStackline [
+
+	"Default: accessible if not specified"
+	| argValuesDict |
+	aStackline isArgsAccessible: (aDictionary at: #accessible ifAbsent: [ true ]).
+
+	argValuesDict := aDictionary at: #argsValues ifAbsent: [ nil ].
+	(aStackline isArgsAccessible and: [ argValuesDict isNil ]) ifTrue: [
+		Error signal: 'methodCall has no arguments description while arguments being accessible' ].
+
+	(aStackline isArgsAccessible not and: [ argValuesDict notNil ]) ifTrue: [
+		Error signal: 'methodCall has a arguments description while arguments being inaccessible' ].
+
+	(aStackline isArgsAccessible and: [ argValuesDict notNil ]) ifTrue: [
+		^ argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | aStackline addArgument: arg ] ].
+]
+
 { #category : 'instance creation' }
 CallStackJsonReader >> createArrayValueWith: aCollection [
 	"Instantiate an ArrayValue"
@@ -110,38 +128,6 @@ CallStackJsonReader >> createMethod: aDictionary [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createMethodCall: aDictionary [
-	"Instatiate the MethodCall of a stack line, being the method informations and the given arguments"
-
-	| methodCall method argsDict argValuesDict |
-	methodCall := model newMethodCall.
-	aDictionary
-		at: #method
-		ifPresent: [ :methodDict | methodCall method: (method := self createMethod: methodDict) ]
-		ifAbsent: [ Error signal: 'MethodCall has no method' ].
-
-	argsDict := aDictionary at: #arguments.
-	"Default: accessible if not specified"
-	methodCall isArgsAccessible: (argsDict at: #accessible ifAbsent: [ true ]).
-
-	argValuesDict := argsDict at: #argsValues ifAbsent: [ nil ].
-	(methodCall isArgsAccessible and: [ argValuesDict isNil ]) ifTrue: [
-		Error signal: 'methodCall has no arguments description while arguments being accessible' ].
-
-	(methodCall isArgsAccessible not and: [ argValuesDict notNil ]) ifTrue: [
-		Error signal: 'methodCall has a arguments description while arguments being inaccessible' ].
-
-	(methodCall isArgsAccessible and: [ argValuesDict notNil ]) ifTrue: [
-		argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | methodCall addArgument: arg ] ].
-
-	"Checking that number of parameters and arguments match in case arguments are accessibles"
-	(methodCall isArgsAccessible and: [ method parameters size ~= methodCall arguments size ]) ifTrue: [
-		Error signal: 'MethodCall have accessible arguments, but the number of arguments and number of parameter of its method doesnt match' ].
-
-	^ methodCall
-]
-
-{ #category : 'instance creation' }
 CallStackJsonReader >> createParameters: anArray [
 	"Instantiates all parameters of a method"
 
@@ -181,13 +167,23 @@ CallStackJsonReader >> createReceiver: aDictionary [
 ]
 
 { #category : 'instance creation' }
-CallStackJsonReader >> createStackline: aDictionnary [
-  	"Instantiate a line of a stack"
+CallStackJsonReader >> createStackline: aDictionary [
+	"Instantiate a line of a stack"
+
 	| line |
 	line := model newStackline.
- 
-	line methodCall: (self createMethodCall: aDictionnary).
-	(aDictionnary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
+	
+	(aDictionary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
+	line method: (self createMethod: (aDictionary at: #method)).
+	
+	aDictionary
+		at: #method
+		ifPresent: [ :methodDict | line method: (self createMethod: methodDict) ]
+		ifAbsent: [ Error signal: 'MethodCall has no method' ].
+		
+	(self createArguments: (aDictionary at: #arguments) forStackline: line).
+	self validateStackline: line.
+
 	^ line
 ]
 
@@ -337,4 +333,12 @@ CallStackJsonReader >> readFrom: aFileReference [
 	reader close.
 
 	^ model
+]
+
+{ #category : 'as yet unclassified' }
+CallStackJsonReader >> validateStackline: aStackline [
+	"Checking that number of parameters and arguments match in case arguments are accessibles"
+
+	(aStackline isArgsAccessible and: [ aStackline method parameters size ~= aStackline arguments size ]) ifTrue: [
+		Error signal: 'Stackline have accessible arguments, but the number of arguments and number of parameter of its method doesnt match' ]
 ]

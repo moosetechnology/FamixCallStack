@@ -10,10 +10,21 @@
 ### Children
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `methodCall` | `FamixCSStackline` | `stackline` | `FamixCSMethodCall` | |
 | `receiver` | `FamixCSStackline` | `stackline` | `FamixCSReceiver` | |
 
+### Other
+| Relation | Origin | Opposite | Type | Comment |
+|---|
+| `arguments` | `FamixCSStackline` | `parent` | `FamixCSArgument` | |
+| `method` | `FamixCSStackline` | `stacklines` | `FamixJavaMethod` | |
 
+
+## Properties
+======================
+
+| Name | Type | Default value | Comment |
+|---|
+| `isArgsAccessible` | `Boolean` | true | |
 
 "
 Class {
@@ -22,7 +33,8 @@ Class {
 	#traits : 'TEntityMetaLevelDependency',
 	#classTraits : 'TEntityMetaLevelDependency classTrait',
 	#instVars : [
-		'#methodCall => FMOne type: #FamixCSMethodCall opposite: #stackline',
+		'#arguments => FMMany type: #FamixCSArgument opposite: #parent',
+		'#isArgsAccessible => FMProperty defaultValue: true',
 		'#receiver => FMOne type: #FamixCSReceiver opposite: #stackline',
 		'#stack => FMOne type: #FamixCSStack opposite: #stacklines'
 	],
@@ -40,6 +52,42 @@ FamixCSStackline class >> annotation [
 	^ self
 ]
 
+{ #category : 'adding' }
+FamixCSStackline >> addArgument: anObject [
+	<generated>
+	^ self arguments add: anObject
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> arguments [
+	"Relation named: #arguments type: #FamixCSArgument opposite: #parent"
+
+	<generated>
+	<derived>
+	^ arguments
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> arguments: anObject [
+
+	<generated>
+	arguments value: anObject
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> isArgsAccessible [
+
+	<FMProperty: #isArgsAccessible type: #Boolean defaultValue: true>
+	<generated>
+	^ isArgsAccessible ifNil: [ isArgsAccessible := true ]
+]
+
+{ #category : 'accessing' }
+FamixCSStackline >> isArgsAccessible: anObject [
+	<generated>
+	isArgsAccessible := anObject
+]
+
 { #category : 'testing' }
 FamixCSStackline >> isStackline [
 
@@ -47,25 +95,19 @@ FamixCSStackline >> isStackline [
 ]
 
 { #category : 'accessing' }
-FamixCSStackline >> methodCall [
-	"Relation named: #methodCall type: #FamixCSMethodCall opposite: #stackline"
+FamixCSStackline >> method [
+	"Relation named: #method type: #FamixJavaMethod opposite: #stacklines"
 
 	<generated>
-	^ methodCall
+	<FMProperty: #method type: #FamixJavaMethod opposite: #stacklines>
+	^ self attributeAt: #method ifAbsent: [ nil ]
 ]
 
 { #category : 'accessing' }
-FamixCSStackline >> methodCall: anObject [
+FamixCSStackline >> method: anObject [
 
 	<generated>
-	methodCall := anObject
-]
-
-{ #category : 'navigation' }
-FamixCSStackline >> methodCallGroup [
-	<generated>
-	<navigation: 'MethodCall'>
-	^ MooseSpecializedGroup with: self methodCall
+	self attributeAt: #method put: (FMMultivalueLink on: self update: #stacklines from: self method to: anObject).
 ]
 
 { #category : 'printing' }

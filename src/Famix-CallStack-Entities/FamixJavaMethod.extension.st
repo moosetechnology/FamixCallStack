@@ -1,19 +1,19 @@
 Extension { #name : 'FamixJavaMethod' }
 
 { #category : '*Famix-Callstack-Entities-accessing' }
-FamixJavaMethod >> methodCalls [
-	"Relation named: #methodCalls type: #FamixCSMethodCall opposite: #method"
+FamixJavaMethod >> stacklines [
+	"Relation named: #stacklines type: #FamixCSStackline opposite: #method"
 
 	<generated>
 	<derived>
-	<FMProperty: #methodCalls type: #FamixCSMethodCall opposite: #method>
+	<FMProperty: #stacklines type: #FamixCSStackline opposite: #method>
 	<package: #'Famix-Callstack-Entities'>
-	^ self attributeAt: #methodCalls ifAbsentPut: [ FMMultivalueLink on: self opposite: #method: ]
+	^ self attributeAt: #stacklines ifAbsentPut: [ FMMultivalueLink on: self opposite: #method: ]
 ]
 
 { #category : '*Famix-Callstack-Entities-accessing' }
-FamixJavaMethod >> methodCalls: anObject [
+FamixJavaMethod >> stacklines: anObject [
 
 	<generated>
-	self methodCalls value: anObject
+	self stacklines value: anObject
 ]

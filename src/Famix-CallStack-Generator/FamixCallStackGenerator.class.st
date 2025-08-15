@@ -6,7 +6,6 @@ Class {
 		'entity',
 		'parameter',
 		'method',
-		'methodCall',
 		'arrayReference',
 		'stringReference',
 		'field',
@@ -51,7 +50,6 @@ FamixCallStackGenerator >> defineClasses [
 	entity := builder newClassNamed: #Entity.
 	stack := builder newClassNamed: #Stack.
 	stackline := builder newClassNamed: #Stackline.
-	methodCall := builder newClassNamed: #MethodCall.
 
 	value := builder newClassNamed: #Value.
 	primitiveValue := builder newClassNamed: #PrimitiveValue.
@@ -76,7 +74,6 @@ FamixCallStackGenerator >> defineHierarchy [
 	"inheritances"
 	stack --|> entity.
 	stackline --|> entity.
-	methodCall --|> entity.
 	value --|> entity.
 	primitiveValue --|> value.
 	objectReference --|> value.
@@ -97,7 +94,6 @@ FamixCallStackGenerator >> defineHierarchy [
 	"querryable"
 	stack --|> #TEntityMetaLevelDependency.
 	stackline --|> #TEntityMetaLevelDependency.
-	methodCall --|> #TEntityMetaLevelDependency.
 	tValueContainer --|> #TEntityMetaLevelDependency.
 	value --|> #TEntityMetaLevelDependency.
 ]
@@ -119,7 +115,7 @@ FamixCallStackGenerator >> defineProperties [
 	field property: #isAtMaxDepth type: #Boolean defaultValue: false .
 	arrayValue property: #isAtMaxDepth type: #Boolean defaultValue: false .
 	field property: #isAccessible type: #Boolean defaultValue: true.
-	methodCall property: #isArgsAccessible type: #Boolean defaultValue: true.
+	stackline property: #isArgsAccessible type: #Boolean defaultValue: true.
 	classReference property: #isPrepared type: #Boolean defaultValue: true.
 ]
 
@@ -128,14 +124,12 @@ FamixCallStackGenerator >> defineRelations [
 
 	super defineRelations.
 	stack <>-* stackline.
-	stackline <>- methodCall.
+	stackline *- method.
 	stackline <>- receiver.
-
-	methodCall *- method.
 
 	(classReference property: #fields) -* (field property: #parent).
 	(arrayReference property: #elements) -* (arrayValue property: #parent).
-	(methodCall property: #arguments) -* (argument property: #parent).
+	(stackline property: #arguments) -* (argument property: #parent).
 
 	(tValueContainer property: #value) *- (value property: #usage)
 ]

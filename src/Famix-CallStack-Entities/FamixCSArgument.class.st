@@ -5,7 +5,7 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
-| `parent` | `FamixCSArgument` | `arguments` | `FamixCSMethodCall` | |
+| `parent` | `FamixCSArgument` | `arguments` | `FamixCSStackline` | |
 | `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
 
@@ -17,7 +17,7 @@ Class {
 	#traits : 'FamixCSTValueContainer',
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
-		'#parent => FMOne type: #FamixCSMethodCall opposite: #arguments'
+		'#parent => FMOne type: #FamixCSStackline opposite: #arguments'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',
@@ -47,7 +47,7 @@ FamixCSArgument >> mooseNameOn: aStream [
 
 { #category : 'accessing' }
 FamixCSArgument >> parent [
-	"Relation named: #parent type: #FamixCSMethodCall opposite: #arguments"
+	"Relation named: #parent type: #FamixCSStackline opposite: #arguments"
 
 	<generated>
 	^ parent
