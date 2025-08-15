@@ -183,6 +183,7 @@ CallStackJsonReader >> createStackline: aDictionary [
 		
 	(self createArguments: (aDictionary at: #arguments) forStackline: line).
 	self validateStackline: line.
+	self linkArgumentsAndParameterOfStackline: line.
 
 	^ line
 ]
@@ -293,6 +294,21 @@ CallStackJsonReader >> instantiateReferenceEntityFrom: aDictionary [
 							  yourself ]
 				  ifFalse: [ model newStringReference ] ].
 	Error signal: 'Should either be String or dictionary'
+]
+
+{ #category : 'instance creation' }
+CallStackJsonReader >> linkArgumentsAndParameterOfStackline: aStackline [
+	"Assumption: from parsing to this method call, parameters and arguments remain in the same order.
+ This relies on:
+  - The parser recording arguments and parameters in the order they appear in the method declaration and call.
+  - NeoJSONReader preserving the order of collections.
+  - MooseGroups being ordered collections."
+
+	| paramIte param |
+	paramIte := aStackline method parameters iterator.
+	aStackline arguments do: [ :arg |
+			param := paramIte next.
+			arg parameter: param ]
 ]
 
 { #category : 'accessing' }

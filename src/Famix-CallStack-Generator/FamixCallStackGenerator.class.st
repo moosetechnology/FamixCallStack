@@ -64,6 +64,7 @@ FamixCallStackGenerator >> defineClasses [
 	receiver := builder newClassNamed: #Receiver.
 
 	method := self remoteEntity: #Method withPrefix: #FamixJava.
+	parameter := self remoteEntity: #Parameter withPrefix: #FamixJava.
 ]
 
 { #category : 'definition' }
@@ -126,6 +127,8 @@ FamixCallStackGenerator >> defineRelations [
 	stack <>-* stackline.
 	stackline *- method.
 	stackline <>- receiver.
+	
+	argument *- parameter.
 
 	(classReference property: #fields) -* (field property: #parent).
 	(arrayReference property: #elements) -* (arrayValue property: #parent).

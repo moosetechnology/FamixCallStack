@@ -5,6 +5,7 @@
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
+| `parameter` | `FamixCSArgument` | `arguments` | `FamixJavaParameter` | |
 | `parent` | `FamixCSArgument` | `arguments` | `FamixCSStackline` | |
 | `value` | `FamixCSTValueContainer` | `usage` | `FamixCSValue` | |
 
@@ -43,6 +44,22 @@ FamixCSArgument >> mooseNameOn: aStream [
 	self flag: #todo. "how to print? we don't know to which one of the method parameter this argument correspond"
 	super mooseNameOn: aStream.
 	
+]
+
+{ #category : 'accessing' }
+FamixCSArgument >> parameter [
+	"Relation named: #parameter type: #FamixJavaParameter opposite: #arguments"
+
+	<generated>
+	<FMProperty: #parameter type: #FamixJavaParameter opposite: #arguments>
+	^ self attributeAt: #parameter ifAbsent: [ nil ]
+]
+
+{ #category : 'accessing' }
+FamixCSArgument >> parameter: anObject [
+
+	<generated>
+	self attributeAt: #parameter put: (FMMultivalueLink on: self update: #arguments from: self parameter to: anObject).
 ]
 
 { #category : 'accessing' }

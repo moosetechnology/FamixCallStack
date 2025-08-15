@@ -535,6 +535,23 @@ CallStackJsonReaderTest >> testCreateStacklineDifferentNumberOfArgumentsAndParam
 ]
 
 { #category : 'createStackline' }
+CallStackJsonReaderTest >> testCreateStacklineLinkArgumentsAndParameters [
+
+	| stacklineDict methodDict argsDict stackline |
+	stacklineDict := CSStructureCreator simpleStacklineDict.
+
+	methodDict := stacklineDict at: #method put: CSStructureCreator simpleMethodDict.
+	methodDict at: #parameters put: { CSStructureCreator simpleParameterDict }.
+
+	argsDict := stacklineDict at: #arguments.
+	argsDict at: #argsValues put: { CSStructureCreator simpleValueDict }.
+
+	stackline := reader createStackline: stacklineDict.
+
+	self assert: stackline arguments first parameter equals: stackline method parameters first
+]
+
+{ #category : 'createStackline' }
 CallStackJsonReaderTest >> testCreateStacklineNoMethod [
 
 	| stacklineDict |
