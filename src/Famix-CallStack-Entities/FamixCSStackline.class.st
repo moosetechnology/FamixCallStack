@@ -113,7 +113,9 @@ FamixCSStackline >> method: anObject [
 { #category : 'printing' }
 FamixCSStackline >> mooseNameOn: aStream [
 
-	aStream nextPutAll: 'Line ' , self positionInStack asString.
+	aStream
+		nextPutAll: 'Line ';
+		nextPutAll: self positionInStack asString
 ]
 
 { #category : 'accessing' }

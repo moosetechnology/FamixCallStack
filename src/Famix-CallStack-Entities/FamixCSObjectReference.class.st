@@ -27,12 +27,6 @@ FamixCSObjectReference class >> annotation [
 	^ self
 ]
 
-{ #category : 'printing' }
-FamixCSObjectReference >> mooseNameOn: aStream [
-
-	aStream nextPutAll: '[' , uniqueID asString , '] : '
-]
-
 { #category : 'accessing' }
 FamixCSObjectReference >> uniqueID [
 

@@ -44,6 +44,12 @@ FamixCSReceiver >> isReceiver [
 ]
 
 { #category : 'accessing' }
+FamixCSReceiver >> mooseNameOn: aStream [
+
+	self value ifNil: [ aStream nextPutAll: nil asString ] ifNotNil: [ self value mooseNameOn: aStream ]
+]
+
+{ #category : 'accessing' }
 FamixCSReceiver >> stackline [
 	"Relation named: #stackline type: #FamixCSStackline opposite: #receiver"
 

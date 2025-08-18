@@ -36,9 +36,6 @@ FamixCSPrimitiveValue >> isPrimitiveValue [
 { #category : 'printing' }
 FamixCSPrimitiveValue >> mooseNameOn: aStream [
 
-	typing ifNotNil: [
-			typing declaredType mooseNameOn: aStream.
-			aStream nextPutAll: ' : ' ].
 	aStream nextPutAll: value asString
 ]
 

@@ -41,9 +41,12 @@ FamixCSArgument >> isArgument [
 
 { #category : 'printing' }
 FamixCSArgument >> mooseNameOn: aStream [
-	self flag: #todo. "how to print? we don't know to which one of the method parameter this argument correspond"
-	super mooseNameOn: aStream.
-	
+
+	self parameter name ifNotNil: [
+			aStream
+				nextPutAll: self parameter name;
+				nextPutAll: ' = ' ].
+	self value ifNotNil: [ self value mooseNameOn: aStream ] ifNil: [ aStream nextPutAll: nil asString ]
 ]
 
 { #category : 'accessing' }

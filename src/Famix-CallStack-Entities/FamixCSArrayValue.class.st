@@ -56,7 +56,8 @@ FamixCSArrayValue >> isAtMaxDepth: anObject [
 
 { #category : 'printing' }
 FamixCSArrayValue >> mooseNameOn: aStream [
-	value ifNil:[ aStream nextPutAll: 'nil'] ifNotNil: [ value mooseNameOn: aStream]
+
+	value ifNil: [ aStream nextPutAll: nil asString ] ifNotNil: [ value mooseNameOn: aStream ]
 ]
 
 { #category : 'accessing' }

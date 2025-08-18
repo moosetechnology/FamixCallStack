@@ -45,6 +45,15 @@ FamixCSStack >> indexOfLine: aLine [
 	^ stacklines indexOf: aLine
 ]
 
+{ #category : 'printing' }
+FamixCSStack >> mooseNameOn: aStream [
+
+	aStream
+		nextPutAll: 'aStack (';
+		nextPutAll: stacklines size asString;
+		nextPutAll: ' stacklines)'
+]
+
 { #category : 'navigation' }
 FamixCSStack >> nextTo: aStackline [
 

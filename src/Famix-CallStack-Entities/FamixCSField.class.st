@@ -81,16 +81,11 @@ FamixCSField >> isField [
 { #category : 'printing' }
 FamixCSField >> mooseNameOn: aStream [
 
-	aStream nextPutAll: name , ' = '.
-	self accessible
-		ifFalse: [ aStream nextPutAll: 'inaccessible' ]
-		ifTrue: [
-				value
-					ifNil: [
-							self maxDepthReached
-								ifTrue: [ aStream nextPutAll: 'maxDepthReached' ]
-								ifFalse: [ aStream nextPutAll: nil asString ] ]
-					ifNotNil: [ value mooseNameOn: aStream ] ]
+	aStream nextPutAll: name.
+	(self isAccessible and: [ self isAtMaxDepth not ]) ifFalse: [ ^ self ].
+	aStream nextPutAll: ' = '.
+
+	value ifNotNil: [ value mooseNameOn: aStream ] ifNil: [ aStream nextPutAll: nil asString ]
 ]
 
 { #category : 'accessing' }

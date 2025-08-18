@@ -35,7 +35,7 @@ FamixCSStringReference >> isStringReference [
 
 { #category : 'printing' }
 FamixCSStringReference >> mooseNameOn: aStream [
-	super mooseNameOn: aStream.
+
 	aStream print: value
 ]
 
