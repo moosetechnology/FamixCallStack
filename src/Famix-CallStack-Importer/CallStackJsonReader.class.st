@@ -272,6 +272,7 @@ CallStackJsonReader >> instantiateMethodFrom: aDictionnary [
 
 	method isClassSide: (aDictionnary at: #isClassSide).
 	method parentType: (self createClassNamed: (aDictionnary at: #parentType)).
+	method signature: (aDictionnary at: #signature).
 
 	(self createParameters: (aDictionnary at: #parameters)) do: [ :param | method addParameter: param ].
 	^ method
