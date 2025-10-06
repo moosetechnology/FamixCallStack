@@ -4,6 +4,7 @@ Extension { #name : 'FamixCSClassReference' }
 FamixCSClassReference >> fillFrom: aCollection reader: aCSReader [
 
 	| fields |
+	self flag: 'The variable field is shadowing another variable, checks if renaming does not break the code'.
 	aCollection isString ifTrue: [
 			(aCollection sameAs: '<<CLASS_NOT_PREPARED>>')
 				ifTrue: [ ^ self isPrepared: false ]
