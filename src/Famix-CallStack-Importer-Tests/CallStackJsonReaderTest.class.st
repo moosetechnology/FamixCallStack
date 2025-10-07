@@ -87,7 +87,7 @@ CallStackJsonReaderTest >> testCreateFieldAccessible [
 	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict at: #accessible put: true.
 
-	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
+	field := reader createField: fieldDict.
 
 	self assert: field isAccessible
 ]
