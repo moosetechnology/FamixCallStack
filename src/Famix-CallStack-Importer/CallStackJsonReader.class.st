@@ -55,19 +55,24 @@ CallStackJsonReader >> createArgument: aCollection [
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createArguments: aDictionary forStackline: aStackline [
 
+	| accessible argValuesDict |
 	"Default: accessible if not specified"
-	| argValuesDict |
-	aStackline isArgsAccessible: (aDictionary at: #accessible ifAbsent: [ true ]).
+	accessible := aDictionary at: #accessible ifAbsent: true.
+	"Default: accessible if not specified"
+	argValuesDict := aDictionary at: #argsValues ifAbsent: nil.
+	aStackline isArgsAccessible: accessible.
 
-	argValuesDict := aDictionary at: #argsValues ifAbsent: [ nil ].
-	(aStackline isArgsAccessible and: [ argValuesDict isNil ]) ifTrue: [
-		Error signal: 'methodCall has no arguments description while arguments being accessible' ].
+	"Checking if the method call has a valid construction
+	Should be either
+	- accessible and have a value
+	- inaccessible and dont have a value"
+	accessible ~= argValuesDict notNil ifTrue: [
+			Error signal:
+				'Invalid methodCall arguments accessibility or description' ].
 
-	(aStackline isArgsAccessible not and: [ argValuesDict notNil ]) ifTrue: [
-		Error signal: 'methodCall has a arguments description while arguments being inaccessible' ].
-
-	(aStackline isArgsAccessible and: [ argValuesDict notNil ]) ifTrue: [
-		^ argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | aStackline addArgument: arg ] ].
+	accessible ifTrue: [
+			argValuesDict do: [ :argDict |
+				aStackline addArgument: (self createArgument: argDict) ] ]
 ]
 
 { #category : 'instance creation' }
