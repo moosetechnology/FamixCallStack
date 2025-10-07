@@ -123,7 +123,7 @@ CallStackJsonReaderTest >> testCreateFieldNoPrecsionOnAccessible [
 	fieldDict := CSStructureCreator simpleFieldDict.
 	fieldDict removeKey: #accessible ifAbsent: [ "not problem if already absent" ].
 
-	self shouldnt: [ field := reader createField: fieldDict  ] raise: Error.
+	field := reader createField: fieldDict.
 	self assert: field isAccessible
 ]
 
@@ -133,7 +133,7 @@ CallStackJsonReaderTest >> testCreateFieldNoValue [
 
 	| fieldDict field |
 	fieldDict := CSStructureCreator simpleFieldDict.
-	fieldDict removeKey: #value ifAbsent: [ "not problem if already absent" ].
+	fieldDict removeKey: #value ifAbsent: [ "no problem if already absent" ].
 	
 	self should: [ field := reader createField: fieldDict ] raise: Error.
 ]
@@ -158,7 +158,7 @@ CallStackJsonReaderTest >> testCreateFieldNotAccessibleWithNoValue [
 	fieldDict at: #accessible put: false.
 	fieldDict removeKey: #value ifAbsent: [ "not problem if already absent" ].
 
-	self shouldnt: [ field := reader createField: fieldDict  ] raise: Error.
+	field := reader createField: fieldDict.
 	self assert: field isAccessible not
 ]
 
@@ -454,11 +454,13 @@ CallStackJsonReaderTest >> testCreateReceiverNotAReference [
 { #category : 'createReceiver' }
 CallStackJsonReaderTest >> testCreateReceiverWithReference [
 
-	self shouldnt: [ reader createReceiver: CSStructureCreator simpleArrayReferenceDict ] raise: Error
+	"Smoke test to make sure the reference we have is right"
+	reader createReceiver: CSStructureCreator simpleArrayReferenceDict 
 ]
 
 { #category : 'createStackline' }
 CallStackJsonReaderTest >> testCreateStacklineArgumentsAccessibleWithValue [
+	"Smoke test, we just check if createStackline act as excpected"
 
 	| stacklineDict argsDict |
 	stacklineDict := CSStructureCreator simpleStacklineDict.
@@ -470,7 +472,7 @@ CallStackJsonReaderTest >> testCreateStacklineArgumentsAccessibleWithValue [
 	argsDict at: #argsValues put: { CSStructureCreator simpleValueDict }.
 	argsDict at: #accessible put: true.
 
-	self shouldnt: [ reader createStackline: stacklineDict ] raise: Error
+	reader createStackline: stacklineDict .
 ]
 
 { #category : 'createStackline' }
@@ -611,7 +613,7 @@ CallStackJsonReaderTest >> testCreateValueReferenceAlreadyFoundWithAReferedValue
 
 { #category : 'createValueReference' }
 CallStackJsonReaderTest >> testCreateValueReferenceAlreadyFoundWithoutAReferedValue [
-
+	"Smoke test, we just check if createValueReference act as expected"
 	| arrayReferenceDict |
 	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
 	arrayReferenceDict at: #alreadyFound put: false.
@@ -622,7 +624,7 @@ CallStackJsonReaderTest >> testCreateValueReferenceAlreadyFoundWithoutAReferedVa
 	arrayReferenceDict removeKey: #refered ifAbsent: [ "No problem if already absent" ].
 	arrayReferenceDict at: #alreadyFound put: true.
 
-	self shouldnt: [ reader createValueReference: arrayReferenceDict ] raise: Error
+	reader createValueReference: arrayReferenceDict
 ]
 
 { #category : 'createValueReference' }
@@ -656,16 +658,18 @@ CallStackJsonReaderTest >> testCreateValueReferenceChoosePrimitiveTypeAsTyping [
 
 { #category : 'createValueReference' }
 CallStackJsonReaderTest >> testCreateValueReferenceNotAlreadyFoundWithAReferedValue [
+	"Smoke test, we just check if createValueReference hold the not already found value"
 
 	| arrayReferenceDict |
-	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict at: #reference.
+	arrayReferenceDict := CSStructureCreator simpleArrayReferenceDict
+		                      at: #reference.
 	"Making sure there is a refered value"
 	arrayReferenceDict at: #refered put: (Dictionary new
 			 at: #elements put: {  };
 			 yourself).
 	arrayReferenceDict at: #alreadyFound put: false.
 
-	self shouldnt: [ reader createValueReference: arrayReferenceDict ] raise: Error
+	reader createValueReference: arrayReferenceDict
 ]
 
 { #category : 'createValueReference' }
@@ -689,13 +693,16 @@ CallStackJsonReaderTest >> testCreateValueWithEmptyDictionary [
 
 { #category : 'createValueWith' }
 CallStackJsonReaderTest >> testCreateValueWithPrimitiveType [
-	self shouldnt: [ reader createValueWith: CSStructureCreator simplePrimitiveValueDict ] raise: Error
+	"Smoke test, we just check if CreateValue hold with a primitive type"
+
+	reader createValueWith: CSStructureCreator simplePrimitiveValueDict 
 ]
 
 { #category : 'createValueWith' }
 CallStackJsonReaderTest >> testCreateValueWithReference [
+	"Smoke test, we just check if createValueWith: hold with an ArrayReference"
 
-	self shouldnt: [ reader createValueWith: CSStructureCreator simpleArrayReferenceDict ] raise: Error
+	reader createValueWith: CSStructureCreator simpleArrayReferenceDict
 ]
 
 { #category : 'fillValueCheckingMaxDepth' }
