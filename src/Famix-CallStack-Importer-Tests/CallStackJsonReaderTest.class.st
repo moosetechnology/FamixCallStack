@@ -98,7 +98,7 @@ CallStackJsonReaderTest >> testCreateFieldCreatedFieldIsInTheModel [
 	| fieldDict field |
 	fieldDict := CSStructureCreator simpleFieldDict.
 
-	[ field := reader createField: fieldDict ] onErrorDo: [ self fail ].
+	field := reader createField: fieldDict.
 
 	self assert: field isField.
 	self assert: (reader model includes: field).
