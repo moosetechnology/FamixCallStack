@@ -82,5 +82,7 @@ FamixCSClassReference >> isPrepared: anObject [
 { #category : 'printing' }
 FamixCSClassReference >> mooseNameOn: aStream [
 
-	typing ifNil: [ aStream nextPutAll: nil asString ] ifNotNil: [ typing declaredType mooseNameOn: aStream ]
+	typing
+		ifNil: [ aStream print: nil ]
+		ifNotNil: [ typing declaredType mooseNameOn: aStream ]
 ]

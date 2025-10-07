@@ -85,7 +85,9 @@ FamixCSField >> mooseNameOn: aStream [
 	(self isAccessible and: [ self isAtMaxDepth not ]) ifFalse: [ ^ self ].
 	aStream nextPutAll: ' = '.
 
-	value ifNotNil: [ value mooseNameOn: aStream ] ifNil: [ aStream nextPutAll: nil asString ]
+	value
+		ifNotNil: [ value mooseNameOn: aStream ]
+		ifNil: [ aStream print: nil ]
 ]
 
 { #category : 'accessing' }
