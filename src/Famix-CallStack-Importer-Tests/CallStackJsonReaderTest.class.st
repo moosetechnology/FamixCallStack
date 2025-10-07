@@ -500,6 +500,21 @@ CallStackJsonReaderTest >> testCreateStacklineArgumentsInAccessibleWithValue [
 ]
 
 { #category : 'createStackline' }
+CallStackJsonReaderTest >> testCreateStacklineArgumentsInAccessibleWithoutValue [
+	"Smoke test, this test just check if no error happen in this case"
+
+	| stacklineDict argsDict |
+	stacklineDict := CSStructureCreator simpleStacklineDict.
+	argsDict := stacklineDict at: #arguments.
+	argsDict
+		removeKey: #argsValues
+		ifAbsent: [ "no problem if already absent" ].
+	argsDict at: #accessible put: false.
+
+	reader createStackline: stacklineDict
+]
+
+{ #category : 'createStackline' }
 CallStackJsonReaderTest >> testCreateStacklineCheckMethodCreation [
 
 	| stacklineDict methodCall |

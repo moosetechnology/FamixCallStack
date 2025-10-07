@@ -70,9 +70,10 @@ CallStackJsonReader >> createArguments: aDictionary forStackline: aStackline [
 			Error signal:
 				'Invalid methodCall arguments accessibility or description' ].
 
-	accessible ifTrue: [
-			argValuesDict do: [ :argDict |
-				aStackline addArgument: (self createArgument: argDict) ] ]
+	accessible
+		ifTrue: [
+				argValuesDict do: [ :argDict |
+					aStackline addArgument: (self createArgument: argDict) ] ]
 ]
 
 { #category : 'instance creation' }
