@@ -9,7 +9,7 @@ To load FamixCallStack into a Moose image, execute the following code:
 ```Smalltalk
 Metacello new
   baseline: 'FamixCallStack';
-  repository: 'github://LeoDefossez/FamixCallStack/src';
+  repository: 'github://moosetechnology/FamixCallStack/src';
   load.
 ```
 
