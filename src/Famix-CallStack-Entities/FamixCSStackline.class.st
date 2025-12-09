@@ -115,7 +115,11 @@ FamixCSStackline >> mooseNameOn: aStream [
 
 	aStream
 		nextPutAll: 'Line ';
-		print: self positionInStack
+		nextPutAll: self positionInStack asString;
+		nextPutAll: ' : ';
+		nextPutAll: self method parentType name;
+		nextPut: $.;
+		nextPutAll: self method signature
 ]
 
 { #category : 'accessing' }
