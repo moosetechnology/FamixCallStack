@@ -50,7 +50,7 @@ FamixCSStack >> mooseNameOn: aStream [
 
 	aStream
 		nextPutAll: 'aStack (';
-		nextPutAll: stacklines size asString;
+		print: stacklines size;
 		nextPutAll: ' stacklines)'
 ]
 

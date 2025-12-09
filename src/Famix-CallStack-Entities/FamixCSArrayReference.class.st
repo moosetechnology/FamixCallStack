@@ -62,11 +62,9 @@ FamixCSArrayReference >> isArrayReference [
 FamixCSArrayReference >> mooseNameOn: aStream [
 
 	aStream nextPutAll: ' ['.
-	elements ifNotEmpty: [
-			elements first mooseNameOn: aStream.
-			elements allButFirstDo: [ :elem |
-					aStream nextPutAll: ', '.
-					elem ifNil: [ aStream nextPutAll: nil asString ] ifNotNil: [ elem mooseNameOn: aStream ] ] ].
+	elements
+		do: [ :elem | elem mooseNameOn: aStream ]
+		separatedBy: [ aStream nextPutAll: ', ' ].
 	aStream nextPutAll: ']'
 ]
 

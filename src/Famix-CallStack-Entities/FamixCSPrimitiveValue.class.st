@@ -36,7 +36,7 @@ FamixCSPrimitiveValue >> isPrimitiveValue [
 { #category : 'printing' }
 FamixCSPrimitiveValue >> mooseNameOn: aStream [
 
-	aStream nextPutAll: value asString
+	aStream print: value
 ]
 
 { #category : 'accessing' }

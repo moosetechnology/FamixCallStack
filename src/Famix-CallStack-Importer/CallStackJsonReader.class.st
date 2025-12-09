@@ -55,19 +55,25 @@ CallStackJsonReader >> createArgument: aCollection [
 { #category : 'as yet unclassified' }
 CallStackJsonReader >> createArguments: aDictionary forStackline: aStackline [
 
+	| accessible argValuesDict |
 	"Default: accessible if not specified"
-	| argValuesDict |
-	aStackline isArgsAccessible: (aDictionary at: #accessible ifAbsent: [ true ]).
+	accessible := aDictionary at: #accessible ifAbsent: true.
+	"Default: accessible if not specified"
+	argValuesDict := aDictionary at: #argsValues ifAbsent: nil.
+	aStackline isArgsAccessible: accessible.
 
-	argValuesDict := aDictionary at: #argsValues ifAbsent: [ nil ].
-	(aStackline isArgsAccessible and: [ argValuesDict isNil ]) ifTrue: [
-		Error signal: 'methodCall has no arguments description while arguments being accessible' ].
+	"Checking if the method call has a valid construction
+	Should be either
+	- accessible and have a value
+	- inaccessible and dont have a value"
+	accessible ~= argValuesDict notNil ifTrue: [
+			Error signal:
+				'Invalid methodCall arguments accessibility or description' ].
 
-	(aStackline isArgsAccessible not and: [ argValuesDict notNil ]) ifTrue: [
-		Error signal: 'methodCall has a arguments description while arguments being inaccessible' ].
-
-	(aStackline isArgsAccessible and: [ argValuesDict notNil ]) ifTrue: [
-		^ argValuesDict collect: [ :argDict | self createArgument: argDict ] thenDo: [ :arg | aStackline addArgument: arg ] ].
+	accessible
+		ifTrue: [
+				argValuesDict do: [ :argDict |
+					aStackline addArgument: (self createArgument: argDict) ] ]
 ]
 
 { #category : 'instance creation' }
@@ -91,26 +97,25 @@ CallStackJsonReader >> createClassNamed: aString [
 CallStackJsonReader >> createField: aDictionary [
 	"Instantiate a field from a ClassReference"
 
-	| field valueDict |
+	| field valueDict accessible |
+	"Default: accessible if not specified"
+	accessible := aDictionary at: #accessible ifAbsent: [ true ].
+	"Default: nil if not specified"
+	valueDict := aDictionary at: #value ifAbsent: nil.
+
+	"Checking if the field has a valid construction
+	Should be either
+	- accessible and have a value
+	- inaccessible and dont have a value"
+	accessible ~= (aDictionary includesKey: #value) ifTrue: [
+		Error signal: 'Field has not a valid construction' ].
+
 	field := model newField
 		         name: (aDictionary at: #name);
+		         isAccessible: accessible;
 		         yourself.
 
-	"Default: accessible if not specified"
-	field isAccessible: (aDictionary at: #accessible ifAbsent: [ true ]).
-
-
-	"Since a field can be nil, it is imperative to check that aDictionary dont include the key value, and not use valueDict form below"
-	(field isAccessible and: [ (aDictionary includesKey: #value) not ]) ifTrue: [ Error signal: 'Field has no value while being accessible' ].
-
-	(field isAccessible not and: [ aDictionary includesKey: #value ]) ifTrue: [ Error signal: 'Field has a value while being inaccessible' ].
-
-	valueDict := aDictionary at: #value ifAbsent: [ nil ].
-
-
-	(field isAccessible and: [ valueDict notNil ]) ifTrue: [ self fillValueCheckingMaxDepthOn: field with: valueDict ].
-
-	^ field
+	^ self fillValueCheckingMaxDepthOn: field with: valueDict
 ]
 
 { #category : 'instance creation' }

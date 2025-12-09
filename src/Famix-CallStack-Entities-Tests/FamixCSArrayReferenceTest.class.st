@@ -26,19 +26,29 @@ FamixCSArrayReferenceTest >> setUp [
 ]
 
 { #category : 'importing' }
-FamixCSArrayReferenceTest >> testsize [
+FamixCSArrayReferenceTest >> testSizeAddElement [
+	"to test:
+	- adding an element augment the size, and reseting element reset the size"
+
+	| arrayReference |
+	arrayReference := FamixCSArrayReference new
+		                  addElement: FamixCSArrayValue new;
+		                  yourself.
+	self assert: arrayReference size equals: 1.
+
+	"Remove the element"
+	arrayReference elements: {  }.
+	self assert: arrayReference size equals: 0
+]
+
+{ #category : 'importing' }
+FamixCSArrayReferenceTest >> testSizeResetElements [
 	"to test:
 	- adding an element augment the size, and reseting element reset the size"
 
 	| arrayReference |
 	arrayReference := FamixCSArrayReference new.
-	"Start at 0"
-	self assert: arrayReference size equals: 0.
-	"Add one element"
-	arrayReference addElement: FamixCSArrayValue new.
-	self assert: arrayReference size equals: 1.
-
-	"Remove the element"
+	
 	arrayReference elements: {  }.
 	self assert: arrayReference size equals: 0
 ]

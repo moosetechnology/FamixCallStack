@@ -46,7 +46,9 @@ FamixCSArgument >> mooseNameOn: aStream [
 			aStream
 				nextPutAll: self parameter name;
 				nextPutAll: ' = ' ].
-	self value ifNotNil: [ self value mooseNameOn: aStream ] ifNil: [ aStream nextPutAll: nil asString ]
+	self value
+		ifNotNil: [ :val | val mooseNameOn: aStream ]
+		ifNil: [ aStream print: nil ]
 ]
 
 { #category : 'accessing' }
