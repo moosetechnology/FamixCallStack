@@ -47,14 +47,13 @@ CSStructureCreator class >> simpleMethodCallDict [
 { #category : 'setup' }
 CSStructureCreator class >> simpleMethodDict [
 
-	| methodDict |
-	methodDict := Dictionary new.
-	methodDict at: #name put: #main.
-	methodDict at: #parentType put: 'Pharo'.
-	methodDict at: #isClassSide put: true.
-
-	methodDict at: #parameters put: {  }.
-	^ methodDict
+	^ Dictionary new
+		  at: #name put: #main;
+		  at: #parentType put: 'Pharo';
+		  at: #isClassSide put: true;
+		  at: #signature put: 'Pharo.main(String[])';
+		  at: #parameters put: {  };
+		  yourself
 ]
 
 { #category : 'setup' }
