@@ -71,6 +71,17 @@ CallStackJsonReaderTest >> testCreateClassNamedArray [
 ]
 
 { #category : 'createClassNamed' }
+CallStackJsonReaderTest >> testCreateClassNamedHandlePackages [
+
+	| class |
+	class := reader createClassNamed: 'org.example.Pharo'.
+
+	self assert: class name equals: 'Pharo'.
+	self assert: class typeContainer name equals: 'example'.
+	self assert: class typeContainer parentPackage name equals: 'org'
+]
+
+{ #category : 'createClassNamed' }
 CallStackJsonReaderTest >> testCreateClassNamedNormal [
 	| class name | 
 	
@@ -321,6 +332,35 @@ CallStackJsonReaderTest >> testCreateMethodParentType [
 	self assert: method parentType name equals: name.
 ]
 
+{ #category : 'createPackage' }
+CallStackJsonReaderTest >> testCreatePackageFromStringCollection1Element [
+
+	| package |
+	package := reader createPackageFromStringCollection: { 'org' }.
+
+	self assert: package name equals: 'org'.
+]
+
+{ #category : 'createPackage' }
+CallStackJsonReaderTest >> testCreatePackageFromStringCollection2Elements [
+
+	| package |
+	package := reader createPackageFromStringCollection: { 'org'. 'example' }.
+
+	self assert: package name equals: 'example'.
+	self assert: package parentPackage name equals: 'org'
+]
+
+{ #category : 'createPackage' }
+CallStackJsonReaderTest >> testCreatePackageFromStringCollectionReuseExistingPackages [
+
+	| package1 package2 |
+	package1 := reader createPackageFromStringCollection: { 'org'. 'example' }.
+	package2 := reader createPackageFromStringCollection: { 'org'. 'test' }.
+
+	self assert: package1 parentPackage identicalTo: package2 parentPackage.
+]
+
 { #category : 'createParameters' }
 CallStackJsonReaderTest >> testCreateParametersCreatedParametersAreInModel [
 
@@ -359,12 +399,27 @@ CallStackJsonReaderTest >> testCreateParametersTyping [
 
 	| paramArray type parameters |
 	paramArray := { (CSStructureCreator simpleParameterDict
-		               at: #name put: (type := #Pharo);
+		               at: #type put: (type := #Pharo);
 		               yourself) }.
 
 	parameters := reader createParameters: paramArray.
 
 	parameters do: [ :param | self assert: param typing declaredType name equals: type ]
+]
+
+{ #category : 'createParameters' }
+CallStackJsonReaderTest >> testCreateParametersTypingPackage [
+
+	| paramArray type parameters |
+	paramArray := { (CSStructureCreator simpleParameterDict
+		               at: #type put: (type := 'org.example.Pharo');
+		               yourself) }.
+
+	parameters := reader createParameters: paramArray.
+
+	parameters do: [ :param | self assert: param typing declaredType name equals: 'Pharo' ].
+	parameters do: [ :param | self assert: param typing declaredType typeContainer name equals: 'example' ].
+	parameters do: [ :param | self assert: param typing declaredType typeContainer parentPackage name equals: 'org' ].
 ]
 
 { #category : 'createPrimitiveType' }

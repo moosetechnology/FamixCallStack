@@ -17,7 +17,8 @@ Class {
 		'createdPrimitives',
 		'createdClasses',
 		'createdMethods',
-		'createdReference'
+		'createdReference',
+		'createdSourcesPackages'
 	],
 	#category : 'Famix-CallStack-Importer',
 	#package : 'Famix-CallStack-Importer'
@@ -85,10 +86,15 @@ CallStackJsonReader >> createArrayValueWith: aCollection [
 { #category : 'instance creation' }
 CallStackJsonReader >> createClassNamed: aString [
 	"Instantiate a FamixJavaClass with the given name"
-	| name |
-	name := aString removeSuffix: '[]'.
+
+	| sequence container name |
+	sequence := (aString removeSuffix: '[]') splitOn: $..
+	name := sequence last.
+	
+	container := self createPackageFromStringCollection: sequence allButLast.
 	^ createdClasses at: name ifAbsentPut: [
-			  (model newClassNamed: name )
+			  (model newClassNamed: name)
+				  typeContainer: container;
 				  isStub: true;
 				  yourself ]
 ]
@@ -130,6 +136,30 @@ CallStackJsonReader >> createMethod: aDictionary [
 	methodTypesDict := methodNameDict at: (aDictionary at: #parentType) ifAbsentPut: [ Dictionary new ].
 
 	^ methodTypesDict at: paramTypeNames ifAbsentPut: [ self instantiateMethodFrom: aDictionary ]
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> createPackageFromStringCollection: aCollection [
+
+	| currentParent |
+	"Search for the source package"
+	currentParent := createdSourcesPackages at: aCollection first ifAbsentPut: [ model newPackageNamed: aCollection first ].
+
+	"If we are in a source package, then return it now"
+	aCollection size = 1 ifTrue: [ ^ currentParent ].
+
+	"If in nested package create all and return the deepest one"
+	aCollection allButFirst do: [ :each | currentParent := self createPackageNamed: each withParent: currentParent ].
+	^ currentParent
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> createPackageNamed: aString withParent: aPackage [
+
+	^ aPackage childEntities detect: [ :each | each name = aString ] ifNone: [
+			  (model newPackageNamed: aString)
+				  parentPackage: aPackage;
+				  yourself ]
 ]
 
 { #category : 'instance creation' }
@@ -262,11 +292,13 @@ CallStackJsonReader >> fillValueCheckingMaxDepthOn: aCSObject with: aCollection 
 ]
 
 { #category : 'initialization' }
-CallStackJsonReader >> initialize [ 
+CallStackJsonReader >> initialize [
+
 	createdReference := Dictionary new.
 	createdPrimitives := Dictionary new.
 	createdClasses := Dictionary new.
 	createdMethods := Dictionary new.
+	createdSourcesPackages := Dictionary new
 ]
 
 { #category : 'as yet unclassified' }
