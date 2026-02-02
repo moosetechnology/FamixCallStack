@@ -18,7 +18,8 @@ Class {
 		'createdClasses',
 		'createdMethods',
 		'createdReference',
-		'createdSourcesPackages'
+		'createdSourcesPackages',
+		'defaultPackage'
 	],
 	#category : 'Famix-CallStack-Importer',
 	#package : 'Famix-CallStack-Importer'
@@ -90,7 +91,7 @@ CallStackJsonReader >> createClassNamed: aString [
 	| sequence container name |
 	sequence := (aString removeSuffix: '[]') splitOn: $..
 	name := sequence last.
-	
+
 	container := self createPackageFromStringCollection: sequence allButLast.
 	^ createdClasses at: name ifAbsentPut: [
 			  (model newClassNamed: name)
@@ -142,6 +143,9 @@ CallStackJsonReader >> createMethod: aDictionary [
 CallStackJsonReader >> createPackageFromStringCollection: aCollection [
 
 	| currentParent |
+	"if the collection is empty then return the default package"
+	aCollection ifEmpty: [ ^ self defaultPackage ].
+	
 	"Search for the source package"
 	currentParent := createdSourcesPackages at: aCollection first ifAbsentPut: [ model newPackageNamed: aCollection first ].
 
@@ -275,6 +279,12 @@ CallStackJsonReader >> createValueWith: aDictionnary [
 	aDictionnary at: #reference ifPresent: [ :reference | ^ self createValueReference: reference ].
 	aDictionnary at: #primitiveValue ifPresent: [ :primitive | ^ self createPrimitiveValue: primitive ].
 	Error signal: 'Unexcepted argument value'
+]
+
+{ #category : 'accessing' }
+CallStackJsonReader >> defaultPackage [
+
+	^ defaultPackage ifNil: [ defaultPackage := model newPackageNamed: '<Default Package>' ]
 ]
 
 { #category : 'as yet unclassified' }

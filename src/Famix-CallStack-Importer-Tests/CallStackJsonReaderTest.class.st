@@ -333,6 +333,15 @@ CallStackJsonReaderTest >> testCreateMethodParentType [
 ]
 
 { #category : 'createPackage' }
+CallStackJsonReaderTest >> testCreatePackageDefaultPackage [
+
+	| package  |
+	package := reader createPackageFromStringCollection: {  }.
+
+	self assert: package name equals:  '<Default Package>'.
+]
+
+{ #category : 'createPackage' }
 CallStackJsonReaderTest >> testCreatePackageFromStringCollection1Element [
 
 	| package |
