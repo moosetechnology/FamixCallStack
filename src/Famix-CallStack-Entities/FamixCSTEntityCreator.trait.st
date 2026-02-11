@@ -56,6 +56,13 @@ FamixCSTEntityCreator >> newField [
 ]
 
 { #category : 'entity creation' }
+FamixCSTEntityCreator >> newFieldNamed: aName [
+
+	<generated>
+	^ self add: (FamixCSField named: aName)
+]
+
+{ #category : 'entity creation' }
 FamixCSTEntityCreator >> newObjectReference [
 
 	<generated>

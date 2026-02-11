@@ -16,18 +16,17 @@
 |---|
 | `isAccessible` | `Boolean` | true | |
 | `isAtMaxDepth` | `Boolean` | false | |
-| `name` | `String` | nil | |
+| `name` | `String` | nil | Basic name of the entity, not full reference.|
 
 "
 Class {
 	#name : 'FamixCSField',
 	#superclass : 'FamixCSEntity',
-	#traits : 'FamixCSTValueContainer',
-	#classTraits : 'FamixCSTValueContainer classTrait',
+	#traits : 'FamixCSTValueContainer + FamixTNamedEntity',
+	#classTraits : 'FamixCSTValueContainer classTrait + FamixTNamedEntity classTrait',
 	#instVars : [
 		'#isAccessible => FMProperty defaultValue: true',
 		'#isAtMaxDepth => FMProperty defaultValue: false',
-		'#name => FMProperty',
 		'#parent => FMOne type: #FamixCSClassReference opposite: #fields'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
@@ -88,20 +87,6 @@ FamixCSField >> mooseNameOn: aStream [
 	value
 		ifNotNil: [ value mooseNameOn: aStream ]
 		ifNil: [ aStream print: nil ]
-]
-
-{ #category : 'accessing' }
-FamixCSField >> name [
-
-	<FMProperty: #name type: #String>
-	<generated>
-	^ name
-]
-
-{ #category : 'accessing' }
-FamixCSField >> name: anObject [
-	<generated>
-	name := anObject
 ]
 
 { #category : 'accessing' }

@@ -87,6 +87,7 @@ FamixCallStackGenerator >> defineHierarchy [
 
 	"trait usages"
 	value --|> #TTypedEntity.
+	field --|> #TNamedEntity.
 	field --|> tValueContainer.
 	arrayValue --|> tValueContainer.
 	argument --|> tValueContainer.
@@ -109,9 +110,6 @@ FamixCallStackGenerator >> defineProperties [
 	objectReference property: #uniqueID type: #Number.
 
 	stringReference property: #value type: #String.
-
-	self flag:#todo. "should field use #TNamedEntity ?"
-	field property: #name type: #String.
 	
 	field property: #isAtMaxDepth type: #Boolean defaultValue: false .
 	arrayValue property: #isAtMaxDepth type: #Boolean defaultValue: false .
