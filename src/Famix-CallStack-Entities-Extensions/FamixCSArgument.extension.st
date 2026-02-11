@@ -1,11 +1,6 @@
 Extension { #name : 'FamixCSArgument' }
 
 { #category : '*Famix-CallStack-Entities-Extensions' }
-FamixCSArgument >> isArgument [ 
-	^ true.
-]
-
-{ #category : '*Famix-CallStack-Entities-Extensions' }
 FamixCSArgument >> mooseNameOn: aStream [
 
 	self parameter name ifNotNil: [

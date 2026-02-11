@@ -1,12 +1,6 @@
 Extension { #name : 'FamixCSStackline' }
 
 { #category : '*Famix-CallStack-Entities-Extensions' }
-FamixCSStackline >> isStackline [
-
-	^ true
-]
-
-{ #category : '*Famix-CallStack-Entities-Extensions' }
 FamixCSStackline >> mooseNameOn: aStream [
 
 	aStream

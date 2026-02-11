@@ -24,7 +24,7 @@ Class {
 	#classTraits : 'FamixCSTValueContainer classTrait',
 	#instVars : [
 		'#isAtMaxDepth => FMProperty defaultValue: false',
-		'#parent => FMOne type: #FamixCSArrayReference opposite: #elements'
+		'#parent => FMOne type: \'AnObsoleteFamixCSArrayReference\' opposite: #elements'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
 	#package : 'Famix-CallStack-Entities',

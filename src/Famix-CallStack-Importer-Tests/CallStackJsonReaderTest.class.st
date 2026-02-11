@@ -25,9 +25,9 @@ CallStackJsonReaderTest >> testCreateArgumentCreatedArgumentIsInTheModel [
 
 	| arg |
 	arg := reader createArgument: nil.
-	
-	self assert: arg isArgument.
-	self assert: (reader model includes: arg).
+
+	self assert: arg class equals: FamixCSArgument.
+	self assert: (reader model includes: arg)
 ]
 
 { #category : 'createArrayArgument' }
@@ -111,10 +111,8 @@ CallStackJsonReaderTest >> testCreateFieldCreatedFieldIsInTheModel [
 
 	field := reader createField: fieldDict.
 
-	self assert: field isField.
-	self assert: (reader model includes: field).
-	
-
+	self assert: field class equals: FamixCSField.
+	self assert: (reader model includes: field)
 ]
 
 { #category : 'createField' }
@@ -595,7 +593,7 @@ CallStackJsonReaderTest >> testCreateStacklineCreatedStacklineIsInTheModel [
 	| stackline |
 	stackline := reader createStackline: CSStructureCreator simpleStacklineDict.
 
-	self assert: stackline isStackline.
+	self assert: stackline class equals: FamixCSStackline.
 	self assert: (reader model includes: stackline)
 ]
 
@@ -817,9 +815,9 @@ CallStackJsonReaderTest >> testfillValueCheckingWithAString [
 CallStackJsonReaderTest >> testinstantiateReferenceEntityAClassReference [
 
 	| reference |
-	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleObjectReferenceDict at:#reference).
+	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleObjectReferenceDict at: #reference).
 
-	self assert: reference isClassReference.
+	self assert: reference class equals: FamixCSClassReference.
 	self assert: (reader model includes: reference)
 ]
 
@@ -831,7 +829,7 @@ CallStackJsonReaderTest >> testinstantiateReferenceEntityAClassReferenceNotPrepa
 			              at: #refered put: '<<CLASS_NOT_PREPARED>>';
 			              yourself).
 
-	self assert: reference isClassReference.
+	self assert: reference class equals: FamixCSClassReference.
 	self assert: (reader model includes: reference)
 ]
 
@@ -839,9 +837,9 @@ CallStackJsonReaderTest >> testinstantiateReferenceEntityAClassReferenceNotPrepa
 CallStackJsonReaderTest >> testinstantiateReferenceEntityAStringReference [
 
 	| reference |
-	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleStringReferenceDict at:#reference).
+	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleStringReferenceDict at: #reference).
 
-	self assert: reference isStringReference.
+	self assert: reference class equals: FamixCSStringReference.
 	self assert: (reader model includes: reference)
 ]
 
@@ -849,8 +847,8 @@ CallStackJsonReaderTest >> testinstantiateReferenceEntityAStringReference [
 CallStackJsonReaderTest >> testinstantiateReferenceEntityArrayReference [
 
 	| reference |
-	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleArrayReferenceDict at:#reference).
+	reference := reader instantiateReferenceEntityFrom: (CSStructureCreator simpleArrayReferenceDict at: #reference).
 
-	self assert: reference isArrayReference.
+	self assert: reference class equals: FamixCSArrayReference.
 	self assert: (reader model includes: reference)
 ]
