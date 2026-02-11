@@ -88,12 +88,6 @@ FamixCSStackline >> isArgsAccessible: anObject [
 	isArgsAccessible := anObject
 ]
 
-{ #category : 'testing' }
-FamixCSStackline >> isStackline [
-
-	^ true
-]
-
 { #category : 'accessing' }
 FamixCSStackline >> method [
 	"Relation named: #method type: #FamixJavaMethod opposite: #stacklines"
@@ -108,45 +102,6 @@ FamixCSStackline >> method: anObject [
 
 	<generated>
 	self attributeAt: #method put: (FMMultivalueLink on: self update: #stacklines from: self method to: anObject).
-]
-
-{ #category : 'printing' }
-FamixCSStackline >> mooseNameOn: aStream [
-
-	aStream
-		nextPutAll: 'Line ';
-		nextPutAll: self positionInStack asString;
-		nextPutAll: ' : ';
-		nextPutAll: self method parentType name;
-		nextPut: $.;
-		nextPutAll: self method signature
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> next [
-
-	<derived>
-	<FMComment: 'The next stackline in the stack'>
-	<FMProperty: #next type: #FamixCSStackline>
-	^ self stack nextTo: self
-]
-
-{ #category : 'as yet unclassified' }
-FamixCSStackline >> positionInStack [
-	
-	<FMProperty: #positionInStack type: #Number>
-	<derived>
-	<FMComment: 'The position of this stack line in the stack'>
-	^ stack ifNotNil:[ stack indexOfLine: self].
-]
-
-{ #category : 'accessing' }
-FamixCSStackline >> previous [
-
-	<derived>
-	<FMComment: 'The previous stackline in the stack'>
-	<FMProperty: #previous type: #FamixCSStackline>
-	^ self stack previousTo: self
 ]
 
 { #category : 'accessing' }

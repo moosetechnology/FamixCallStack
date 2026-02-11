@@ -37,20 +37,6 @@ FamixCSReceiver class >> annotation [
 	^ self
 ]
 
-{ #category : 'testing' }
-FamixCSReceiver >> isReceiver [
-
-	^ true
-]
-
-{ #category : 'accessing' }
-FamixCSReceiver >> mooseNameOn: aStream [
-
-	self value
-		ifNil: [ aStream print: nil ]
-		ifNotNil: [ self value mooseNameOn: aStream ]
-]
-
 { #category : 'accessing' }
 FamixCSReceiver >> stackline [
 	"Relation named: #stackline type: #FamixCSStackline opposite: #receiver"

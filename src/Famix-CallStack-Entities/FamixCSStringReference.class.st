@@ -27,18 +27,6 @@ FamixCSStringReference class >> annotation [
 	^ self
 ]
 
-{ #category : 'testing' }
-FamixCSStringReference >> isStringReference [
-
-	^ true
-]
-
-{ #category : 'printing' }
-FamixCSStringReference >> mooseNameOn: aStream [
-
-	aStream print: value
-]
-
 { #category : 'accessing' }
 FamixCSStringReference >> value [
 

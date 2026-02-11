@@ -40,37 +40,6 @@ FamixCSStack >> addStackline: anObject [
 ]
 
 { #category : 'accessing' }
-FamixCSStack >> indexOfLine: aLine [
-
-	^ stacklines indexOf: aLine
-]
-
-{ #category : 'printing' }
-FamixCSStack >> mooseNameOn: aStream [
-
-	aStream
-		nextPutAll: 'aStack (';
-		print: stacklines size;
-		nextPutAll: ' stacklines)'
-]
-
-{ #category : 'navigation' }
-FamixCSStack >> nextTo: aStackline [
-
-	<derived>
-	<FMComment: 'The line next to the given line in the stack'>
-	^ stacklines after: aStackline ifAbsent: [ nil ]
-]
-
-{ #category : 'navigation' }
-FamixCSStack >> previousTo: aStackline [
-
-	<derived>
-	<FMComment: 'The line before to the given line in the stack'>
-	^ stacklines before: aStackline ifAbsent: [ nil ]
-]
-
-{ #category : 'accessing' }
 FamixCSStack >> stacklines [
 	"Relation named: #stacklines type: #FamixCSStackline opposite: #stack"
 

@@ -51,27 +51,3 @@ FamixCSArrayReference >> elements: anObject [
 	<generated>
 	elements value: anObject
 ]
-
-{ #category : 'testing' }
-FamixCSArrayReference >> isArrayReference [
-
-	^ true
-]
-
-{ #category : 'printing' }
-FamixCSArrayReference >> mooseNameOn: aStream [
-
-	aStream nextPutAll: ' ['.
-	elements
-		do: [ :elem | elem mooseNameOn: aStream ]
-		separatedBy: [ aStream nextPutAll: ', ' ].
-	aStream nextPutAll: ']'
-]
-
-{ #category : 'accessing' }
-FamixCSArrayReference >> size [
-
-	<FMProperty: #size type: #Number>
-	<derived>
-	^ elements size
-]

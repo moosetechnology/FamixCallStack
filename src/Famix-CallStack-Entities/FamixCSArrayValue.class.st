@@ -54,12 +54,6 @@ FamixCSArrayValue >> isAtMaxDepth: anObject [
 	isAtMaxDepth := anObject
 ]
 
-{ #category : 'printing' }
-FamixCSArrayValue >> mooseNameOn: aStream [
-
-	value ifNil: [ aStream print: nil ] ifNotNil: [ value mooseNameOn: aStream ]
-]
-
 { #category : 'accessing' }
 FamixCSArrayValue >> parent [
 	"Relation named: #parent type: #FamixCSArrayReference opposite: #elements"

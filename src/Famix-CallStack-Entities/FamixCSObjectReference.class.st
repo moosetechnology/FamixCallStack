@@ -28,12 +28,6 @@ FamixCSObjectReference class >> annotation [
 ]
 
 { #category : 'accessing' }
-FamixCSObjectReference >> fillFrom: aCollection reader: aCSReader [
-
-	self subclassResponsibility 
-]
-
-{ #category : 'accessing' }
 FamixCSObjectReference >> uniqueID [
 
 	<FMProperty: #uniqueID type: #Number>

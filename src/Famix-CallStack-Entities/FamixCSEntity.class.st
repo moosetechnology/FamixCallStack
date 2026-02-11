@@ -31,44 +31,8 @@ FamixCSEntity class >> metamodel [
 ]
 
 { #category : 'testing' }
-FamixCSEntity >> isArgument [
-
-	^ false
-]
-
-{ #category : 'testing' }
-FamixCSEntity >> isArrayReference [
-
-	^ false
-]
-
-{ #category : 'testing' }
-FamixCSEntity >> isClassReference [
-
-	^ false
-]
-
-{ #category : 'testing' }
-FamixCSEntity >> isField [
-
-	^ false
-]
-
-{ #category : 'testing' }
 FamixCSEntity >> isQueryable [
 
 	<generated>
-	^ false
-]
-
-{ #category : 'testing' }
-FamixCSEntity >> isStackline [
-
-	^ false
-]
-
-{ #category : 'testing' }
-FamixCSEntity >> isStringReference [
-
 	^ false
 ]

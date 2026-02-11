@@ -59,12 +59,6 @@ FamixCSClassReference >> fields: anObject [
 	fields value: anObject
 ]
 
-{ #category : 'testing' }
-FamixCSClassReference >> isClassReference [
-
-	^ true
-]
-
 { #category : 'accessing' }
 FamixCSClassReference >> isPrepared [
 
@@ -77,12 +71,4 @@ FamixCSClassReference >> isPrepared [
 FamixCSClassReference >> isPrepared: anObject [
 	<generated>
 	isPrepared := anObject
-]
-
-{ #category : 'printing' }
-FamixCSClassReference >> mooseNameOn: aStream [
-
-	typing
-		ifNil: [ aStream print: nil ]
-		ifNotNil: [ typing declaredType mooseNameOn: aStream ]
 ]

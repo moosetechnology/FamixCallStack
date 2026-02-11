@@ -34,23 +34,6 @@ FamixCSArgument class >> annotation [
 	^ self
 ]
 
-{ #category : 'testing' }
-FamixCSArgument >> isArgument [ 
-	^ true.
-]
-
-{ #category : 'printing' }
-FamixCSArgument >> mooseNameOn: aStream [
-
-	self parameter name ifNotNil: [
-			aStream
-				nextPutAll: self parameter name;
-				nextPutAll: ' = ' ].
-	self value
-		ifNotNil: [ :val | val mooseNameOn: aStream ]
-		ifNil: [ aStream print: nil ]
-]
-
 { #category : 'accessing' }
 FamixCSArgument >> parameter [
 	"Relation named: #parameter type: #FamixJavaParameter opposite: #arguments"
