@@ -20,7 +20,7 @@ Class {
 	#name : 'FamixCSClassReference',
 	#superclass : 'FamixCSObjectReference',
 	#instVars : [
-		'#fields => FMMany type: \'AnObsoleteFamixCSField\' opposite: #parent',
+		'#fields => FMMany type: #FamixCSField opposite: #parent',
 		'#isPrepared => FMProperty defaultValue: true'
 	],
 	#category : 'Famix-CallStack-Entities-Entities',
