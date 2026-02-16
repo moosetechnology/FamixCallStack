@@ -462,7 +462,7 @@ CallStackJsonReaderTest >> testCreatePrimitiveValueCreatedPrimitiveValueIsInTheM
 	| primVal |
 	primVal := reader createPrimitiveValue: (CSStructureCreator simplePrimitiveValueDict at: #primitiveValue).
 
-	self assert: primVal isPrimitiveValue.
+	self assert: primVal class equals: FamixCSPrimitiveValue .
 	self assert: (reader model includes: primVal)
 ]
 
@@ -503,7 +503,7 @@ CallStackJsonReaderTest >> testCreateReceiverIsInTheModel [
 	| receiver |
 	receiver := reader createReceiver: CSStructureCreator simpleArrayReferenceDict.
 
- 	self assert: receiver isReceiver.
+	self assert: receiver class equals: FamixCSReceiver.
 	self assert: (reader model includes: receiver)
 ]
 
