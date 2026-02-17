@@ -374,14 +374,19 @@ CallStackJsonReader >> model: aModel [
 CallStackJsonReader >> read: json [
 	"Instantiate the JavaCallStack model from a json object"
 
-	| stack lines |
+	| stack lines valueIndependents |
 	json ifEmpty: [ Error signal: 'The json file is empty' ] ifNotEmpty: [
 			model := FamixCSModel new
 				         name: filename;
 				         yourself.
 			stack := model newStack.
-			lines := json at: #Lines. "Get the lines"
-			lines do: [ :line | stack addStackline: (self createStackline: line) ].
+			
+			valueIndependents := json at: #valueIndependents.
+			lines := json at: #Lines. 
+			
+			lines do: [ :line |
+					valueIndependents ifTrue: [ createdReference := Dictionary new ].
+					stack addStackline: (self createStackline: line) ].
 			"reset moose name to make sure no error appear"
 			model entities do: #resetMooseName ]
 ]
