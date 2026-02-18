@@ -209,20 +209,26 @@ CallStackJsonReader >> createReceiver: aDictionary [
 CallStackJsonReader >> createStackline: aDictionary [
 	"Instantiate a line of a stack"
 
+	"NOTE : IT IS IMPORTANT TO FOLLOW THE STEPS
+		1. Method
+		2. Arguments
+		3. Receiver
+		BECAUSE THE JAVA EXTRACTOR NEED FOLLOW THIS EXACT ORDER TO CREATE ALREADY FOUND REFERENCES"
+
 	| line |
 	line := model newStackline.
-	
-	(aDictionary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
-	line method: (self createMethod: (aDictionary at: #method)).
-	
+
 	aDictionary
 		at: #method
 		ifPresent: [ :methodDict | line method: (self createMethod: methodDict) ]
 		ifAbsent: [ Error signal: 'MethodCall has no method' ].
-		
-	(self createArguments: (aDictionary at: #arguments) forStackline: line).
+
+	self createArguments: (aDictionary at: #arguments) forStackline: line.
 	self validateStackline: line.
 	self linkArgumentsAndParameterOfStackline: line.
+
+	(aDictionary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
+	line method: (self createMethod: (aDictionary at: #method)).
 
 	^ line
 ]
