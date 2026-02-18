@@ -2,25 +2,30 @@
 
 name: Run tests
 
-on:
 # Only one trigger is necessary, keep only the ones you need. Default branch is set by default, change it according to your needs.
 # Find more information here: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+on:
   push:
-    branches: [ "master" ]
+    branches: 
+     - master
   pull_request:
-    branches: [ "master" ]
+    branches: 
+     - master
+  workflow_dispatch:
 
 jobs:
   run:
     uses: moosetechnology/.github/.github/workflows/run-tests.yml@main
-    secrets: inherit
-# Optional inputs: un-comment the lines below. See documentation in the next commented paragraph.
     with:
-       pharo-versions: "[ 'Moose64-trunk' ]"
+     run-coverage: true 
+     pharo-versions: ${{ vars.MOOSE_PHARO_VERSIONS['Moose-latest'] }}
+# Optional inputs: un-comment the lines below. See documentation in the next commented paragraph.
+#    with:
+#       pharo-versions: "[ 'Moose64-trunk' ]"
 #        create-artifact: true
 #        image-name: ""
 #        pre-upload-script: ""
-       run-coverage: true # Don't forget to modify your .smalltalk.ston file!
+#       run-coverage: true
 
 
 
