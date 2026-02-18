@@ -224,7 +224,6 @@ CallStackJsonReader >> createStackline: aDictionary [
 		ifAbsent: [ Error signal: 'MethodCall has no method' ].
 
 	self createArguments: (aDictionary at: #arguments) forStackline: line.
-	self validateStackline: line.
 	self linkArgumentsAndParameterOfStackline: line.
 
 	(aDictionary at: #receiver) ifNotNil: [ :receiver | line receiver: (self createReceiver: receiver) ].
@@ -408,12 +407,4 @@ CallStackJsonReader >> readFrom: aFileReference [
 	reader close.
 
 	^ model
-]
-
-{ #category : 'as yet unclassified' }
-CallStackJsonReader >> validateStackline: aStackline [
-	"Checking that number of parameters and arguments match in case arguments are accessibles"
-
-	(aStackline isArgsAccessible and: [ aStackline method parameters size ~= aStackline arguments size ]) ifTrue: [
-		Error signal: 'Stackline have accessible arguments, but the number of arguments and number of parameter of its method doesnt match' ]
 ]
