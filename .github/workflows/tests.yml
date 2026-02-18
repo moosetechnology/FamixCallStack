@@ -18,7 +18,7 @@ jobs:
     uses: moosetechnology/.github/.github/workflows/run-tests.yml@main
     with:
      run-coverage: true 
-     pharo-versions: ${{ vars.MOOSE_PHARO_VERSIONS['Moose-latest'] }}
+     pharo-versions: "[ 'Moose64-trunk' ]"
 # Optional inputs: un-comment the lines below. See documentation in the next commented paragraph.
 #    with:
 #       pharo-versions: "[ 'Moose64-trunk' ]"
