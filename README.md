@@ -2,7 +2,7 @@
 
 This project offers a metamodel for Java call stacks, enabling dynamic analysis of Java applications directly within Moose.
 
-This project can imports file created using [JavaCallStackExtractor-v1.0.0]([https://github.com/moosetechnology/JavaCallStackExtractor](https://github.com/moosetechnology/JavaCallStackExtractor/releases/tag/v1.0.0)).
+This project can imports file created using [JavaCallStackExtractor-v1.0.0](https://github.com/moosetechnology/JavaCallStackExtractor/releases/tag/v1.0.0).
 
 ## Loading the project into Moose
 To load FamixCallStack into a Moose image, execute the following code:
